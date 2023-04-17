@@ -1,0 +1,93 @@
+
+.normalGameMode {
+    border: white 4px solid;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-101%, -50%);
+    width: 30vw;
+    height: 30vw;
+}
+
+.customGameMode {
+    border: white 4px solid;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(+1%, -50%);
+    width: 30vw;
+    height: 30vw;
+}
+
+.customPong {
+    margin-top: 4vw;
+    text-align: center;
+    color: white;
+    font-size: 5vw;
+}
+
+.classicPong {
+    margin-top: 4vw;
+    text-align: center;
+    color: white;
+    font-size: 5vw;
+}
+.normalGameMode:hover {
+    background-color: white;
+}
+.normalGameMode:hover .classicPong {
+    color: black;
+}
+
+.normalGameMode:hover .imgPlaceHolder {
+    background-image: url('../img/normalPongReversed.png');
+    border-color: black;
+}
+
+.customGameMode:hover {
+    background-color: white;
+}
+.customGameMode:hover .customPong {
+    color: black;
+}
+
+.customGameMode:hover .imgPlaceHolder2 {
+    background-image: url('../img/normalPongReversed.png');
+    border-color: black;
+}
+
+.imgPlaceHolder {
+    background-size: cover;
+    background-image: url('../img/normalPong.png');
+    margin-top: 4vw;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border: white 3px solid;
+    transform: translate(-50%, -50%);
+    width: 19vw;
+    height: 19vw;
+}
+
+
+.imgPlaceHolder2 {
+    background-size: cover;
+    background-image: url('../img/normalPong.png');
+    margin-top: 4vw;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border: white 3px solid;
+    transform: translate(-50%, -50%);
+    width: 19vw;
+    height: 19vw;
+}
+
+.modePageTitle {
+    text-align: center;
+    font-size: 8vw;
+}
+
+.divModePage {
+    width: 100%;
+}

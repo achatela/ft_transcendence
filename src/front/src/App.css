@@ -1,0 +1,178 @@
+@font-face {
+    font-family: 'pixeltype';
+    src: url('../../misc/Pixeltype.ttf') format('truetype');
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'pixeltype', sans-serif;
+    color: white;
+}
+
+body {
+    max-height: 88vh;
+    min-height: 88vh;
+    padding: 40px;
+    border: white 12px solid;
+    background-color: black;
+}
+
+::placeholder {
+    color: white;
+    opacity: 1;
+}
+
+.transcendence-title {
+    font-weight: 500;
+    color: white;
+    font-size: 7rem;
+    text-align: center;
+    margin-top: 5rem;
+}
+
+.login-div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    max-width: 400px;
+    padding: 2rem;
+    /* border-radius: 10px; */
+    /* box-shadow: 0 2px 4px rgb(255, 255, 255); */
+    border: white 5px solid;
+}
+
+.login-input[type="text"], .password-input {
+    background: black;
+    width: 80%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    color: white;
+    /* border-radius: 5px; */
+    font-size: 1rem;
+    outline: none;
+    flex-grow: 1;
+}
+
+.password-label {
+    font-size: 1rem;
+    color: white;
+}
+
+.password-wrapper {
+    width: 85%;
+    position: relative;
+    display: flex;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 35%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    outline: none;
+}
+
+
+.login-input, .password-input {
+    width: 80%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 3px solid white;
+    /* border-radius: 5px; */
+    font-size: 1rem;
+    outline: none;
+    flex-grow: 1;
+}
+
+.remember-me-wrapper {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.remember-me-checkbox {
+    margin-right: 0.5rem;
+}
+
+.sign-up-button {
+    background-color: black;
+    border: white 2px solid;
+    color: white;
+    padding: 0.5rem 1rem;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1rem;
+    margin: 0.5rem 0;
+    cursor: pointer;
+    /* border-radius: 5px; */
+}
+
+.topnav {
+    overflow: hidden;
+    border: white 1px solid;
+  }
+  
+.topnav a {
+    float: left;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    border: white 1px solid;
+    font-size: 17px;
+}
+
+.topnav a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+.topnav a.active {
+    background-color: #04AA6D;
+    color: white;
+}
+
+.addBallButton {
+    background-color: black;
+    border: white 2px solid;
+    color: white;
+    padding: 0.5rem 1rem;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 2rem;
+    margin: 0.5rem 0;
+    cursor: pointer;
+    position: absolute;
+    top: 63%;
+    left: 42.5%;
+    width: 15%;
+}
+
+.removeBallButton {
+    background-color: black;
+    border: white 2px solid;
+    color: white;
+    padding: 0.5rem 1rem;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 2rem;
+    margin: 0.5rem 0;
+    cursor: pointer;
+    position: absolute;
+    top: 68%;
+    left: 42.5%;
+    width: 15%;
+}
