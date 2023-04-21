@@ -4,6 +4,7 @@ import './css/BouncingBall.css';
 interface State {
   position: { x: number, y: number };
   direction: { dx: number, dy: number };
+  start: number;
 }
 
 class BouncingBall extends Component<{x: number, y: number, speed: number, loginDiv: any}, State> {
@@ -14,9 +15,14 @@ class BouncingBall extends Component<{x: number, y: number, speed: number, login
   constructor(props: {x: number, y: number, speed: number, loginDiv: any}) {
     super(props);
     this.state = {
+      start: 0,
       position: { x: props.x, y: props.y},
       direction: { dx: 1, dy: 1 },
     };
+    this.state.position.x = Math.random() * window.innerWidth;
+    this.state.position.y = Math.random() * window.innerHeight;
+    this.state.direction.dx = Math.random() * 2 - 1;
+    this.state.direction.dy = Math.random() * 2 - 1;
     this.animationRef = 0;
     this.lastFrameTime = performance.now();
     this.speed = 0.2;
@@ -88,6 +94,14 @@ class BouncingBall extends Component<{x: number, y: number, speed: number, login
 
   render() {
   const { position } = this.state;
+  if (this.state.start === 0){
+    while (this.checkCollision(position.x, position.y, 40, this.props.loginDiv)){
+      this.setState({
+        position: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight},
+      });
+    }
+    this.setState({start: 1});
+  }
   return (
     <div className="bouncing-ball" style={{ left: position.x, top: position.y }}></div>
   );

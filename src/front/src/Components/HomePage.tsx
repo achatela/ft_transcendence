@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import BouncingBall from './BouncingBall';
 import SpeedSlider from './SpeedSlider';
 import AddBallButton from './AddBallButton';
-// import RemoveBallButton from './RemoveBallButton';
+import RemoveBallButton from './RemoveBallButton';
 
 export default function HomePage(props: any) {
   const loginDivRef = useRef(null);
@@ -70,12 +70,12 @@ export default function HomePage(props: any) {
         </div>
         <button className="sign-up-button" type="button">Sign Up</button>
       </div>
-      {/* <BouncingBall x={900} y={100} loginDiv={loginDivRef} speed={speed}/> */}
+      <BouncingBall x={900} y={100} loginDiv={loginDivRef} speed={speed}/>
       {balls.map((ball, index) => (
       <BouncingBall loginDiv={loginDivRef} x={ball.x} y={ball.y} speed={speed}/>
       ))}
     <AddBallButton onAddBall={addBall}/>
-    {/* <RemoveBallButton onRemoveBall={removeBall} /> */}
+    <RemoveBallButton onRemoveBall={removeBall} />
     </div>
   );
 }
