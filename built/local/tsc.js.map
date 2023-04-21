@@ -1,0 +1,1 @@
+{"version":3,"file":"tsc.js","sourceRoot":"","sources":["../../src/front/src/Components/AddBallButton.tsx"],"names":[],"mappings":";;;;IAEA,SAAwB,aAAa,CAAC,EAA8B;YAA5B,SAAS,eAAA,EAAE,QAAQ,cAAA,EAAE,KAAK,WAAA;QAChE,OAAO,CACL,CAAC,MAAM,CAAC,SAAS,CAAC,eAAe,CAAC,IAAI,CAAC,QAAQ,CAAC,OAAO,CAAC,CAAC,SAAS,CAAC,CACjE;;IACF,EAAE,MAAM,CAAC,CACV,CAAC;IACJ,CAAC;;;;;;;;;QACD,CAAC"}

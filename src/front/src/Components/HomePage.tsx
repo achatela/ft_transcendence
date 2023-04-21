@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import BouncingBall from './BouncingBall';
-import SpeedSlider from './SpeedSlider.js';
+import SpeedSlider from './SpeedSlider';
 import AddBallButton from './AddBallButton';
-import RemoveBallButton from './RemoveBallButton';
+// import RemoveBallButton from './RemoveBallButton';
 
-export default function HomePage(props) {
+export default function HomePage(props: any) {
   const loginDivRef = useRef(null);
   const [speed, setSpeed] = useState(1);
   const [balls, setBalls] = useState([{ x: 900, y: 100 }]);
@@ -31,24 +31,31 @@ export default function HomePage(props) {
     const passwordInput = document.querySelector(".password-input");
 
     function handleClick() {
+      // @ts-ignore: Object is possibly 'null'.
       if (passwordInput.type === "password") {
+        // @ts-ignore: Object is possibly 'null'.
         passwordInput.type = "text";
+        // @ts-ignore: Object is possibly 'null'.
         togglePasswordButton.innerHTML = '&#128064;'; // Change to eye-slash icon
       } else {
+        // @ts-ignore: Object is possibly 'null'.
         passwordInput.type = "password";
+        // @ts-ignore: Object is possibly 'null'.
         togglePasswordButton.innerHTML = '🫣'; // Change back to eye icon
       }
     }
-
+    // @ts-ignore: Object is possibly 'null'.
     togglePasswordButton.addEventListener("click", handleClick);
 
     return () => {
+      // @ts-ignore: Object is possibly 'null'.
       togglePasswordButton.removeEventListener("click", handleClick);
     };
   }, []);
 
   return (
     <div id="tmp">
+      {/* <SpeedSlider/> */}
       <SpeedSlider onSpeedChange={setSpeed} />
       <h1 className="transcendence-title">PONG</h1>
       <div ref={loginDivRef} className="login-div">
@@ -63,17 +70,12 @@ export default function HomePage(props) {
         </div>
         <button className="sign-up-button" type="button">Sign Up</button>
       </div>
-      <BouncingBall x={900} y={100} loginDiv={loginDivRef} speed={speed} />{balls.map((ball, index) => (
-      <BouncingBall
-        key={index}
-        x={ball.x}
-        y={ball.y}
-        loginDiv={loginDivRef}
-        speed={speed}
-      />
-    ))}
-    <AddBallButton onAddBall={addBall} loginDiv={loginDivRef} speed={speed} />
-    <RemoveBallButton onRemoveBall={removeBall} />
+      {/* <BouncingBall x={900} y={100} loginDiv={loginDivRef} speed={speed}/> */}
+      {balls.map((ball, index) => (
+      <BouncingBall loginDiv={loginDivRef} x={ball.x} y={ball.y} speed={speed}/>
+      ))}
+    <AddBallButton onAddBall={addBall}/>
+    {/* <RemoveBallButton onRemoveBall={removeBall} /> */}
     </div>
   );
 }

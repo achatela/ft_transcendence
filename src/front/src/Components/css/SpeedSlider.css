@@ -23,7 +23,7 @@ input[type="range"]::-webkit-slider-thumb {
     margin-bottom: 1vw;
 }
 
-.slidecontainer {
+.slide-container {
     width: 12em;
     position: absolute;
     top: 75%;

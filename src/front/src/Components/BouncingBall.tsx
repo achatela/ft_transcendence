@@ -1,19 +1,28 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import './css/BouncingBall.css';
 
-class BouncingBall extends Component {
-  constructor(props) {
+interface State {
+  position: { x: number, y: number };
+  direction: { dx: number, dy: number };
+}
+
+class BouncingBall extends Component<{x: number, y: number, speed: number, loginDiv: any}, State> {
+  animationRef: number;
+  lastFrameTime: number;
+  speed: number;
+  intervalId: any;
+  constructor(props: {x: number, y: number, speed: number, loginDiv: any}) {
     super(props);
     this.state = {
       position: { x: props.x, y: props.y},
       direction: { dx: 1, dy: 1 },
     };
-    this.animationRef = null;
+    this.animationRef = 0;
     this.lastFrameTime = performance.now();
     this.speed = 0.2;
   }
 
-  checkCollision = (newX, newY, squareSize, rect) => {
+  checkCollision = (newX: number, newY: number, squareSize: number, rect: {right: number, left: number, bottom: number, top: number}) => {
     return (
       newX < rect.right &&
       newX + squareSize > rect.left &&
@@ -27,12 +36,17 @@ class BouncingBall extends Component {
     const currentTime = performance.now();
     const deltaTime = currentTime - this.lastFrameTime;
     this.lastFrameTime = currentTime;
+    
+    const speedSlider = document.getElementById('myRange');
 
-    const newX = position.x + direction.dx * this.speed * deltaTime * this.props.speed;
-    const newY = position.y + direction.dy * this.speed * deltaTime * this.props.speed;
+    // @ts-ignore: Object is possibly 'null'.
+    const newX = position.x + direction.dx * this.speed * deltaTime * speedSlider.value;
+    // @ts-ignore: Object is possibly 'null'.
+    const newY = position.y + direction.dy * this.speed * deltaTime * speedSlider.value;
     const squareSize = 40;
 
     const loginDiv = document.querySelector('.login-div');
+    // @ts-ignore: Object is possibly 'null'.
     const rect = loginDiv.getBoundingClientRect();
 
     if (
@@ -73,17 +87,12 @@ class BouncingBall extends Component {
   }
 
   render() {
-    const { position } = this.state;
-    return (
-      <div
-        className="bouncing-ball"
-        style={{
-          left: position.x,
-          top: position.y,
-        }}
-      />
-    );
-  }
+  const { position } = this.state;
+  return (
+    <div className="bouncing-ball" style={{ left: position.x, top: position.y }}></div>
+  );
+}
+
 }
 
 export default BouncingBall;
