@@ -17,15 +17,13 @@ class BouncingBall extends Component<{x: number, y: number, speed: number, login
     this.state = {
       start: 0,
       position: { x: props.x, y: props.y},
-      direction: { dx: 1, dy: 1 },
+      direction: { dx: Math.random() * 2 - 1, dy: Math.random() * 2 - 1 },
     };
     this.state.position.x = Math.random() * window.innerWidth;
     this.state.position.y = Math.random() * window.innerHeight;
-    this.state.direction.dx = Math.random() * 2 - 1;
-    this.state.direction.dy = Math.random() * 2 - 1;
     this.animationRef = 0;
     this.lastFrameTime = performance.now();
-    this.speed = 0.2;
+    this.speed = 2;
   }
 
   checkCollision = (newX: number, newY: number, squareSize: number, rect: {right: number, left: number, bottom: number, top: number}) => {
@@ -40,17 +38,23 @@ class BouncingBall extends Component<{x: number, y: number, speed: number, login
   updatePosition = () => {
     const { position, direction } = this.state;
     const currentTime = performance.now();
-    const deltaTime = currentTime - this.lastFrameTime;
+    //const deltaTime = currentTime - this.lastFrameTime;
     this.lastFrameTime = currentTime;
     
     const speedSlider = document.getElementById('myRange');
+    const magnitude = Math.sqrt(direction.dx ** 2 + direction.dy ** 2);
+    const normalisedSpeedX = direction.dx / magnitude;
+    const normalisedSpeedY = direction.dy / magnitude;
+    
+    let newX: number = position.x;
+    let newY: number = position.y;
 
     // @ts-ignore: Object is possibly 'null'.
-    const newX = position.x + direction.dx * this.speed * deltaTime * speedSlider.value;
+    newX += normalisedSpeedX * speedSlider.value;
     // @ts-ignore: Object is possibly 'null'.
-    const newY = position.y + direction.dy * this.speed * deltaTime * speedSlider.value;
+    newY += normalisedSpeedY * speedSlider.value;
+    
     const squareSize = 40;
-
     const loginDiv = document.querySelector('.login-div');
     // @ts-ignore: Object is possibly 'null'.
     const rect = loginDiv.getBoundingClientRect();
