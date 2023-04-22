@@ -11,6 +11,7 @@ class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
   animationRef: number;
   lastFrameTime: number;
   speed: number;
+  squareSize: number = 40;
   intervalId: any;
   constructor(props: {speed: number, loginDiv: any}) {
     super(props);
@@ -23,6 +24,30 @@ class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
     this.lastFrameTime = performance.now();
     this.speed = 2;
   }
+
+  checkSpawn = (x: number, y: number, squareSize: number) => {
+    if (x <= 12 + squareSize){
+      return 1;
+    }
+    else if (x >= (window.innerWidth - (12 + (squareSize)))){
+      return 1;
+    }
+    else if (y <= 12 + squareSize){
+      return 1;
+    }
+    else if (y >= (window.innerHeight - (12 + (squareSize)))){
+      return 1;
+    }
+    const loginDiv = document.querySelector('.login-div');
+    // @ts-ignore: Object is possibly 'null'.
+    const rect = loginDiv.getBoundingClientRect();
+    if ((x - squareSize <= rect.right && x + squareSize >= rect.left) && (y - squareSize <= rect.bottom && y + squareSize >= rect.top)){
+      console.log("collision");
+      return 1;
+    }
+    return 0;
+  };
+  
 
   checkCollision = (newX: number, newY: number, squareSize: number, rect: {right: number, left: number, bottom: number, top: number}) => {
     return (
@@ -52,23 +77,22 @@ class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
     // @ts-ignore: Object is possibly 'null'.
     newY += normalisedSpeedY * speedSlider.value;
 
-    const squareSize = 40;
     const loginDiv = document.querySelector('.login-div');
     // @ts-ignore: Object is possibly 'null'.
     const rect = loginDiv.getBoundingClientRect();
 
     if (
-      newX > window.innerWidth - (12 + squareSize)||
+      newX > window.innerWidth - (12 + this.squareSize)||
       newX < 12 ||
-      this.checkCollision(newX, position.y, squareSize, rect)
+      this.checkCollision(newX, position.y, this.squareSize, rect)
     ) {
       this.setState((prevState) => ({
         direction: { ...prevState.direction, dx: -prevState.direction.dx },
       }));
     } else if (
-      newY > window.innerHeight  - (12 + squareSize)||
+      newY > window.innerHeight  - (12 + this.squareSize)||
       newY < 12 ||
-      this.checkCollision(position.x, newY, squareSize, rect)
+      this.checkCollision(position.x, newY, this.squareSize, rect)
     ) {
       this.setState((prevState) => ({
         direction: { ...prevState.direction, dy: -prevState.direction.dy },
@@ -83,6 +107,17 @@ class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
   };
 
   componentDidMount() {
+    let newPosition = this.state.position;
+    // const loginDiv = document.getElementById('login-div-ref');
+    // @ts-ignore: Object is possibly 'null'.
+    // const rect = loginDiv.getBoundingClientRect();
+    if (this.state.start === 0){
+        while (this.checkSpawn(newPosition.x, newPosition.y, this.squareSize) === 1){
+          newPosition = this.getRandomPosition();
+        }
+      this.setState({start: 1});
+      this.setState({position: newPosition});
+    }
     this.animationRef = requestAnimationFrame(this.updatePosition);
     this.intervalId = setInterval(() => {
       this.forceUpdate();
@@ -94,21 +129,18 @@ class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
     clearInterval(this.intervalId);
   }
 
-  render() {
-  const { position } = this.state;
-  if (this.state.start === 0){
-    while (this.checkCollision(position.x, position.y, 40, this.props.loginDiv)){
-      this.setState({
-        position: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight},
-      });
-    }
-    this.setState({start: 1});
-  }
-  return (
-    <div className="bouncing-ball" style={{ left: position.x, top: position.y }}></div>
-  );
-}
+  getRandomPosition = () => {
+    return {
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+    };
+  };
 
+  render() {
+    return (
+      <div className="bouncing-ball" style={{ left: this.state.position.x, top: this.state.position.y }}></div>
+    );
+  }
 }
 
 export default BouncingBall;
