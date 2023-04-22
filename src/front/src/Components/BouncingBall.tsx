@@ -7,20 +7,18 @@ interface State {
   start: number;
 }
 
-class BouncingBall extends Component<{x: number, y: number, speed: number, loginDiv: any}, State> {
+class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
   animationRef: number;
   lastFrameTime: number;
   speed: number;
   intervalId: any;
-  constructor(props: {x: number, y: number, speed: number, loginDiv: any}) {
+  constructor(props: {speed: number, loginDiv: any}) {
     super(props);
     this.state = {
       start: 0,
-      position: { x: props.x, y: props.y},
+      position: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight},
       direction: { dx: Math.random() * 2 - 1, dy: Math.random() * 2 - 1 },
     };
-    this.state.position.x = Math.random() * window.innerWidth;
-    this.state.position.y = Math.random() * window.innerHeight;
     this.animationRef = 0;
     this.lastFrameTime = performance.now();
     this.speed = 2;
@@ -37,9 +35,9 @@ class BouncingBall extends Component<{x: number, y: number, speed: number, login
 
   updatePosition = () => {
     const { position, direction } = this.state;
-    const currentTime = performance.now();
+    //const currentTime = performance.now();
     //const deltaTime = currentTime - this.lastFrameTime;
-    this.lastFrameTime = currentTime;
+    //this.lastFrameTime = currentTime;
     
     const speedSlider = document.getElementById('myRange');
     const magnitude = Math.sqrt(direction.dx ** 2 + direction.dy ** 2);
@@ -53,7 +51,7 @@ class BouncingBall extends Component<{x: number, y: number, speed: number, login
     newX += normalisedSpeedX * speedSlider.value;
     // @ts-ignore: Object is possibly 'null'.
     newY += normalisedSpeedY * speedSlider.value;
-    
+
     const squareSize = 40;
     const loginDiv = document.querySelector('.login-div');
     // @ts-ignore: Object is possibly 'null'.

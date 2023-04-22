@@ -55,7 +55,6 @@ export default function HomePage(props: any) {
 
   return (
     <div id="tmp">
-      {/* <SpeedSlider/> */}
       <SpeedSlider onSpeedChange={setSpeed} />
       <h1 className="transcendence-title">PONG</h1>
       <div ref={loginDivRef} className="login-div">
@@ -70,9 +69,8 @@ export default function HomePage(props: any) {
         </div>
         <button className="sign-up-button" type="button">Sign Up</button>
       </div>
-      <BouncingBall x={900} y={100} loginDiv={loginDivRef} speed={speed}/>
       {balls.map((ball, index) => (
-      <BouncingBall loginDiv={loginDivRef} x={ball.x} y={ball.y} speed={speed}/>
+      <BouncingBall loginDiv={loginDivRef} speed={speed}/>
       ))}
     <AddBallButton onAddBall={addBall}/>
     <RemoveBallButton onRemoveBall={removeBall} />
