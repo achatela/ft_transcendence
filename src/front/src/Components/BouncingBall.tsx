@@ -40,17 +40,46 @@ class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
       return 1;
     }
     const loginDiv = document.querySelector('.login-div');
+    const addDiv = document.querySelector('.addBallButton');
+    const removeDiv = document.querySelector('.removeBallButton');
     // @ts-ignore: Object is possibly 'null'.
     const rect = loginDiv.getBoundingClientRect();
+    // @ts-ignore: Object is possibly 'null'.
+    const rectAdd = addDiv.getBoundingClientRect();
+    // @ts-ignore: Object is possibly 'null'.
+    const rectRemove = removeDiv.getBoundingClientRect();
     if ((x - squareSize <= rect.right && x + squareSize >= rect.left) && (y - squareSize <= rect.bottom && y + squareSize >= rect.top)){
-      console.log("collision");
+      return 1;
+    }
+    else if ((x - squareSize <= rectAdd.right && x + squareSize >= rectAdd.left) && (y - squareSize <= rectAdd.bottom && y + squareSize >= rectAdd.top)){
+      return 1;
+    }
+    else if ((x - squareSize <= rectRemove.right && x + squareSize >= rectRemove.left) && (y - squareSize <= rectRemove.bottom && y + squareSize >= rectRemove.top)){
       return 1;
     }
     return 0;
   };
   
 
-  checkCollision = (newX: number, newY: number, squareSize: number, rect: {right: number, left: number, bottom: number, top: number}) => {
+  checkCollisionLogin = (newX: number, newY: number, squareSize: number, rect: {right: number, left: number, bottom: number, top: number}) => {
+    return (
+      newX < rect.right &&
+      newX + squareSize > rect.left &&
+      newY < rect.bottom &&
+      newY + squareSize > rect.top
+    );
+  };
+
+  checkCollisionAdd = (newX: number, newY: number, squareSize: number, rect: {right: number, left: number, bottom: number, top: number}) => {
+    return (
+      newX < rect.right &&
+      newX + squareSize > rect.left &&
+      newY < rect.bottom &&
+      newY + squareSize > rect.top
+    );
+  };
+
+  checkCollisionRemove = (newX: number, newY: number, squareSize: number, rect: {right: number, left: number, bottom: number, top: number}) => {
     return (
       newX < rect.right &&
       newX + squareSize > rect.left &&
@@ -79,26 +108,35 @@ class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
     newY += (normalisedSpeedY * speedSlider.value) * this.speed;
 
     const loginDiv = document.querySelector('.login-div');
+    const addedDiv = document.querySelector('.addBallButton');
+    const removeDiv = document.querySelector('.removeBallButton');
     // @ts-ignore: Object is possibly 'null'.
     const rect = loginDiv.getBoundingClientRect();
+    // @ts-ignore: Object is possibly 'null'.
+    const rectAdd = addedDiv.getBoundingClientRect();
+    // @ts-ignore: Object is possibly 'null'.
+    const rectRemove = removeDiv.getBoundingClientRect();
 
-    if (
-      newX > window.innerWidth - (12 + this.squareSize)||
-      newX < 12 ||
-      this.checkCollision(newX, position.y, this.squareSize, rect)
-    ) {
+    if (newX > window.innerWidth - (12 + this.squareSize)
+        || newX < 12
+        || this.checkCollisionLogin(newX, position.y, this.squareSize, rect)
+        || this.checkCollisionAdd(newX, position.y, this.squareSize, rectAdd)
+        || this.checkCollisionRemove(newX, position.y, this.squareSize, rectRemove))
+    {
       this.setState((prevState) => ({
         direction: { ...prevState.direction, dx: -prevState.direction.dx },
       }));
-    } else if (
-      newY > window.innerHeight  - (12 + this.squareSize)||
-      newY < 12 ||
-      this.checkCollision(position.x, newY, this.squareSize, rect)
-    ) {
+    }
+    else if (newY > window.innerHeight  - (12 + this.squareSize)
+        || newY < 12 || this.checkCollisionLogin(position.x, newY, this.squareSize, rect)
+        || this.checkCollisionAdd(position.x, newY, this.squareSize, rectAdd)
+        || this.checkCollisionRemove(position.x, newY, this.squareSize, rectRemove))
+    {
       this.setState((prevState) => ({
         direction: { ...prevState.direction, dy: -prevState.direction.dy },
       }));
-    } else {
+    }
+    else {
       this.setState({
         position: { x: newX, y: newY },
       });
