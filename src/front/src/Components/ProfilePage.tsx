@@ -5,7 +5,13 @@ interface IProps {}
 
 interface IState {
     username: string;
-    avatar: {};
+    avatar: {
+        avatarUrl: string;
+    };
+    wins: number;
+    losses: number;
+    ladderLevel: number;
+    achievements: {};
 }
 
 class ProfilePage extends Component<IProps, IState> {
@@ -13,14 +19,53 @@ class ProfilePage extends Component<IProps, IState> {
         super(props);
         this.state = {
             username: "",
-            avatar: {}
+            avatar: {
+                avatarUrl: ""
+            },
+            wins: 0,
+            losses: 0,
+            ladderLevel: 0,
+            achievements: {}
         };
+    }
+
+    getAvatar = async() => {
+        const response = await fetch("http://localhost:3333/profile/avatar");
+        const data = await response.json();
+        let ret = {
+            avatarUrl: data.avatarUrl
+        }   
+        return ret;
     }
 
     getUsername = async() => {
         const response = await fetch('http://localhost:3333/profile/username');
         const data = await response.json();
         return data.username;
+    }
+
+    getWins = async() => {
+        const response = await fetch('http://localhost:3333/profile/wins');
+        const data = await response.json();
+        return data.wins;
+    }
+
+    getLosses = async() => {
+        const response = await fetch('http://localhost:3333/profile/losses');
+        const data = await response.json();
+        return data.losses;
+    }
+
+    getLadderLevel = async() => {
+        const response = await fetch('http://localhost:3333/profile/ladder_level');
+        const data = await response.json();
+        return data.losses;
+    }
+
+    getAchievements = async() => {
+        const response = await fetch('htpp://localhost:3333/profile/achievements');
+        const data = await response.json();
+        return data.achievements;
     }
 
     componentDidMount(): void {
@@ -31,6 +76,35 @@ class ProfilePage extends Component<IProps, IState> {
             .catch(error => {
                 console.error("Error fetching username:", error);
             });
+        this.getAvatar()
+            .then(avatar => {
+                this.setState({ avatar });
+            })
+            .catch(error => {
+                console.error("Error fetching avatar:", error);
+            });
+        this.getWins()
+            .then(wins => {
+                this.setState({ wins });
+            })
+            .catch(error => {
+                console.error("Error fetching wins:", error);
+            });
+        this.getLosses()
+            .then(losses => {
+                this.setState({ losses });
+            })
+            .catch(error => {
+                console.error("Error fetching losses:", error);
+            });
+        this.getLadderLevel()
+            .then(ladderLevel => {
+                this.setState({ ladderLevel });
+            })
+            .catch(error => {
+                console.error("Error fetching ladder level:", error);
+            });
+        // this.getAchievements()
     }
 
     render() {
@@ -49,6 +123,7 @@ class ProfilePage extends Component<IProps, IState> {
                         <p></p>
                     </div>
                 </div>
+                <p>DEBUG: wins:{this.state.wins} losses{this.state.losses} ladderLevel:{this.state.ladderLevel} avatar:{this.state.avatar.avatarUrl}</p>
             </div>
         );
     }     

@@ -8,4 +8,24 @@ export class ProfileController {
   getPlayerNumber(): {} {
     return this.appService.getUsername();
   }
+
+  @Get('wins')
+  getWins(): {} {
+    return this.appService.getWins();
+  }
+
+  @Get('losses')
+  getLosses(): {} {
+    return this.appService.getLosses();
+  }
+
+  @Get('avatar')
+  getAvatar(): {} {
+    return this.appService.getAvatar();
+  }
+
+  @Get('ladderLevel')
+  getLadderLevel(): {} {
+    return this.appService.getLadderLevel();
+  }
 }
