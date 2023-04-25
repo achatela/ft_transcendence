@@ -24,7 +24,7 @@ export class ProfileController {
     return this.appService.getAvatar();
   }
 
-  @Get('ladderLevel')
+  @Get('ladder_level')
   getLadderLevel(): {} {
     return this.appService.getLadderLevel();
   }
