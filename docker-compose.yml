@@ -1,61 +1,17 @@
-version: "3"
+# docker-compose.yml
 
+version: "3.8"
 services:
-  db:
-    image: postgres
+  postgres:
+    image: postgres:13.5
     restart: always
     environment:
-      POSTGRES_USER: 'postgres'
-      POSTGRES_PASSWORD: 'example'
-      POSTGRES_DB: 'transcendence'
-      POSTGRES_HOST: 'localhost'
-    expose:
-      - "5432"
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+    volumes:
+      - postgres:/var/lib/postgresql/data
     ports:
-      - 5432:5432
-    networks:
-      - transcendence
-
-  nestjs:
-    build:
-      context: "./src/back"
-      dockerfile: Dockerfile
-    ports:
-      - "3333:3333"
-    depends_on:
-      - db
-    environment:
-      - .env
-    restart: always
-    environment:
-      POSTGRES_USER: 'postgres'
-      POSTGRES_PASSWORD: 'example'
-      POSTGRES_DB: 'transcendence'
-      POSTGRES_HOST: 'db'
-    networks:
-      - transcendence
-    dns_search:
-      - transcendence
-
-  react:
-    build:
-      context: "./src/front"
-      dockerfile: Dockerfile
-    ports:
-      - "3133:3133"
-    depends_on:
-      - db
-    environment:
-      POSTGRES_USER: 'postgres'
-      POSTGRES_PASSWORD: 'example'
-      POSTGRES_DB: 'transcendence'
-      POSTGRES_HOST: 'db'
-    networks:
-      - transcendence
+      - "5432:5432"
 
 volumes:
-  db:
-
-networks:
-  transcendence:
-    driver: bridge
+  postgres:

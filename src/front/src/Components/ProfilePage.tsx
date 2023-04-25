@@ -41,6 +41,24 @@ class ProfilePage extends Component<IProps, IState> {
     getUsername = async() => {
         const response = await fetch('http://localhost:3333/profile/username');
         const data = await response.json();
+
+        const create = await fetch("http://localhost:3333/prisma/create_user", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username: "test",
+                    password: "test"
+                    })
+                });
+        const createData = await create.json();
+        if (createData.success) {
+            console.log("Created user");
+        }
+        else {
+            console.log("Failed to create user");
+        }
         return data.username;
     }
 
