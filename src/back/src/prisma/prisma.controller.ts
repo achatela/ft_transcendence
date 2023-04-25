@@ -1,7 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { Post, Get, Body } from '@nestjs/common';
 
-
 @Controller('prisma')
 export class PrismaController {
     constructor() {}

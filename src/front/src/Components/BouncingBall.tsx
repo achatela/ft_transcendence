@@ -11,7 +11,7 @@ class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
   animationRef: number;
   lastFrameTime: number;
   speed: number;
-  squareSize: number = 40;
+  squareSize: number;
   intervalId: any;
   constructor(props: {speed: number, loginDiv: any}) {
     super(props);
@@ -22,7 +22,8 @@ class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
     };
     this.animationRef = 0;
     this.lastFrameTime = performance.now();
-    this.speed = 2;
+    this.speed = 3;
+    this.squareSize = 40;
   }
 
   checkSpawn = (x: number, y: number, squareSize: number) => {
@@ -73,9 +74,9 @@ class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
     let newY: number = position.y;
 
     // @ts-ignore: Object is possibly 'null'.
-    newX += normalisedSpeedX * speedSlider.value;
+    newX += (normalisedSpeedX * speedSlider.value) * this.speed;
     // @ts-ignore: Object is possibly 'null'.
-    newY += normalisedSpeedY * speedSlider.value;
+    newY += (normalisedSpeedY * speedSlider.value) * this.speed;
 
     const loginDiv = document.querySelector('.login-div');
     // @ts-ignore: Object is possibly 'null'.

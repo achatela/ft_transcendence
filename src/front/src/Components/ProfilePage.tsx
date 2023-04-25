@@ -42,6 +42,8 @@ class ProfilePage extends Component<IProps, IState> {
         const response = await fetch('http://localhost:3333/profile/username');
         const data = await response.json();
 
+
+        // tmp, should be moved to the moment we create the user
         const create = await fetch("http://localhost:3333/prisma/create_user", {
             method: "POST",
             headers: {

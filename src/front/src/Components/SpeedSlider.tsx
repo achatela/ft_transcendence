@@ -1,12 +1,14 @@
 import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
 import "./css/SpeedSlider.css";
 
+const startingSpeed = 5;
+
 interface speedSliderProps {
   onSpeedChange: Dispatch<SetStateAction<number>>;
 }
 
 export default function SpeedSlider(onSpeedChange: speedSliderProps) {
-    const [speed, setSpeed] = useState(1);
+    const [speed, setSpeed] = useState(startingSpeed);
   
     useEffect(() => {
       const slider = document.getElementById("myRange");
@@ -29,7 +31,7 @@ export default function SpeedSlider(onSpeedChange: speedSliderProps) {
     return (
       <div className="slide-container">
         <p className="speed">Speed: {speed}</p>
-        <input defaultValue={1} type="range" min="1" max="100" className="slider" id="myRange" />
+        <input defaultValue={startingSpeed} type="range" min="0" max="10" className="slider" id="myRange" />
       </div>
     );
   }
