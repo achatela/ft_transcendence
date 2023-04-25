@@ -3,6 +3,7 @@ import BouncingBall from './BouncingBall';
 import SpeedSlider from './SpeedSlider';
 import AddBallButton from './AddBallButton';
 import RemoveBallButton from './RemoveBallButton';
+import './css/HomePage.css';
 
 export default function HomePage(props: any) {
   const loginDivRef = useRef(null);

@@ -4,7 +4,7 @@ export class AppService {
   getPlayerNumber(): {} {
     return( 
       {
-        currentPlayers: 123
+        currentPlayers: 1,
       }
     );
   }
