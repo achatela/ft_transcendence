@@ -13,14 +13,14 @@
 
 .login-div {
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 50vh;
+    left: 50vw;
     transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 80%;
-    max-width: 400px;
+    height: 19vh;
+    width: 34vw;
     padding: 2rem;
     border: white 5px solid;
 }
@@ -61,6 +61,7 @@
 
 
 .login-input, .password-input {
+    height: 2vh;
     width: 80%;
     padding: 0.5rem;
     margin-bottom: 1rem;
@@ -73,7 +74,7 @@
 .remember-me-wrapper {
     display: flex;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 1vh;
 }
 
 .remember-me-checkbox {
@@ -89,10 +90,47 @@
     text-decoration: none;
     display: inline-block;
     font-size: 1rem;
-    margin: 0.5rem 0;
+    /* margin: 0.5rem 0; */
+    margin-top: 1vh;
     cursor: pointer;
 }
 
+.addBallButton {
+    background-color: black;
+    border: white 2px solid;
+    color: white;
+    padding: 0.5rem 1rem;
+    text-align: center;
+    text-decoration: none;
+    font-size: 2.5vw;
+    margin: 0.5rem 0;
+    cursor: pointer;
+    position: absolute;
+    display: block;
+    top: 63vh;
+    left: 42.5vw;
+    width: 15vw;
+}
+
+.removeBallButton {
+    background-color: black;
+    border: white 2px solid;
+    color: white;
+    padding: 0.5rem 1rem;
+    text-align: center;
+    text-decoration: none;
+    font-size: 2.5vw;
+    margin: 0.5rem 0;
+    cursor: pointer;
+    position: absolute;
+    display: block;
+    top: 68vh;
+    left: 42.5vw;
+    width: 15vw;
+}
+
+
+/* 
 .topnav {
     overflow: hidden;
     border: white 1px solid;
@@ -106,9 +144,9 @@
     text-decoration: none;
     border: white 1px solid;
     font-size: 17px;
-}
+} */
 
-.topnav a:hover {
+/* .topnav a:hover {
     background-color: #ddd;
     color: black;
 }
@@ -116,38 +154,4 @@
 .topnav a.active {
     background-color: #04AA6D;
     color: white;
-}
-
-.addBallButton {
-    background-color: black;
-    border: white 2px solid;
-    color: white;
-    padding: 0.5rem 1rem;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 2rem;
-    margin: 0.5rem 0;
-    cursor: pointer;
-    position: absolute;
-    top: 63%;
-    left: 42.5%;
-    width: 15%;
-}
-
-.removeBallButton {
-    background-color: black;
-    border: white 2px solid;
-    color: white;
-    padding: 0.5rem 1rem;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 2rem;
-    margin: 0.5rem 0;
-    cursor: pointer;
-    position: absolute;
-    top: 68%;
-    left: 42.5%;
-    width: 15%;
-}
+} */
