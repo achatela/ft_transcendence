@@ -50,8 +50,9 @@ class ProfilePage extends Component<IProps, IState> {
                 "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    username: "test",
-                    password: "test"
+                    name: "hcarpent",
+                    hashedPassword: "hcarpent2009",
+                    email: "123@123.fr"
                     })
                 });
         const createData = await create.json();
