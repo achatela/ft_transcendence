@@ -1,7 +1,7 @@
 input[type="range"] {
     -webkit-appearance: none;
     width: 74%;
-    height: 5px;
+    height: 0.6vh;
     background-color: white;
     outline: none;
     margin: 0;
@@ -10,8 +10,8 @@ input[type="range"] {
   
 input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
+    width: 1.5vw;
+    height: 2.6vh;
     background-color: white;
     border-radius: 0;
     box-sizing: border-box;
@@ -20,15 +20,15 @@ input[type="range"]::-webkit-slider-thumb {
 .speed {
     color: white;
     font-size: 4vw;
-    margin-bottom: 1vw;
+    margin-bottom: 1vh;
 }
 
 .slide-container {
-    width: 12em;
+    width: 14vw;
     position: absolute;
-    top: 75%;
-    left: 45%;
-    height: 10%;
+    top: 75vh;
+    left: 45vw;
+    height: 10vh;
 }
   
   

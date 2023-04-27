@@ -8,10 +8,10 @@ import ProfilePage from './Components/ProfilePage'
 function App() {
   return (
     <div>
-      {/* <ProfilePage /> */}
+      <ProfilePage />
       {/* <ModePage /> */}
       {/* <NavBar /> */}
-      <HomePage />
+      {/* <HomePage /> */}
     </div>
   );
 }

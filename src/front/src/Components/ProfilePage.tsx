@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import './css/ProfilePage.css'
+import './css/ProfilePage.css';
+
 
 interface IProps {}
 
@@ -44,24 +45,24 @@ class ProfilePage extends Component<IProps, IState> {
 
 
         // tmp, should be moved to the moment we create the user
-        const create = await fetch("http://localhost:3333/prisma/create_user", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    name: "hcarpent",
-                    hashedPassword: "hcarpent2009",
-                    email: "123@123.fr"
-                    })
-                });
-        const createData = await create.json();
-        if (createData.success) {
-            console.log("Created user");
-        }
-        else {
-            console.log("Failed to create user");
-        }
+        // const create = await fetch("http://localhost:3333/prisma/create_user", {
+        //     method: "POST",
+        //     headers: {
+        //         "Content-Type": "application/json"
+        //         },
+        //         body: JSON.stringify({
+        //             name: "hcarpent",
+        //             hashedPassword: "hcarpent2009",
+        //             email: "123@123.fr"
+        //             })
+        //         });
+        // const createData = await create.json();
+        // if (createData.success) {
+        //     console.log("Created user");
+        // }
+        // else {
+        //     console.log("Failed to create user");
+        // }
         return data.username;
     }
 
@@ -129,10 +130,11 @@ class ProfilePage extends Component<IProps, IState> {
     }
 
     render() {
+        console.log(this.state.avatar.avatarUrl)
         return (
             <div>
                 <p className="userName">{this.state.username}</p>
-                <div className="pictureProfile" id="pfpPlaceholder"/>
+                <div className="pictureProfile" id="pfpPlaceholder" style={{backgroundImage: `url(${this.state.avatar.avatarUrl})`}}/>
                 <div className="stats">
                     <div className="winLose">
                         <p></p>
@@ -144,7 +146,7 @@ class ProfilePage extends Component<IProps, IState> {
                         <p></p>
                     </div>
                 </div>
-                <p>DEBUG: wins:{this.state.wins} losses{this.state.losses} ladderLevel:{this.state.ladderLevel} avatar:{this.state.avatar.avatarUrl}</p>
+                <p className="debug">DEBUG: wins:{this.state.wins} losses{this.state.losses} ladderLevel:{this.state.ladderLevel} avatar:{this.state.avatar.avatarUrl}</p>
             </div>
         );
     }     

@@ -13,6 +13,9 @@
     width: 12vw;
     height: 12vw;
     border: 3px solid white;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .stats {
@@ -33,4 +36,10 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
+}
+
+.debug {
+    margin-left: 15px;
+    margin-top: 30px;
+    font-size: 25px;
 }
