@@ -81,7 +81,7 @@ class ProfilePage extends Component<IProps, IState> {
     getLadderLevel = async() => {
         const response = await fetch('http://localhost:3333/profile/ladder_level');
         const data = await response.json();
-        return data.losses;
+        return data.ladderLevel;
     }
 
     getAchievements = async() => {
@@ -128,22 +128,23 @@ class ProfilePage extends Component<IProps, IState> {
             });
         // this.getAchievements()
     }
+    
 
     render() {
-        console.log(this.state.avatar.avatarUrl)
+        let ratio = this.state.wins * 100 / (this.state.wins + this.state.losses);
         return (
             <div>
                 <p className="userName">{this.state.username}</p>
                 <div className="pictureProfile" id="pfpPlaceholder" style={{backgroundImage: `url(${this.state.avatar.avatarUrl})`}}/>
                 <div className="stats">
                     <div className="winLose">
-                        <p></p>
+                        <p>Wins/Losses: {this.state.wins}/{this.state.losses} {ratio.toFixed(2)}</p>
                     </div>
                     <div className="ladderLevel">
-                        <p></p>
+                        <p>Level: {this.state.ladderLevel}</p>
                     </div>
                     <div className="achievements">
-                        <p></p>
+                        <p>Achievements: </p>
                     </div>
                 </div>
                 <p className="debug">DEBUG: wins:{this.state.wins} losses{this.state.losses} ladderLevel:{this.state.ladderLevel} avatar:{this.state.avatar.avatarUrl}</p>

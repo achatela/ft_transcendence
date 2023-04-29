@@ -19,7 +19,6 @@ export class PrismaService extends PrismaClient {
         const newUser = await prisma.user.create({
             data: user['body'],
         });
-        console.log(newUser);
         return newUser;
     }
 }

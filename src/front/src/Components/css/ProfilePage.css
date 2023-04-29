@@ -20,6 +20,7 @@
 
 .stats {
     position: absolute;
+    font-size: 80px;
     width: 80%;
     left: 10%;
     top: 40%;
@@ -33,9 +34,29 @@
 .achievements
 {
     border: 1px solid white;
-    display: grid;
+    display: flex;
+    justify-content: center;
+    vertical-align: middle;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
+}
+
+.winLose p {
+    margin-top: auto;
+    margin-bottom: auto;
+    font-size: 1em;
+}
+
+.ladderLevel p {
+    margin-top: auto;
+    margin-bottom: auto;
+    font-size: 1em;
+}
+
+.achievements p {
+    margin-top: auto;
+    margin-bottom: auto;
+    font-size: 1em;
 }
 
 .debug {
