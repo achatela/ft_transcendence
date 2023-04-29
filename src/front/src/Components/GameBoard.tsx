@@ -1,6 +1,14 @@
 import React, { Component } from 'react';
 import './css/GameBoard.css';
 
+const upArrow:number = 38;
+const downArrow:number = 40;
+const zKey:number = 90;
+const sKey:number = 83;
+const speedMultiplier:number = 2;
+const paddleStep:number = 10;
+const paddleHeight:number = 100;
+
 interface IProps{}
 
 interface IState {
@@ -26,19 +34,72 @@ class GameBoard extends Component<IProps, IState> {
             ballDirectionY: Math.random() * 2 - 1,
             leftPlayerScore: 0,
             rightPlayerScore: 0,
-            ballX: 100,
-            ballY: 100,
+            ballX: 450,
+            ballY: 300,
         };
         this.interval = setInterval(() => {}, 10);
         this.squareSize = 40;
     }
 
     componentDidMount() {
+        const borders = document.querySelector('.gameBoard')
+        // @ts-ignore: Object is possibly 'null'.
+        const rect = borders.getBoundingClientRect();
+        let bottomborder = rect.bottom - rect.top;
+ 
         this.interval = setInterval(this.renderBall, 10);
+        document.addEventListener('keydown', (event) => {
+            if (event.keyCode === upArrow) {
+                if (this.state.rightPaddleY < paddleStep){
+                    this.setState((prevState) => ({
+                        rightPaddleY: 0,
+                      }));
+                }
+                else {
+                    this.setState((prevState) => ({
+                        rightPaddleY: prevState.rightPaddleY - paddleStep,
+                      }));
+                }
+            }
+            else if (event.keyCode === downArrow) {
+                if (this.state.rightPaddleY + paddleHeight + paddleStep > bottomborder)
+                    this.setState((prevState) => ({
+                        rightPaddleY: bottomborder - paddleHeight - 4,
+                    }));
+                else
+                    this.setState((prevState) => ({
+                        rightPaddleY: prevState.rightPaddleY + paddleStep,
+                        }));
+            }
+            else if (event.keyCode === zKey){
+                if (this.state.leftPaddleY < paddleStep){
+                    this.setState((prevState) => ({
+                        leftPaddleY: 0,
+                      }));
+                }
+                else {
+                    this.setState((prevState) => ({
+                        leftPaddleY: prevState.leftPaddleY - paddleStep,
+                      }));
+                }
+            }
+            else if (event.keyCode === sKey){
+                if (this.state.leftPaddleY + paddleHeight + paddleStep > bottomborder)
+                    this.setState((prevState) => ({
+                        leftPaddleY: bottomborder - paddleHeight - 4,
+                    }));
+                else
+                    this.setState((prevState) => ({
+                        leftPaddleY: prevState.leftPaddleY + paddleStep,
+                        }));
+            }
+        }
+        );
     }
 
     componentWillUnmount() {
         clearInterval(this.interval);
+        // Needs to remove event listener
     }
 
     renderBall = () => {
@@ -46,7 +107,6 @@ class GameBoard extends Component<IProps, IState> {
         const borders = document.querySelector('.gameBoard');
         const left = document.querySelector('.leftPaddle');
         const right = document.querySelector('.rightPaddle');
-        const speedMultiplier:number = 5;
         // @ts-ignore: Object is possibly 'null'.
         const rect = borders.getBoundingClientRect();
         // @ts-ignore: Object is possibly 'null'.
@@ -60,7 +120,7 @@ class GameBoard extends Component<IProps, IState> {
     
         const newX = this.state.ballX + normalisedSpeedX;
         const newY = this.state.ballY + normalisedSpeedY;
-        // Handle collisions
+        // Handle collisions with the left Paddle
         if (newY < 0) {
             this.setState((prevState) => ({
                 ballDirectionY: -prevState.ballDirectionY,
@@ -69,8 +129,8 @@ class GameBoard extends Component<IProps, IState> {
         else if (newX < 0) {
             this.setState((prevState) => ({
                 rightPlayerScore: prevState.rightPlayerScore + 1,
-                ballX: 100, // change to be in the middle
-                ballY: 100, // change to be in the middle
+                ballX: 450, // change to be in the middle
+                ballY: 300, // change to be in the middle
                 ballDirectionY: Math.random() * 2 - 1,
                 ballDirectionX: Math.random() * 2 - 1,
               }));
@@ -83,8 +143,8 @@ class GameBoard extends Component<IProps, IState> {
         else if (newX + this.squareSize >= rect.right - rect.left) {
             this.setState((prevState) => ({
                 leftPlayerScore: prevState.leftPlayerScore + 1,
-                ballX: 100, // change to be in the middle
-                ballY: 100, // change to be in the middle
+                ballX: 450, // change to be in the middle
+                ballY: 300, // change to be in the middle
                 ballDirectionY: Math.random() * 2 - 1,
                 ballDirectionX: Math.random() * 2 - 1,
               }));
