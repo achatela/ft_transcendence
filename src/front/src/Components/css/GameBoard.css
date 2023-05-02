@@ -32,7 +32,7 @@
 
 .leftPaddle {
     position: absolute;
-    width: 19px;
+    width: 20px;
     height: 100px;
     background-color: white;
     margin-left: 50px;
@@ -40,7 +40,7 @@
 
 .rightPaddle {
     position: absolute;
-    width: 19px;
+    width: 20px;
     height: 100px;
     background-color: white;
     right: 0;

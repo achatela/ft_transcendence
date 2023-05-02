@@ -45,7 +45,7 @@ class GameBoard extends Component<IProps, IState> {
         const borders = document.querySelector('.gameBoard')
         // @ts-ignore: Object is possibly 'null'.
         const rect = borders.getBoundingClientRect();
-        let bottomborder = rect.bottom - rect.top;
+        let bottomBorder = rect.bottom - rect.top;
  
         this.interval = setInterval(this.renderBall, 10);
         document.addEventListener('keydown', (event) => {
@@ -62,9 +62,9 @@ class GameBoard extends Component<IProps, IState> {
                 }
             }
             else if (event.keyCode === downArrow) {
-                if (this.state.rightPaddleY + paddleHeight + paddleStep > bottomborder)
+                if (this.state.rightPaddleY + paddleHeight + paddleStep > bottomBorder)
                     this.setState((prevState) => ({
-                        rightPaddleY: bottomborder - paddleHeight - 4,
+                        rightPaddleY: bottomBorder - paddleHeight - 4,
                     }));
                 else
                     this.setState((prevState) => ({
@@ -84,9 +84,9 @@ class GameBoard extends Component<IProps, IState> {
                 }
             }
             else if (event.keyCode === sKey){
-                if (this.state.leftPaddleY + paddleHeight + paddleStep > bottomborder)
+                if (this.state.leftPaddleY + paddleHeight + paddleStep > bottomBorder)
                     this.setState((prevState) => ({
-                        leftPaddleY: bottomborder - paddleHeight - 4,
+                        leftPaddleY: bottomBorder - paddleHeight - 4,
                     }));
                 else
                     this.setState((prevState) => ({
@@ -102,6 +102,18 @@ class GameBoard extends Component<IProps, IState> {
         // Needs to remove event listener
     }
 
+    checkLeftCollision(rect:DOMRect, x:number, y:number, squareSize:number) {
+        if ((x < 70 && x > 50) && (y > this.state.leftPaddleY && y < this.state.leftPaddleY + 100))
+            return 0;
+        return 1;
+    }
+
+    checkRightCollision(rect:DOMRect, x:number, y:number, squareSize:number, compensate:number) {
+        if ((x > rect.left - (compensate / 2) - 70 && x < rect.left - (compensate / 2) - 50) && (y > this.state.rightPaddleY && y < this.state.rightPaddleY + 100))
+            return 0;
+        return 1;
+    }
+
     renderBall = () => {
         const magnitude = Math.sqrt(this.state.ballDirectionX ** 2 + this.state.ballDirectionY ** 2);
         const borders = document.querySelector('.gameBoard');
@@ -114,14 +126,25 @@ class GameBoard extends Component<IProps, IState> {
         // @ts-ignore: Object is possibly 'null'.
         const rectRight = right.getBoundingClientRect();
 
-
         let normalisedSpeedX = (this.state.ballDirectionX / magnitude) * speedMultiplier;
         let normalisedSpeedY = (this.state.ballDirectionY / magnitude) * speedMultiplier;
     
         const newX = this.state.ballX + normalisedSpeedX;
         const newY = this.state.ballY + normalisedSpeedY;
         // Handle collisions with the left Paddle
-        if (newY < 0) {
+        if (this.checkLeftCollision(rectLeft, newX, newY, this.squareSize) == 0) {
+            console.log("Collision with left paddle")
+            this.setState((prevState) => ({
+                ballDirectionX: -prevState.ballDirectionX,
+                }));
+        }
+        else if (this.checkRightCollision(rectRight, newX, newY, this.squareSize, window.innerWidth - (rect.right - rect.left) - 70) == 0) {
+            console.log("Collision with right paddle")
+            this.setState((prevState) => ({
+                ballDirectionX: -prevState.ballDirectionX,
+                }));
+        }
+        else if (newY < 0) {
             this.setState((prevState) => ({
                 ballDirectionY: -prevState.ballDirectionY,
               }));
@@ -149,9 +172,6 @@ class GameBoard extends Component<IProps, IState> {
                 ballDirectionX: Math.random() * 2 - 1,
               }));
         }
-        // Find condition for left paddle collision (no matter which part, change x direction)
-
-        // Find condition for right paddle collision (no matter which part, change x direction)
         else {
             this.setState(prevState => ({
                 ballX: newX,
