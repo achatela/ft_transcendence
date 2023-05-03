@@ -145,8 +145,18 @@ class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
     this.animationRef = requestAnimationFrame(this.updatePosition);
   };
 
+  handleResize = () => {
+    let newPosition = this.state.position;
+    newPosition = this.getRandomPosition();
+    while (this.checkSpawn(newPosition.x, newPosition.y, this.squareSize) === 1){
+      newPosition = this.getRandomPosition();
+    }
+    this.setState({position: newPosition});
+  };
+
   componentDidMount() {
     let newPosition = this.state.position;
+    window.addEventListener("resize", this.handleResize);
     // const loginDiv = document.getElementById('login-div-ref');
     // @ts-ignore: Object is possibly 'null'.
     // const rect = loginDiv.getBoundingClientRect();
