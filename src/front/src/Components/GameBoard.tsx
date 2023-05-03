@@ -133,13 +133,11 @@ class GameBoard extends Component<IProps, IState> {
         const newY = this.state.ballY + normalisedSpeedY;
         // Handle collisions with the left Paddle
         if (this.checkLeftCollision(rectLeft, newX, newY, this.squareSize) == 0) {
-            console.log("Collision with left paddle")
             this.setState((prevState) => ({
                 ballDirectionX: -prevState.ballDirectionX,
                 }));
         }
         else if (this.checkRightCollision(rectRight, newX, newY, this.squareSize, window.innerWidth - (rect.right - rect.left) - 70) == 0) {
-            console.log("Collision with right paddle")
             this.setState((prevState) => ({
                 ballDirectionX: -prevState.ballDirectionX,
                 }));

@@ -59,9 +59,9 @@ export default function HomePage(props: any) {
       <SpeedSlider onSpeedChange={setSpeed} />
       <h1 className="transcendence-title">PONG</h1>
       <div ref={loginDivRef} className="login-div" id="login-div-id">
-        <input className="login-input" type="text" placeholder="Login" />
         <div className="password-wrapper">
-          <input className="password-input" type="password" placeholder="Password" />
+          <input className="login-input" type="text" placeholder="Login"/>
+          <input className="password-input" type="password" placeholder="Password"/>
           <button className="toggle-password" type="button">🫣</button>
         </div>
         <div className="remember-me-wrapper">
