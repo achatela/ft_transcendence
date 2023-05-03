@@ -20,3 +20,15 @@ model User {
 
   username String @unique
 }
+
+model Channel {
+  id Int @default(autoincrement()) @id
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name String @unique
+  slug String @unique
+
+  creatorId Int
+  creator User @relation(fields: [creatorId], references: [id])
+}
