@@ -8,6 +8,8 @@ const sKey:number = 83;
 const speedMultiplier:number = 2;
 const paddleStep:number = 10;
 const paddleHeight:number = 100;
+const paddleWidth:number = 20;
+const squareSize:number = 20;
 
 interface IProps{}
 
@@ -24,7 +26,6 @@ interface IState {
 
 class GameBoard extends Component<IProps, IState> {
     interval: NodeJS.Timer;
-    squareSize: number;
     constructor(props: IProps) {
         super(props);
         this.state = {
@@ -38,7 +39,6 @@ class GameBoard extends Component<IProps, IState> {
             ballY: 300,
         };
         this.interval = setInterval(() => {}, 10);
-        this.squareSize = 40;
     }
 
     componentDidMount() {
@@ -102,16 +102,12 @@ class GameBoard extends Component<IProps, IState> {
         // Needs to remove event listener
     }
 
-    checkLeftCollision(rect:DOMRect, x:number, y:number, squareSize:number) {
-        if ((x < 70 && x > 50) && (y > this.state.leftPaddleY && y < this.state.leftPaddleY + 100))
-            return 0;
-        return 1;
-    }
-
-    checkRightCollision(rect:DOMRect, x:number, y:number, squareSize:number, compensate:number) {
-        if ((x > rect.left - (compensate / 2) - 50 && x < rect.left - (compensate / 2) - 30) && (y > this.state.rightPaddleY && y < this.state.rightPaddleY + 100))
-            return 0;
-        return 1;
+    checkPaddleCollision(x:number, y:number, outerSidePos:number, innerSidePos:number, topSidePos:number, bottomSidePos:number) {
+        if ((x > innerSidePos && x < outerSidePos) && (y > topSidePos && y < bottomSidePos))
+            if (x - innerSidePos < y - topSidePos && x - innerSidePos < bottomSidePos - y)
+                return "horizontal";
+            else
+                return "vertical";
     }
 
     renderBall = () => {
@@ -132,20 +128,19 @@ class GameBoard extends Component<IProps, IState> {
         const newX = this.state.ballX + normalisedSpeedX;
         const newY = this.state.ballY + normalisedSpeedY;
         // Handle collisions with the left Paddle
-        if (this.checkLeftCollision(rectLeft, newX, newY, this.squareSize) == 0) {
+
+        const leftPaddleCollision = this.checkPaddleCollision(newX, newY, 50 + paddleWidth, 50, this.state.leftPaddleY, this.state.leftPaddleY + paddleHeight)
+        const rightPaddleCollision = this.checkPaddleCollision(newX, newY, rect.right - rect.left - 50 - squareSize, rect.right - rect.left - 50 - squareSize - paddleWidth, this.state.rightPaddleY, this.state.rightPaddleY + paddleHeight)
+
+        if (leftPaddleCollision == "horizontal" || rightPaddleCollision == "horizontal") {
             this.setState((prevState) => ({
                 ballDirectionX: -prevState.ballDirectionX,
                 }));
         }
-        else if (this.checkRightCollision(rectRight, newX, newY, this.squareSize, window.innerWidth - (rect.right - rect.left) - 70) == 0) {
-            this.setState((prevState) => ({
-                ballDirectionX: -prevState.ballDirectionX,
-                }));
-        }
-        else if (newY < 0) {
+        else if (newY + squareSize >= rect.bottom - rect.top || newY < 0 || leftPaddleCollision == "vertical" || rightPaddleCollision == "vertical") {
             this.setState((prevState) => ({
                 ballDirectionY: -prevState.ballDirectionY,
-              }));
+                }));
         }
         else if (newX < 0) {
             this.setState((prevState) => ({
@@ -156,12 +151,7 @@ class GameBoard extends Component<IProps, IState> {
                 ballDirectionX: Math.random() * 2 - 1,
               }));
         }
-        else if (newY + this.squareSize >= rect.bottom - rect.top) {
-            this.setState(prevState => ({
-                ballDirectionY: -prevState.ballDirectionY,
-                }));
-        }
-        else if (newX + this.squareSize >= rect.right - rect.left) {
+        else if (newX + squareSize >= rect.right - rect.left) {
             this.setState((prevState) => ({
                 leftPlayerScore: prevState.leftPlayerScore + 1,
                 ballX: 450, // change to be in the middle
