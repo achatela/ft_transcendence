@@ -1,24 +1,21 @@
 // src/prisma/prisma.service.ts
-import { INestApplication, Injectable } from '@nestjs/common';
-import { PrismaClient, User } from '@prisma/client';
+import { INestApplication, Injectable, OnModuleInit } from '@nestjs/common';
+import { Prisma, PrismaClient, User } from '@prisma/client';
 const prisma = new PrismaClient();
 
 @Injectable()
-export class PrismaService extends PrismaClient {
+export class PrismaService extends PrismaClient implements OnModuleInit {
     constructor() {
         super();
     }
 
-    async enableShutdownHooks(app: INestApplication) {
-    this.$on('beforeExit', async () => {
-        await app.close();
-    });
+    async onModuleInit() {
+        await this.$connect();
     }
 
-      async createUser(user: {}): Promise<User> {
-        const newUser = await prisma.user.create({
-            data: user['body'],
+    async enableShutdownHooks(app: INestApplication) {
+        this.$on('beforeExit', async () => {
+            await app.close();
         });
-        return newUser;
     }
 }
