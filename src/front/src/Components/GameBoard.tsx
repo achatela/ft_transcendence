@@ -109,7 +109,7 @@ class GameBoard extends Component<IProps, IState> {
     }
 
     checkRightCollision(rect:DOMRect, x:number, y:number, squareSize:number, compensate:number) {
-        if ((x > rect.left - (compensate / 2) - 70 && x < rect.left - (compensate / 2) - 50) && (y > this.state.rightPaddleY && y < this.state.rightPaddleY + 100))
+        if ((x > rect.left - (compensate / 2) - 50 && x < rect.left - (compensate / 2) - 30) && (y > this.state.rightPaddleY && y < this.state.rightPaddleY + 100))
             return 0;
         return 1;
     }
