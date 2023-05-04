@@ -103,11 +103,21 @@ class GameBoard extends Component<IProps, IState> {
     }
 
     checkPaddleCollision(x:number, y:number, outerSidePos:number, innerSidePos:number, topSidePos:number, bottomSidePos:number) {
-        if ((x > innerSidePos && x < outerSidePos) && (y > topSidePos && y < bottomSidePos))
+        if ((x >= innerSidePos && x <= outerSidePos) && (y >= topSidePos && y <= bottomSidePos)){
             if (x - innerSidePos < y - topSidePos && x - innerSidePos < bottomSidePos - y)
-                return "horizontal";
-            else
-                return "vertical";
+                return 1;
+            else if (y - topSidePos < x - innerSidePos){
+                if (this.state.ballDirectionY <= 3.14159265359 && this.state.ballDirectionY >= 0)
+                    return 2;
+                return 3;
+            }
+            else if (bottomSidePos - y < x - innerSidePos){
+                if (this.state.ballDirectionY <= 3.14159265359 && this.state.ballDirectionY >= 0)
+                    return 3;
+                return 2;
+            }
+        }
+        return 0;
     }
 
     renderBall = () => {
@@ -130,17 +140,27 @@ class GameBoard extends Component<IProps, IState> {
         // Handle collisions with the left Paddle
 
         const leftPaddleCollision = this.checkPaddleCollision(newX, newY, 50 + paddleWidth, 50, this.state.leftPaddleY, this.state.leftPaddleY + paddleHeight)
-        const rightPaddleCollision = this.checkPaddleCollision(newX, newY, rect.right - rect.left - 50 - squareSize, rect.right - rect.left - 50 - squareSize - paddleWidth, this.state.rightPaddleY, this.state.rightPaddleY + paddleHeight)
+        const rightPaddleCollision = this.checkPaddleCollision(newX, newY, rect.right - rect.left - 50 - squareSize, rect.right - rect.left - 50 - squareSize - paddleWidth, this.state.rightPaddleY - squareSize, this.state.rightPaddleY - squareSize + paddleHeight)
 
-        if (leftPaddleCollision == "horizontal" || rightPaddleCollision == "horizontal") {
+        if (leftPaddleCollision == 1 || rightPaddleCollision == 1) {
             this.setState((prevState) => ({
                 ballDirectionX: -prevState.ballDirectionX,
-                }));
+            }));
         }
-        else if (newY + squareSize >= rect.bottom - rect.top || newY < 0 || leftPaddleCollision == "vertical" || rightPaddleCollision == "vertical") {
+        else if (leftPaddleCollision == 2 || rightPaddleCollision == 2) {
             this.setState((prevState) => ({
                 ballDirectionY: -prevState.ballDirectionY,
-                }));
+            }));
+        }
+        // else if (leftPaddleCollision == 3 || rightPaddleCollision == 3) {
+        //     this.setState((prevState) => ({
+        //         ballDirectionY: -prevState.ballDirectionY,
+        //     }));
+        // }
+        else if (newY + squareSize >= rect.bottom - rect.top || newY < 0) {
+            this.setState((prevState) => ({
+                ballDirectionY: -prevState.ballDirectionY,
+            }));
         }
         else if (newX < 0) {
             this.setState((prevState) => ({
@@ -161,7 +181,7 @@ class GameBoard extends Component<IProps, IState> {
               }));
         }
         else {
-            this.setState(prevState => ({
+            this.setState((prevState) => ({
                 ballX: newX,
                 ballY: newY
             }));
