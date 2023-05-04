@@ -139,8 +139,8 @@ class GameBoard extends Component<IProps, IState> {
         const newY = this.state.ballY + normalisedSpeedY;
         // Handle collisions with the left Paddle
 
-        const leftPaddleCollision = this.checkPaddleCollision(newX, newY, 50 + paddleWidth, 50, this.state.leftPaddleY, this.state.leftPaddleY + paddleHeight)
-        const rightPaddleCollision = this.checkPaddleCollision(newX, newY, rect.right - rect.left - 50 - squareSize, rect.right - rect.left - 50 - squareSize - paddleWidth, this.state.rightPaddleY - squareSize, this.state.rightPaddleY - squareSize + paddleHeight)
+        const leftPaddleCollision = this.checkPaddleCollision(newX, newY, 50 + paddleWidth, 50, this.state.leftPaddleY - squareSize, this.state.leftPaddleY + paddleHeight)
+        const rightPaddleCollision = this.checkPaddleCollision(newX, newY, rect.right - rect.left - 50 - squareSize, rect.right - rect.left - 50 - squareSize - paddleWidth, this.state.rightPaddleY - squareSize, this.state.rightPaddleY + paddleHeight)
 
         if (leftPaddleCollision == 1 || rightPaddleCollision == 1) {
             this.setState((prevState) => ({
@@ -154,7 +154,7 @@ class GameBoard extends Component<IProps, IState> {
         }
         // else if (leftPaddleCollision == 3 || rightPaddleCollision == 3) {
         //     this.setState((prevState) => ({
-        //         ballDirectionY: -prevState.ballDirectionY,
+        //         ballDirectionX: -prevState.ballDirectionY,
         //     }));
         // }
         else if (newY + squareSize >= rect.bottom - rect.top || newY < 0) {
