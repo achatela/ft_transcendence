@@ -39,8 +39,8 @@ class GameBoard extends Component<IProps, IState> {
             ballDirectionY: Math.random() * 2 - 1,
             leftPlayerScore: 0,
             rightPlayerScore: 0,
-            ballX: -1002,
-            ballY: -100,
+            ballX: 0,
+            ballY: 0,
         };
         this.interval = setInterval(() => {}, 10);
         this.magnitude = Math.sqrt(this.state.ballDirectionX ** 2 + this.state.ballDirectionY ** 2);
@@ -121,32 +121,60 @@ class GameBoard extends Component<IProps, IState> {
         // Needs to remove event listener
     }
 
-    checkPaddleCollision(x:number, y:number, outerSidePos:number, innerSidePos:number, topSidePos:number, bottomSidePos:number) {
-        if ((x >= innerSidePos && x <= outerSidePos) && (y >= topSidePos && y <= bottomSidePos)){
-            if (x - innerSidePos < y - topSidePos && x - innerSidePos < bottomSidePos - y)
-                return 1;
-            else if (y - topSidePos < x - innerSidePos){
-                if (this.state.ballDirectionY <= 3.14159265359 && this.state.ballDirectionY >= 0)
-                    return 2;
-                return 3;
-            }
-            else if (bottomSidePos - y < x - innerSidePos){
-                if (this.state.ballDirectionY <= 3.14159265359 && this.state.ballDirectionY >= 0)
-                    return 3;
-                return 2;
-            }
+    checkPaddleCollision(ballX: number, ballY: number, paddleX: number, paddleY: number, paddleWidth: number, paddleHeight: number) {
+        const ballCenterX = ballX + squareSize / 2;
+        const ballCenterY = ballY + squareSize / 2;
+        const paddleCenterX = paddleX + paddleWidth / 2;
+        const paddleCenterY = paddleY + paddleHeight / 2;
+      
+        const distanceX = Math.abs(ballCenterX - paddleCenterX);
+        const distanceY = Math.abs(ballCenterY - paddleCenterY);
+      
+        const combinedHalfWidths = (squareSize + paddleWidth) / 2;
+        const combinedHalfHeights = (squareSize + paddleHeight) / 2;
+      
+        if (distanceX < combinedHalfWidths && distanceY < combinedHalfHeights) {
+          const overlapX = combinedHalfWidths - distanceX;
+          const overlapY = combinedHalfHeights - distanceY;
+      
+          if (overlapX < overlapY) {
+            // Horizontal collision
+            if (this.state.ballDirectionX < 0)
+                this.setState(prevState => ({
+                    ballX: prevState.ballX + overlapX,
+                    }));
+            else
+                this.setState(prevState => ({
+                    ballX: prevState.ballX - overlapX,
+                }));
+            return 1;
+          } else {
+            // Vertical collision
+            if (this.state.ballDirectionX < 0)
+                this.setState(prevState => ({
+                    ballX: prevState.ballX + overlapX,
+                }));
+            else
+                this.setState(prevState => ({
+                    ballX: prevState.ballX - overlapX,
+                }));
+            return 2;
+          }
         }
         return 0;
-    }
+      }      
 
     renderBall = () => {
         const newX = this.state.ballX + (this.normalizedSpeedX * 3);
         const newY = this.state.ballY + (this.normalizedSpeedY * 3);
         // Handle collisions with the left Paddle
 
-        const leftPaddleCollision = this.checkPaddleCollision(newX, newY, 50 + paddleWidth, 50, this.state.leftPaddleY - squareSize, this.state.leftPaddleY + paddleHeight)
+        const leftPaddleCollision = this.checkPaddleCollision(newX, newY, 50, this.state.leftPaddleY, paddleWidth, paddleHeight);
         // @ts-ignore: Object is possibly 'null'.
-        const rightPaddleCollision = this.checkPaddleCollision(newX, newY, this.rect.right - this.rect.left - 50 - squareSize, this.rect.right - this.rect.left - 50 - squareSize - paddleWidth, this.state.rightPaddleY - squareSize, this.state.rightPaddleY + paddleHeight)
+        const rightPaddleCollision = this.checkPaddleCollision(newX, newY, this.rect.right - this.rect.left - 50 - paddleWidth, this.state.rightPaddleY, paddleWidth, paddleHeight);
+
+        // const leftPaddleCollision = this.checkPaddleCollision(newX, newY, 50 + paddleWidth, 50, this.state.leftPaddleY - squareSize, this.state.leftPaddleY + paddleHeight)
+        // const rightPaddleCollision = this.checkPaddleCollision(newX, newY, this.rect.right - this.rect.left - 50 - squareSize, this.rect.right - this.rect.left - 50 - squareSize - paddleWidth, this.state.rightPaddleY - squareSize, this.state.rightPaddleY + paddleHeight)
 
         if (leftPaddleCollision == 1 || rightPaddleCollision == 1) {
             this.setState((prevState) => ({
