@@ -137,7 +137,7 @@ class GameBoard extends Component<IProps, IState> {
                                ballAABB.y1 < paddleAABB.y2 &&
                                ballAABB.y2 > paddleAABB.y1;
 
-        return isIntersecting ? 1 : 0;
+        return isIntersecting;
       }
       
 
@@ -148,11 +148,11 @@ class GameBoard extends Component<IProps, IState> {
         const leftPaddleCollision = this.checkPaddleCollision(newX, newY, 50, this.state.leftPaddleY, paddleWidth, paddleHeight);
         const rightPaddleCollision = this.checkPaddleCollision(newX, newY, this.rect!.right - this.rect!.left - 50 - paddleWidth, this.state.rightPaddleY, paddleWidth, paddleHeight);
 
-        if (leftPaddleCollision == 1 || rightPaddleCollision == 1) {
+        if (leftPaddleCollision || rightPaddleCollision) {
             const ballOffset = squareSize / 2;
             this.setState((prevState) => ({
                 ballDirectionX: -prevState.ballDirectionX,
-                ballX: leftPaddleCollision == 1 ? prevState.ballX + ballOffset : prevState.ballX - ballOffset,
+                ballX: leftPaddleCollision ? prevState.ballX + ballOffset : prevState.ballX - ballOffset,
             }));
             this.magnitude = Math.sqrt(this.state.ballDirectionX ** 2 + this.state.ballDirectionY ** 2);
             this.normalizedSpeedX = this.state.ballDirectionX / this.magnitude;
