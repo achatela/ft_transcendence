@@ -77,7 +77,7 @@ class GameBoard extends Component<IProps, IState> {
             else if (event.keyCode === downArrow) {
                 if (this.state.rightPaddleY + paddleHeight + paddleStep > bottomBorder)
                     this.setState((prevState) => ({
-                        rightPaddleY: bottomBorder - paddleHeight - 4,
+                        rightPaddleY: bottomBorder - paddleHeight - 8,
                     }));
                 else
                     this.setState((prevState) => ({
@@ -99,7 +99,7 @@ class GameBoard extends Component<IProps, IState> {
             else if (event.keyCode === sKey){
                 if (this.state.leftPaddleY + paddleHeight + paddleStep > bottomBorder)
                     this.setState((prevState) => ({
-                        leftPaddleY: bottomBorder - paddleHeight - 4,
+                        leftPaddleY: bottomBorder - paddleHeight - 8,
                     }));
                 else
                     this.setState((prevState) => ({
@@ -120,75 +120,43 @@ class GameBoard extends Component<IProps, IState> {
     }
 
     checkPaddleCollision(ballX: number, ballY: number, paddleX: number, paddleY: number, paddleWidth: number, paddleHeight: number) {
-        const ballCenterX = ballX + squareSize / 2;
-        const ballCenterY = ballY + squareSize / 2;
-        const paddleCenterX = paddleX + paddleWidth / 2;
-        const paddleCenterY = paddleY + paddleHeight / 2;
+        const ballAABB = {
+          x1: ballX,
+          y1: ballY,
+          x2: ballX + squareSize,
+          y2: ballY + squareSize
+        };
+        const paddleAABB = {
+          x1: paddleX,
+          y1: paddleY,
+          x2: paddleX + paddleWidth,
+          y2: paddleY + paddleHeight
+        };
+        const isIntersecting = ballAABB.x1 < paddleAABB.x2 &&
+                               ballAABB.x2 > paddleAABB.x1 &&
+                               ballAABB.y1 < paddleAABB.y2 &&
+                               ballAABB.y2 > paddleAABB.y1;
+
+        return isIntersecting ? 1 : 0;
+      }
       
-        const distanceX = Math.abs(ballCenterX - paddleCenterX);
-        const distanceY = Math.abs(ballCenterY - paddleCenterY);
-      
-        const combinedHalfWidths = (squareSize + paddleWidth) / 2;
-        const combinedHalfHeights = (squareSize + paddleHeight) / 2;
-      
-        if (distanceX < combinedHalfWidths && distanceY < combinedHalfHeights) {
-          const overlapX = combinedHalfWidths - distanceX;
-          const overlapY = combinedHalfHeights - distanceY;
-      
-          if (overlapX < overlapY) {
-            // Horizontal collision
-            if (this.state.ballDirectionX < 0)
-                this.setState(prevState => ({
-                    ballX: prevState.ballX + overlapX,
-                    }));
-            else
-                this.setState(prevState => ({
-                    ballX: prevState.ballX - overlapX,
-                }));
-            return 1;
-          } else {
-            // Vertical collision
-            if (this.state.ballDirectionX < 0)
-                this.setState(prevState => ({
-                    ballX: prevState.ballX + overlapX,
-                }));
-            else
-                this.setState(prevState => ({
-                    ballX: prevState.ballX - overlapX,
-                }));
-            return 2;
-          }
-        }
-        return 0;
-      }      
 
     renderBall = () => {
-        const newX = this.state.ballX + (this.normalizedSpeedX);
-        const newY = this.state.ballY + (this.normalizedSpeedY);
-        // Handle collisions with the left Paddle
+        const newX = this.state.ballX + (this.normalizedSpeedX * 4);
+        const newY = this.state.ballY + (this.normalizedSpeedY * 4);
 
         const leftPaddleCollision = this.checkPaddleCollision(newX, newY, 50, this.state.leftPaddleY, paddleWidth, paddleHeight);
         const rightPaddleCollision = this.checkPaddleCollision(newX, newY, this.rect!.right - this.rect!.left - 50 - paddleWidth, this.state.rightPaddleY, paddleWidth, paddleHeight);
 
         if (leftPaddleCollision == 1 || rightPaddleCollision == 1) {
+            const ballOffset = squareSize / 2;
             this.setState((prevState) => ({
                 ballDirectionX: -prevState.ballDirectionX,
+                ballX: leftPaddleCollision == 1 ? prevState.ballX + ballOffset : prevState.ballX - ballOffset,
             }));
             this.magnitude = Math.sqrt(this.state.ballDirectionX ** 2 + this.state.ballDirectionY ** 2);
             this.normalizedSpeedX = this.state.ballDirectionX / this.magnitude;
         }
-        else if (leftPaddleCollision == 2 || rightPaddleCollision == 2) {
-            this.setState((prevState) => ({
-                ballDirectionY: -prevState.ballDirectionY,
-            }));
-            this.magnitude = Math.sqrt(this.state.ballDirectionX ** 2 + this.state.ballDirectionY ** 2);
-            this.normalizedSpeedY = this.state.ballDirectionY / this.magnitude;
-        }
-        // else if (leftPaddleCollision == 3 || rightPaddleCollision == 3) {
-        //     this.setState((prevState) => ({
-        //         ballDirectionX: -prevState.ballDirectionY,
-        //     }));
-        // }
         else if (newY + squareSize >= this.rect!.bottom - this.rect!.top || newY < 0) {
             this.setState((prevState) => ({
                 ballDirectionY: -prevState.ballDirectionY,
