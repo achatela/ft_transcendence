@@ -13,18 +13,14 @@ export default function SpeedSlider(onSpeedChange: speedSliderProps) {
     useEffect(() => {
       const slider = document.getElementById("myRange");
 
-      // @ts-ignore: Object is possibly 'null'.
-      slider.addEventListener("input", () => {
+      slider!.addEventListener("input", () => {
         // @ts-ignore: Object is possibly 'null'.
         const newSpeed = slider.value;
         setSpeed(newSpeed);
-        // @ts-ignore: Object is possibly 'null'.
-        // onSpeedChange(newSpeed);
       });
   
       return () => {
-        // @ts-ignore: Object is possibly 'null'.
-        slider.removeEventListener("input", () => {});
+        slider!.removeEventListener("input", () => {});
       };
     }, [onSpeedChange]);
   

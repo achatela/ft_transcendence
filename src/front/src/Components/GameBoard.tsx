@@ -55,9 +55,7 @@ class GameBoard extends Component<IProps, IState> {
     }
 
     componentDidMount() {
-        // @ts-ignore: Object is possibly 'null'.
-        this.rect = document.querySelector('.gameBoard').getBoundingClientRect();
-        // @ts-ignore: Object is possibly 'null'.
+        this.rect = document.querySelector('.gameBoard')!.getBoundingClientRect();
         let bottomBorder = this.rect.bottom - this.rect.top;
 
         window.addEventListener('resize', this.handleResize)
@@ -165,16 +163,12 @@ class GameBoard extends Component<IProps, IState> {
       }      
 
     renderBall = () => {
-        const newX = this.state.ballX + (this.normalizedSpeedX * 3);
-        const newY = this.state.ballY + (this.normalizedSpeedY * 3);
+        const newX = this.state.ballX + (this.normalizedSpeedX);
+        const newY = this.state.ballY + (this.normalizedSpeedY);
         // Handle collisions with the left Paddle
 
         const leftPaddleCollision = this.checkPaddleCollision(newX, newY, 50, this.state.leftPaddleY, paddleWidth, paddleHeight);
-        // @ts-ignore: Object is possibly 'null'.
-        const rightPaddleCollision = this.checkPaddleCollision(newX, newY, this.rect.right - this.rect.left - 50 - paddleWidth, this.state.rightPaddleY, paddleWidth, paddleHeight);
-
-        // const leftPaddleCollision = this.checkPaddleCollision(newX, newY, 50 + paddleWidth, 50, this.state.leftPaddleY - squareSize, this.state.leftPaddleY + paddleHeight)
-        // const rightPaddleCollision = this.checkPaddleCollision(newX, newY, this.rect.right - this.rect.left - 50 - squareSize, this.rect.right - this.rect.left - 50 - squareSize - paddleWidth, this.state.rightPaddleY - squareSize, this.state.rightPaddleY + paddleHeight)
+        const rightPaddleCollision = this.checkPaddleCollision(newX, newY, this.rect!.right - this.rect!.left - 50 - paddleWidth, this.state.rightPaddleY, paddleWidth, paddleHeight);
 
         if (leftPaddleCollision == 1 || rightPaddleCollision == 1) {
             this.setState((prevState) => ({
@@ -195,8 +189,7 @@ class GameBoard extends Component<IProps, IState> {
         //         ballDirectionX: -prevState.ballDirectionY,
         //     }));
         // }
-        // @ts-ignore: Object is possibly 'null'.
-        else if (newY + squareSize >= this.rect.bottom - this.rect.top || newY < 0) {
+        else if (newY + squareSize >= this.rect!.bottom - this.rect!.top || newY < 0) {
             this.setState((prevState) => ({
                 ballDirectionY: -prevState.ballDirectionY,
             }));
@@ -215,8 +208,7 @@ class GameBoard extends Component<IProps, IState> {
             this.normalizedSpeedX = this.state.ballDirectionX / this.magnitude;
             this.normalizedSpeedY = this.state.ballDirectionY / this.magnitude;
         }
-        // @ts-ignore: Object is possibly 'null'.
-        else if (newX + squareSize >= this.rect.right - this.rect.left) {
+        else if (newX + squareSize >= this.rect!.right - this.rect!.left) {
             this.setState((prevState) => ({
                 leftPlayerScore: prevState.leftPlayerScore + 1,
                 ballX: this.rect!.width / 2 - (squareSize / 2), // change to be in the middle
@@ -235,7 +227,6 @@ class GameBoard extends Component<IProps, IState> {
             }));
         }
     };
-    
 
     render() {
         return (

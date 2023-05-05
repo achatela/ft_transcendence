@@ -115,7 +115,6 @@ class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
     newY += this.normalizedSpeedY * speedValue * this.speed;
   
     // Use the stored element references
-    // @ts-ignore: Object is possibly 'null'.
     const elements = [this.loginDiv, this.addedDiv, this.removeDiv].filter(el => el !== null) as HTMLElement[];
   
     if (newX > window.innerWidth - (12 + this.squareSize)
@@ -157,7 +156,6 @@ class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
     const speedSlider = document.getElementById('myRange');
 
     window.addEventListener("resize", this.handleResize);
-    // @ts-ignore: Object is possibly 'null'.
     if (this.state.start === 0) {
       while (this.isValidSpawn(newPosition.x, newPosition.y, this.squareSize) === false) {
         newPosition = this.getRandomPosition();
@@ -180,8 +178,7 @@ class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
     const speedSlider = document.getElementById('myRange');
     cancelAnimationFrame(this.animationRef);
     clearInterval(this.intervalId);
-    // @ts-ignore: Object is possibly 'null'.
-    speedSlider.removeEventListener('input', this.handleSpeedChange);
+    speedSlider!.removeEventListener('input', this.handleSpeedChange);
   }
   
   getRandomPosition = () => {

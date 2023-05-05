@@ -36,21 +36,17 @@ export default function HomePage(props: any) {
       if (passwordInput.type === "password") {
         // @ts-ignore: Object is possibly 'null'.
         passwordInput.type = "text";
-        // @ts-ignore: Object is possibly 'null'.
-        togglePasswordButton.innerHTML = '&#128064;'; // Change to eye-slash icon
+        togglePasswordButton!.innerHTML = '&#128064;'; // Change to eye-slash icon
       } else {
         // @ts-ignore: Object is possibly 'null'.
         passwordInput.type = "password";
-        // @ts-ignore: Object is possibly 'null'.
-        togglePasswordButton.innerHTML = '🫣'; // Change back to eye icon
+        togglePasswordButton!.innerHTML = '🫣'; // Change back to eye icon
       }
     }
-    // @ts-ignore: Object is possibly 'null'.
-    togglePasswordButton.addEventListener("click", handleClick);
+    togglePasswordButton!.addEventListener("click", handleClick);
 
     return () => {
-      // @ts-ignore: Object is possibly 'null'.
-      togglePasswordButton.removeEventListener("click", handleClick);
+      togglePasswordButton!.removeEventListener("click", handleClick);
     };
   }, []);
 
