@@ -11,124 +11,126 @@ generator client {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  authId      String   @unique
-  displayName String   @unique
-  avatar      String?
-  password    String?
-  twoFactor   String?
-  status      String   @default("offline")
-  wins        Int      @default(0)
-  losses      Int      @default(0)
-  ladderLevel Int      @default(1)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             Int     @id @default(autoincrement())
+  // authId      String  @unique
+  username       String  @unique
+  avatar         String?
+  hashedPassword String?
+  twoFactor      String?
 
-  friends      Friend[]
-  friendOf     Friend[]
-  messages     Message[]
-  matchHistory Match[]
+  status      String @default("offline") // offline, online, ingame
+  wins        Int    @default(0)
+  losses      Int    @default(0)
+  ladderLevel Int    @default(1)
 
-  // Relationships
-  channels           ChannelMember[]
-  ownedChannels      Channel[]
-  directMessageRooms DirectMessageRoomMember[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // friends      Friend[]
+  // friendOf     Friend[]
+  // messages     Message[]
+  // matchHistory Match[]
+
+  // // Relationships
+  // channels           ChannelMember[]
+  // ownedChannels      Channel[]
+  // directMessageRooms DirectMessageRoomMember[]
 }
 
-model Friend {
-  id         Int      @id @default(autoincrement())
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+// model Friend {
+//   id         Int      @id @default(autoincrement())
+//   createdAt  DateTime @default(now())
+//   updatedAt  DateTime @updatedAt
 
-  // Relationships
-  user   User @relation("Friends", fields: [userId], references: [id])
-  userId Int
-  friend User @relation("Friends", fields: [friendId], references: [id])
-  friendId Int
-}
+//   // Relationships
+//   user   User @relation("Friends", fields: [userId], references: [id])
+//   userId Int
+//   friend User @relation("Friends", fields: [friendId], references: [id])
+//   friendId Int
+// }
 
-model Channel {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
-  isPrivate   Boolean  @default(false)
-  password    String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+// model Channel {
+//   id          Int      @id @default(autoincrement())
+//   name        String   @unique
+//   isPrivate   Boolean  @default(false)
+//   password    String?
+//   createdAt   DateTime @default(now())
+//   updatedAt   DateTime @updatedAt
 
-  // Relationships
-  owner   User          @relation(fields: [ownerId], references: [id])
-  ownerId Int
-  members ChannelMember[]
-  messages Message[]
-}
+//   // Relationships
+//   owner   User          @relation(fields: [ownerId], references: [id])
+//   ownerId Int
+//   members ChannelMember[]
+//   messages Message[]
+// }
 
-model ChannelMember {
-  id         Int      @id @default(autoincrement())
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+// model ChannelMember {
+//   id         Int      @id @default(autoincrement())
+//   createdAt  DateTime @default(now())
+//   updatedAt  DateTime @updatedAt
 
-  // Relationships
-  user     User   @relation(fields: [userId], references: [id])
-  userId   Int
-  channel  Channel @relation(fields: [channelId], references: [id])
-  channelId Int
-}
+//   // Relationships
+//   user     User   @relation(fields: [userId], references: [id])
+//   userId   Int
+//   channel  Channel @relation(fields: [channelId], references: [id])
+//   channelId Int
+// }
 
-model DirectMessageRoom {
-  id          Int                     @id @default(autoincrement())
-  createdAt   DateTime                @default(now())
-  updatedAt   DateTime                @updatedAt
-  messages    DirectMessage[]
-  members     DirectMessageRoomMember[]
-}
+// model DirectMessageRoom {
+//   id          Int                     @id @default(autoincrement())
+//   createdAt   DateTime                @default(now())
+//   updatedAt   DateTime                @updatedAt
+//   messages    DirectMessage[]
+//   members     DirectMessageRoomMember[]
+// }
 
-model DirectMessageRoomMember {
-  id         Int      @id @default(autoincrement())
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+// model DirectMessageRoomMember {
+//   id         Int      @id @default(autoincrement())
+//   createdAt  DateTime @default(now())
+//   updatedAt  DateTime @updatedAt
 
-  // Relationships
-  user              User             @relation(fields: [userId], references: [id])
-  userId            Int
-  directMessageRoom DirectMessageRoom @relation(fields: [directMessageRoomId], references: [id])
-  directMessageRoomId Int
-}
+//   // Relationships
+//   user              User             @relation(fields: [userId], references: [id])
+//   userId            Int
+//   directMessageRoom DirectMessageRoom @relation(fields: [directMessageRoomId], references: [id])
+//   directMessageRoomId Int
+// }
 
-model Message {
-  id           Int      @id @default(autoincrement())
-  content      String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+// model Message {
+//   id           Int      @id @default(autoincrement())
+//   content      String
+//   createdAt    DateTime @default(now())
+//   updatedAt    DateTime @updatedAt
 
-  // Relationships
-  author    User   @relation(fields: [authorId], references: [id])
-  authorId  Int
-  channel   Channel? @relation(fields: [channelId], references: [id])
-  channelId Int?
-  directMessage DirectMessageRoom? @relation(fields: [directMessageId], references: [id])
-  directMessageId Int?
-}
+//   // Relationships
+//   author    User   @relation(fields: [authorId], references: [id])
+//   authorId  Int
+//   channel   Channel? @relation(fields: [channelId], references: [id])
+//   channelId Int?
+//   directMessage DirectMessageRoom? @relation(fields: [directMessageId], references: [id])
+//   directMessageId Int?
+// }
 
-model DirectMessage {
-  id           Int      @id @default(autoincrement())
-  content      String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+// model DirectMessage {
+//   id           Int      @id @default(autoincrement())
+//   content      String
+//   createdAt    DateTime @default(now())
+//   updatedAt    DateTime @updatedAt
 
-  // Relationships
-  author             User             @relation(fields: [authorId], references: [id])
-  authorId           Int
-  directMessageRoom  DirectMessageRoom @relation(fields: [directMessageRoomId], references: [id])
-  directMessageRoomId Int
-}
+//   // Relationships
+//   author             User             @relation(fields: [authorId], references: [id])
+//   authorId           Int
+//   directMessageRoom  DirectMessageRoom @relation(fields: [directMessageRoomId], references: [id])
+//   directMessageRoomId Int
+// }
 
-model Match {
-  id         Int      @id @default(autoincrement())
-  result     String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+// model Match {
+//   id         Int      @id @default(autoincrement())
+//   result     String
+//   createdAt  DateTime @default(now())
+//   updatedAt  DateTime @updatedAt
 
-  // Relationships
-  user    User @relation(fields: [userId], references: [id])
-  userId  Int
-}
+//   // Relationships
+//   user    User @relation(fields: [userId], references: [id])
+//   userId  Int
+// }

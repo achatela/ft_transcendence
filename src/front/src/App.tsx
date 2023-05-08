@@ -13,7 +13,7 @@ function App() {
       {/* <ModePage /> */}
       {/* <NavBar /> */}
       {/* <HomePage /> */}
-      <GameBoard/>
+      {/* <GameBoard/> */}
     </div>
   );
 }

@@ -31,7 +31,7 @@ export class ProfileController {
   }
 
   @Post('create_user')
-  async signupUser( @Body() userData: { username: string; hashedPassword: string; email: string; })
+  async signupUser( @Body() userData: { username: string; hashedPassword: string;})
     : Promise<User>
   {
     return this.profileService.createUser(userData);

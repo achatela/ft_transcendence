@@ -116,7 +116,6 @@ class GameBoard extends Component<IProps, IState> {
 
     componentWillUnmount() {
         clearInterval(this.interval);
-        // Needs to remove event listener
     }
 
     checkPaddleCollision(ballX: number, ballY: number, paddleX: number, paddleY: number, paddleWidth: number, paddleHeight: number) {
@@ -139,7 +138,6 @@ class GameBoard extends Component<IProps, IState> {
 
         return isIntersecting;
       }
-      
 
     renderBall = () => {
         const newX = this.state.ballX + (this.normalizedSpeedX * 4);
@@ -167,8 +165,8 @@ class GameBoard extends Component<IProps, IState> {
         else if (newX < 0) {
             this.setState((prevState) => ({
                 rightPlayerScore: prevState.rightPlayerScore + 1,
-                ballX: this.rect!.width / 2 - (squareSize / 2), // change to be in the middle
-                ballY: this.rect!.height / 2 - (squareSize / 2), // change to be in the middle
+                ballX: this.rect!.width / 2 - (squareSize / 2),
+                ballY: this.rect!.height / 2 - (squareSize / 2),
                 ballDirectionY: Math.random() * 2 - 1,
                 ballDirectionX: Math.random() * 2 - 1,
               }));
@@ -179,8 +177,8 @@ class GameBoard extends Component<IProps, IState> {
         else if (newX + squareSize >= this.rect!.right - this.rect!.left) {
             this.setState((prevState) => ({
                 leftPlayerScore: prevState.leftPlayerScore + 1,
-                ballX: this.rect!.width / 2 - (squareSize / 2), // change to be in the middle
-                ballY: this.rect!.height / 2 - (squareSize / 2), // change to be in the middle
+                ballX: this.rect!.width / 2 - (squareSize / 2),
+                ballY: this.rect!.height / 2 - (squareSize / 2),
                 ballDirectionY: Math.random() * 2 - 1,
                 ballDirectionX: Math.random() * 2 - 1,
               }));
