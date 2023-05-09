@@ -55,13 +55,30 @@ export class AuthService {
         const request = fetch("https://api.intra.42.fr/oauth/token", {
             method: "POST",
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/x-www-form-urlencoded",
             },
             body: requestBody
         });
     
+        request.then(response => {
+            console.log(response);
+            // Access all properties of the response object here
+            console.log(response.status);
+            console.log(response.statusText);
+            console.log(response.headers);
+            console.log(response.url);
+            console.log(response.body);
+            console.log(response.bodyUsed);
+            console.log(response.type);
+            console.log(response.redirected);
+            console.log(response.ok);
+          });
+          
         const response = await request;
-        console.log(response)
+        // const data = await response.json();
+        // const token = data.access_token;
+
+        // console.log(token)
         return (response)
     }
     
