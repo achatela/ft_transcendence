@@ -50,6 +50,18 @@ export default function HomePage(props: any) {
     };
   }, []);
 
+  async function redirectFortyTwo(): Promise<void> {
+    const response = await fetch('http://localhost:3333/auth/redirect',
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+    });
+    const answer = await response.json();
+    window.location.href = answer.url;
+  }
+
   return (
     <div id="tmp">
       <SpeedSlider onSpeedChange={setSpeed} />
@@ -64,7 +76,7 @@ export default function HomePage(props: any) {
           <input type="checkbox" id="remember-me" name="remember-me" className="remember-me-checkbox" />
           <label className="password-label" htmlFor="remember-me">Remember me</label>
         </div>
-        <button className="sign-up-button" type="button">Sign Up</button>
+          <button className="sign-up-button" type="button" onClick={redirectFortyTwo}>Sign Up</button>
       </div>
       {balls.map((ball, index) => (
       <BouncingBall key={index} loginDiv={loginDivRef} speed={speed}/>

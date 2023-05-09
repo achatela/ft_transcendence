@@ -12,7 +12,7 @@ function App() {
       {/* <ProfilePage /> */}
       {/* <ModePage /> */}
       {/* <NavBar /> */}
-      {/* <HomePage /> */}
+      <HomePage />
       {/* <GameBoard/> */}
     </div>
   );

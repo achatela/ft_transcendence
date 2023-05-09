@@ -4,8 +4,4 @@ import { AppService } from './app.service';
 @Controller('player_number')
 export class AppController {
   constructor(private readonly appService: AppService) {}
-  @Get()
-  getPlayerNumber(): {} {
-    return this.appService.getPlayerNumber();
-  }
 }
