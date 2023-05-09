@@ -15,7 +15,14 @@ export class AuthService {
         this.countdown = answer.expires_in;
         console.log(this.token, this.countdown);
 
-        setTimeout(() => this.init(), this.countdown * 1000);
+        setTimeout(() => this.refresh(), this.countdown * 1000);
+    }
+
+    async refresh() {
+        const answer = await this.getToken();
+        this.token = answer.access_token;
+        this.countdown = answer.expires_in;
+        console.log(this.token, this.countdown);
     }
 
     async getToken(): Promise<any> {
@@ -36,6 +43,34 @@ export class AuthService {
         return (data)
     }
 
+    async getUserToken(userCode: string): Promise<any> {
+        const requestBody = new URLSearchParams({
+            grant_type: 'authorization_code',
+            client_id: process.env.FORTY_TWO_UID,
+            client_secret: process.env.FORTY_TWO_SECRET,
+            code: userCode,
+            redirect_uri: "http://localhost:3133"
+        });
+    
+        const request = fetch("https://api.intra.42.fr/oauth/token", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: requestBody
+        });
+    
+        const response = await request;
+        console.log(response)
+        return (response)
+    }
+    
+
+    print(): void {
+        console.log("token: ", this.token);
+        console.log("countdown: ", this.countdown);
+    }
+
     redirectUrl(): string {
         const queryParams = new URLSearchParams({
             client_id: process.env.FORTY_TWO_UID,
@@ -44,25 +79,5 @@ export class AuthService {
 
         return (`https://api.intra.42.fr/oauth/authorize?response_type=code&` + queryParams.toString())
     }
-
-    // async connectUser(): Promise<any> {
-    //     const queryParams = new URLSearchParams({
-    //         client_id: process.env.FORTY_TWO_UID,
-    //         redirect_uri: "http://localhost:3133",
-    //     });
-
-    //     console.log(`https://api.intra.42.fr/oauth/authorize?response_type=code` + queryParams.toString())
-        
-    //     const request = fetch(`https://api.intra.42.fr/oauth/authorize?\${queryParams.toString()}`, {
-    //         method: "GET",
-    //         headers: {
-    //             "Content-Type": "code"
-    //         },
-    //     })
-
-    //     const response = await request;
-    //     console.log(response);
-    //     return (request)
-    // }
 }
 

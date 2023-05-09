@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
+
 @Injectable()
 export class AppService {
-  constructor() {}
+  constructor(private moduleRef: ModuleRef) {}
 }
