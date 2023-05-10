@@ -89,6 +89,10 @@ export default function HomePage(props: any) {
     });
     const answer = await response.json();
     // IF SUCCESS
+    if (answer.success === false) {
+      console.log("Error: " + answer.error)
+      return ;
+    }
     window.location.href = answer.url;
     // ELSE IF USERNAME ALREADY IN DATABASE
   }

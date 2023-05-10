@@ -18,4 +18,11 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
             await app.close();
         });
     }
+
+    async createUser(data: Prisma.UserCreateInput): Promise<User> {
+        console.log("User created")
+        return this.user.create({
+            data,
+        });
+    }
 }
