@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AuthService {
-    token: string;
+    tokenApp: string;
     countdown: number;
     
     constructor() {
@@ -11,18 +11,18 @@ export class AuthService {
 
     async init() {
         const answer = await this.getToken();
-        this.token = answer.access_token;
+        this.tokenApp = answer.access_token;
         this.countdown = answer.expires_in;
-        console.log(this.token, this.countdown);
+        console.log(this.tokenApp, this.countdown);
 
         setTimeout(() => this.refresh(), this.countdown * 1000);
     }
 
     async refresh() {
         const answer = await this.getToken();
-        this.token = answer.access_token;
+        this.tokenApp = answer.access_token;
         this.countdown = answer.expires_in;
-        console.log(this.token, this.countdown);
+        console.log(this.tokenApp, this.countdown);
     }
 
     async getToken(): Promise<any> {
@@ -60,33 +60,18 @@ export class AuthService {
             body: requestBody
         });
     
-        request.then(response => {
-            console.log(response);
-            // Access all properties of the response object here
-            console.log(response.status);
-            console.log(response.statusText);
-            console.log(response.headers);
-            console.log(response.url);
-            console.log(response.body);
-            console.log(response.bodyUsed);
-            console.log(response.type);
-            console.log(response.redirected);
-            console.log(response.ok);
-          });
-          
         const response = await request;
-        // const data = await response.json();
-        // const token = data.access_token;
+        const data = await response.json();
+        const token = data.access_token;
 
-        // console.log(token)
+        console.log(token);
         return (response)
     }
-    
 
-    print(): void {
-        console.log("token: ", this.token);
-        console.log("countdown: ", this.countdown);
-    }
+    // print(): void {
+    //     console.log("token: ", this.tokenApp);
+    //     console.log("countdown: ", this.countdown);
+    // }
 
     redirectUrl(): string {
         const queryParams = new URLSearchParams({
@@ -97,4 +82,3 @@ export class AuthService {
         return (`https://api.intra.42.fr/oauth/authorize?response_type=code&` + queryParams.toString())
     }
 }
-

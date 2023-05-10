@@ -30,6 +30,7 @@ export default function HomePage(props: any) {
   const handlePageLoad = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
+    
     if (code) {
       fetch('http://localhost:3333/auth/get_code', {
         method: 'POST',
