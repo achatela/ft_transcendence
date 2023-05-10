@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import axios from 'axios';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +14,7 @@ export class AuthService {
         const answer = await this.getToken();
         this.tokenApp = answer.access_token;
         this.countdown = answer.expires_in;
-        console.log(this.tokenApp, this.countdown);
+        // console.log(this.tokenApp, this.countdown);
 
         setTimeout(() => this.refresh(), this.countdown * 1000);
     }
@@ -22,26 +23,28 @@ export class AuthService {
         const answer = await this.getToken();
         this.tokenApp = answer.access_token;
         this.countdown = answer.expires_in;
-        console.log(this.tokenApp, this.countdown);
+        // console.log(this.tokenApp, this.countdown);
     }
 
+
     async getToken(): Promise<any> {
-        const request = fetch("https://api.intra.42.fr/oauth/token", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
+        try {
+            const response = await axios.post("https://api.intra.42.fr/oauth/token", {
                 grant_type: 'client_credentials',
                 client_id: process.env.FORTY_TWO_UID,
                 client_secret: process.env.FORTY_TWO_SECRET
-            })
-        });
-
-        const response = await request;
-        const data = await response.json();
-        return (data)
+            }, {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching token:', error);
+            throw error;
+        }
     }
+
 
     async getUserToken(userCode: string): Promise<any> {
         const requestBody = new URLSearchParams({
@@ -52,16 +55,14 @@ export class AuthService {
             redirect_uri: "http://localhost:3133"
         });
     
-        const request = fetch("https://api.intra.42.fr/oauth/token", {
-            method: "POST",
+        const request = axios.post("https://api.intra.42.fr/oauth/token", requestBody.toString(), {
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
             },
-            body: requestBody
         });
     
         const response = await request;
-        const data = await response.json();
+        const data: any = await response.data;
         const token = data.access_token;
         const tokenExpires = data.expires_in;
         console.log(token, tokenExpires);

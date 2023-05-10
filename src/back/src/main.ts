@@ -3,7 +3,6 @@ import { AppModule } from './app.module';
 import { AuthModule} from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
 
-
 declare const module: any;
 
 async function bootstrap() {
