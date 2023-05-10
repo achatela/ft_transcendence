@@ -48,39 +48,49 @@ export default function HomePage(props: any) {
   }, []);
   
 
-  useEffect(() => {
-    const togglePasswordButton = document.querySelector(".toggle-password");
-    const passwordInput = document.querySelector(".password-input");
+  // useEffect(() => {
+  //   const togglePasswordButton = document.querySelector(".toggle-password");
+  //   const passwordInput = document.querySelector(".password-input");
 
-    function handleClick() {
-      // @ts-ignore: Object is possibly 'null'.
-      if (passwordInput.type === "password") {
-        // @ts-ignore: Object is possibly 'null'.
-        passwordInput.type = "text";
-        togglePasswordButton!.innerHTML = '&#128064;'; // Change to eye-slash icon
-      } else {
-        // @ts-ignore: Object is possibly 'null'.
-        passwordInput.type = "password";
-        togglePasswordButton!.innerHTML = '🫣'; // Change back to eye icon
-      }
-    }
-    togglePasswordButton!.addEventListener("click", handleClick);
+  //   function handleClick() {
+  //     // @ts-ignore: Object is possibly 'null'.
+  //     if (passwordInput.type === "password") {
+  //       // @ts-ignore: Object is possibly 'null'.
+  //       passwordInput.type = "text";
+  //       togglePasswordButton!.innerHTML = '&#128064;'; // Change to eye-slash icon
+  //     } else {
+  //       // @ts-ignore: Object is possibly 'null'.
+  //       passwordInput.type = "password";
+  //       togglePasswordButton!.innerHTML = '🫣'; // Change back to eye icon
+  //     }
+  //   }
+  //   togglePasswordButton!.addEventListener("click", handleClick);
 
-    return () => {
-      togglePasswordButton!.removeEventListener("click", handleClick);
-    };
-  }, []);
+  //   return () => {
+  //     togglePasswordButton!.removeEventListener("click", handleClick);
+  //   };
+  // }, []);
 
   async function redirectFortyTwo(): Promise<void> {
+    // Check if login-input is empty
+    const loginInput = document.querySelector(".login-input");
+    // @ts-ignore: Object is possibly 'null'.
+    if (loginInput.value === "") {
+      return ;
+    }
     const response = await fetch('http://localhost:3333/auth/redirect',
       {
-        method: 'GET',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        // @ts-ignore: Object is possibly 'null'.
+        body: JSON.stringify({username: loginInput.value}),
     });
     const answer = await response.json();
+    // IF SUCCESS
     window.location.href = answer.url;
+    // ELSE IF USERNAME ALREADY IN DATABASE
   }
 
   return (
@@ -90,12 +100,12 @@ export default function HomePage(props: any) {
       <div ref={loginDivRef} className="login-div" id="login-div-id">
         <div className="password-wrapper">
           <input className="login-input" type="text" placeholder="Login"/>
-          <input className="password-input" type="password" placeholder="Password"/>
-          <button className="toggle-password" type="button">🫣</button>
+          {/* <input className="password-input" type="password" placeholder="Password"/> */}
+          {/* <button className="toggle-password" type="button">🫣</button> */}
         </div>
         <div className="remember-me-wrapper">
-          <input type="checkbox" id="remember-me" name="remember-me" className="remember-me-checkbox" />
-          <label className="password-label" htmlFor="remember-me">Remember me</label>
+          {/* <input type="checkbox" id="remember-me" name="remember-me" className="remember-me-checkbox" /> */}
+          {/* <label className="password-label" htmlFor="remember-me">Remember me</label> */}
         </div>
           <button className="sign-up-button" type="button" onClick={redirectFortyTwo}>Sign Up</button>
       </div>

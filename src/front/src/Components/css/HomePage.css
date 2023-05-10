@@ -29,11 +29,11 @@
 .login-input[type="text"], .password-input[type="password"], .password-input[type="text"] {
     background: black;
     width: 70%;
-    margin-left: 15%;
+    margin-left: 14%;
     padding: 0.5em;
     margin-bottom: 1em;
     color: white;
-    font-size: 1em;
+    font-size: 1.4em;
     outline: none;
     flex-grow: 1;
     display: inline-block;

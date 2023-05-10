@@ -4,17 +4,20 @@ import { AuthService } from './auth.service';
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
-    @Get('redirect')
-    getRedirectUrl(): any {
-        const redirectUrl = this.authService.redirectUrl();
+    @Post('redirect')
+    getRedirectUrl(@Body() userInput: { username: string }): any {
+        // Check if username is already in database
+        // Return error
+        console.log("username = ", userInput.username)
+        const redirectUrl = this.authService.redirectUrl(userInput.username);
         return {
             url: redirectUrl,
         };
     }
 
     @Post('get_code')
-    getCode(@Body() userCode: { code: string}): any {
-        this.authService.getUserToken(userCode.code);
+    getCode(@Body() userInput: { code: string }): any {
+        this.authService.getUserToken(userInput.code);
         return {
             success: true,
         }

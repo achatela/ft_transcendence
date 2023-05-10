@@ -64,8 +64,8 @@ export class AuthService {
         const data = await response.json();
         const token = data.access_token;
         const tokenExpires = data.expires_in;
-
         console.log(token, tokenExpires);
+        // Create the user in the database
         return (response)
     }
 
@@ -74,7 +74,7 @@ export class AuthService {
         console.log("countdown: ", this.countdown);
     }
 
-    redirectUrl(): string {
+    redirectUrl(username: string): string {
         const queryParams = new URLSearchParams({
             client_id: process.env.FORTY_TWO_UID,
             redirect_uri: "http://localhost:3133",
