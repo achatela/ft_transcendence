@@ -18,6 +18,8 @@ model User {
   hashedPassword String?
   twoFactor      String?
 
+  personnalToken String?
+
   status      String @default("offline") // offline, online, ingame
   wins        Int    @default(0)
   losses      Int    @default(0)

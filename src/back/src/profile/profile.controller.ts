@@ -1,12 +1,14 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ProfileService } from './profile.service';
 import { User } from '@prisma/client';
+import { AuthService } from 'src/auth/auth.service';
 
 @Controller('profile')
 export class ProfileController {
-  constructor(private readonly profileService: ProfileService) {}
+  constructor(private readonly profileService: ProfileService, private authService: AuthService) {}
   @Get('username')
   getPlayerNumber(): {} {
+    this.authService.print();
     return this.profileService.getUsername();
   }
 

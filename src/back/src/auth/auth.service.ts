@@ -63,15 +63,16 @@ export class AuthService {
         const response = await request;
         const data = await response.json();
         const token = data.access_token;
+        const tokenExpires = data.expires_in;
 
-        console.log(token);
+        console.log(token, tokenExpires);
         return (response)
     }
 
-    // print(): void {
-    //     console.log("token: ", this.tokenApp);
-    //     console.log("countdown: ", this.countdown);
-    // }
+    print(): void {
+        console.log("token: ", this.tokenApp);
+        console.log("countdown: ", this.countdown);
+    }
 
     redirectUrl(): string {
         const queryParams = new URLSearchParams({
