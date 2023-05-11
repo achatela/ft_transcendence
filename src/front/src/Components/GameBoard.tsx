@@ -128,25 +128,24 @@ class GameBoard extends Component<IProps, IState> {
     }
 
       
-    checkPaddleCollision(ballX:number, ballY:number, paddleX:number, paddleY:number){
-        const ballLeftTop = {"x": ballX, "y": ballY};
-        const ballRightTop = {"x": ballX + squareSize, "y": ballY};
-        const ballLeftBottom = {"x": ballX, "y": ballY + squareSize};
-        const ballRightBottom = {"x": ballX + squareSize, "y": ballY + squareSize};
-        const paddleLeftTop = {"x": paddleX, "y": paddleY};
-        const paddleRightTop = {"x": paddleX + paddleWidth, "y": paddleY};
-        const paddleLeftBottom = {"x": paddleX, "y": paddleY + paddleHeight};
-        const paddleRightBottom = {"x": paddleX + paddleWidth, "y": paddleY + paddleHeight};
-        if (ballLeftTop['x'] <= paddleRightTop['x'] && ballLeftTop['y'] >= paddleRightTop['y'] && ballLeftTop['x'] <= paddleRightTop['x'] && ballLeftTop['y'] >= paddleRightTop['y'])
-            return true;
-        if (ballLeftBottom['x'] <= paddleRightTop['x'] && ballLeftBottom['y'] >= paddleRightTop['y'] && ballLeftBottom['x'] <= paddleRightTop['x'] && ballLeftBottom['y'] >= paddleRightTop['y'])
-            return true;
-        // if (ballRightTop['x'] >= paddleLeftTop['x'] && ballRightTop['y'] >= paddleLeftTop['y'] && ballRightTop['x'] >= paddleLeftTop['x'] && ballRightTop['y'] >= paddleLeftTop['y'])
-        //     return true;
-        // if (ballRightBottom['x'] >= paddleLeftTop['x'] && ballRightBottom['y'] >= paddleLeftTop['y'] && ballRightBottom['x'] >= paddleLeftTop['x'] && ballRightBottom['y'] >= paddleLeftTop['y'])
-        //     return true;
+    checkPaddleCollision(ballX: number, ballY: number, paddleX: number, paddleY: number) {
+        const ballLeft = ballX;
+        const ballRight = ballX + squareSize;
+        const ballTop = ballY;
+        const ballBottom = ballY + squareSize;
+      
+        const paddleLeft = paddleX;
+        const paddleRight = paddleX + paddleWidth;
+        const paddleTop = paddleY;
+        const paddleBottom = paddleY + paddleHeight;
+      
+        // Check if ball and paddle are colliding
+        if (ballRight > paddleLeft && ballLeft < paddleRight && ballBottom > paddleTop && ballTop < paddleBottom) {
+          return true;
+        }
         return false;
-    }
+      }
+      
 
     renderBall = () => {
         const newX = this.state.ballX + this.state.ballDirectionX * speedMultiplier;
