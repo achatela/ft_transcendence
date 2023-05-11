@@ -5,9 +5,10 @@ const upArrow:number = 38;
 const downArrow:number = 40;
 const zKey:number = 90;
 const sKey:number = 83;
-const speedMultiplier:number = 2;
+const speedMultiplier:number = 3;
 const paddleStep:number = 10;
 const paddleHeight:number = 100;
+const paddleMid:number = paddleHeight / 2;
 const paddleWidth:number = 20;
 const squareSize:number = 20;
 
@@ -26,27 +27,28 @@ interface IState {
 
 class GameBoard extends Component<IProps, IState> {
     interval: NodeJS.Timer;
-    magnitude: number;
-    normalizedSpeedX: number;
-    normalizedSpeedY: number;
     rect: DOMRect | null;
+    leftPaddleCollision: boolean;
+    rightPaddleCollision: boolean;
     constructor(props: IProps) {
         super(props);
+        const dirX = Math.random() * 2 - 1;
+        const dirY = Math.random() * 2 - 1;
+        const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
         this.state = {
-            leftPaddleY: 400,
-            rightPaddleY: 100,
-            ballDirectionX: Math.random() * 2 - 1,
-            ballDirectionY: Math.random() * 2 - 1,
+            leftPaddleY: 200,
+            rightPaddleY: 200,
+            ballDirectionX: dirX / magnitude,
+            ballDirectionY: dirY / magnitude,
             leftPlayerScore: 0,
             rightPlayerScore: 0,
             ballX: 0,
-            ballY: 0,
+            ballY: 0
         };
         this.interval = setInterval(() => {}, 10);
-        this.magnitude = Math.sqrt(this.state.ballDirectionX ** 2 + this.state.ballDirectionY ** 2);
-        this.normalizedSpeedX = this.state.ballDirectionX / this.magnitude;
-        this.normalizedSpeedY = this.state.ballDirectionY / this.magnitude;
         this.rect = null;
+        this.leftPaddleCollision = false;
+        this.rightPaddleCollision = false;
     }
 
     handleResize() {
@@ -66,45 +68,45 @@ class GameBoard extends Component<IProps, IState> {
                 if (this.state.rightPaddleY < paddleStep){
                     this.setState((prevState) => ({
                         rightPaddleY: 0,
-                      }));
+                    }));
                 }
                 else {
                     this.setState((prevState) => ({
                         rightPaddleY: prevState.rightPaddleY - paddleStep,
-                      }));
+                    }));
                 }
             }
             else if (event.keyCode === downArrow) {
                 if (this.state.rightPaddleY + paddleHeight + paddleStep > bottomBorder)
                     this.setState((prevState) => ({
-                        rightPaddleY: bottomBorder - paddleHeight - 8,
+                        rightPaddleY: bottomBorder - paddleHeight - 4,
                     }));
                 else
                     this.setState((prevState) => ({
                         rightPaddleY: prevState.rightPaddleY + paddleStep,
-                        }));
+                    }));
             }
             else if (event.keyCode === zKey){
                 if (this.state.leftPaddleY < paddleStep){
                     this.setState((prevState) => ({
                         leftPaddleY: 0,
-                      }));
+                    }));
                 }
                 else {
                     this.setState((prevState) => ({
                         leftPaddleY: prevState.leftPaddleY - paddleStep,
-                      }));
+                    }));
                 }
             }
             else if (event.keyCode === sKey){
                 if (this.state.leftPaddleY + paddleHeight + paddleStep > bottomBorder)
                     this.setState((prevState) => ({
-                        leftPaddleY: bottomBorder - paddleHeight - 8,
+                        leftPaddleY: bottomBorder - paddleHeight - 4,
                     }));
                 else
                     this.setState((prevState) => ({
                         leftPaddleY: prevState.leftPaddleY + paddleStep,
-                        }));
+                    }));
             }
         }
         );
@@ -116,75 +118,67 @@ class GameBoard extends Component<IProps, IState> {
 
     componentWillUnmount() {
         clearInterval(this.interval);
+        // Needs to remove event listener
     }
 
-    checkPaddleCollision(ballX: number, ballY: number, paddleX: number, paddleY: number, paddleWidth: number, paddleHeight: number) {
-        const ballAABB = {
-          x1: ballX,
-          y1: ballY,
-          x2: ballX + squareSize,
-          y2: ballY + squareSize
-        };
-        const paddleAABB = {
-          x1: paddleX,
-          y1: paddleY,
-          x2: paddleX + paddleWidth,
-          y2: paddleY + paddleHeight
-        };
-        const isIntersecting = ballAABB.x1 < paddleAABB.x2 &&
-                               ballAABB.x2 > paddleAABB.x1 &&
-                               ballAABB.y1 < paddleAABB.y2 &&
-                               ballAABB.y2 > paddleAABB.y1;
-
-        return isIntersecting;
-      }
+      
+    checkPaddleCollision(x:number, y:number, leftSidePos:number, rightSidePos:number, topSidePos:number, bottomSidePos:number){
+        if (x > leftSidePos && x < rightSidePos && y > topSidePos && y < bottomSidePos)
+            return true;
+        return false;
+    }
 
     renderBall = () => {
-        const newX = this.state.ballX + (this.normalizedSpeedX * 4);
-        const newY = this.state.ballY + (this.normalizedSpeedY * 4);
-
-        const leftPaddleCollision = this.checkPaddleCollision(newX, newY, 50, this.state.leftPaddleY, paddleWidth, paddleHeight);
-        const rightPaddleCollision = this.checkPaddleCollision(newX, newY, this.rect!.right - this.rect!.left - 50 - paddleWidth, this.state.rightPaddleY, paddleWidth, paddleHeight);
-
-        if (leftPaddleCollision || rightPaddleCollision) {
-            const ballOffset = squareSize / 2;
+        const newX = this.state.ballX + this.state.ballDirectionX * speedMultiplier;
+        const newY = this.state.ballY + this.state.ballDirectionY * speedMultiplier;
+        const lpc = this.checkPaddleCollision(newX, newY, 50, 50 + paddleWidth, this.state.leftPaddleY - squareSize, this.state.leftPaddleY + paddleHeight);
+        const rpc = this.checkPaddleCollision(newX, newY, this.rect!.right - this.rect!.left - 50 - paddleWidth - squareSize, this.rect!.right - this.rect!.left - 50 - squareSize, this.state.rightPaddleY - squareSize, this.state.rightPaddleY + paddleHeight);
+        if (lpc == true && this.leftPaddleCollision == false) {
+            const dirX = -this.state.ballDirectionX;
+            const dirY = (this.state.ballY - this.state.leftPaddleY - paddleMid) / paddleMid;
+            const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
             this.setState((prevState) => ({
-                ballDirectionX: -prevState.ballDirectionX,
-                ballX: leftPaddleCollision ? prevState.ballX + ballOffset : prevState.ballX - ballOffset,
+                ballDirectionX: dirX / magnitude,
+                ballDirectionY: dirY / magnitude
             }));
-            this.magnitude = Math.sqrt(this.state.ballDirectionX ** 2 + this.state.ballDirectionY ** 2);
-            this.normalizedSpeedX = this.state.ballDirectionX / this.magnitude;
         }
-        else if (newY + squareSize >= this.rect!.bottom - this.rect!.top || newY < 0) {
+        else if (rpc == true && this.rightPaddleCollision == false) {
+            const dirX = -this.state.ballDirectionX;
+            const dirY = (this.state.ballY - this.state.rightPaddleY - paddleMid) / paddleMid;
+            const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
             this.setState((prevState) => ({
-                ballDirectionY: -prevState.ballDirectionY,
+                ballDirectionX: dirX / magnitude,
+                ballDirectionY: dirY / magnitude
             }));
-            this.magnitude = Math.sqrt(this.state.ballDirectionX ** 2 + this.state.ballDirectionY ** 2);
-            this.normalizedSpeedY = this.state.ballDirectionY / this.magnitude;
+        }
+        else if (newY < 0 || newY + squareSize > this.rect!.bottom - this.rect!.top) {
+            this.setState((prevState) => ({
+                ballDirectionY: -prevState.ballDirectionY
+            }));
         }
         else if (newX < 0) {
+            const dirX = Math.random() * 2 - 1;
+            const dirY = Math.random() * 2 - 1;
+            const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
             this.setState((prevState) => ({
                 rightPlayerScore: prevState.rightPlayerScore + 1,
-                ballX: this.rect!.width / 2 - (squareSize / 2),
-                ballY: this.rect!.height / 2 - (squareSize / 2),
-                ballDirectionY: Math.random() * 2 - 1,
-                ballDirectionX: Math.random() * 2 - 1,
-              }));
-            this.magnitude = Math.sqrt(this.state.ballDirectionX ** 2 + this.state.ballDirectionY ** 2);
-            this.normalizedSpeedX = this.state.ballDirectionX / this.magnitude;
-            this.normalizedSpeedY = this.state.ballDirectionY / this.magnitude;
+                ballX: this.rect!.width / 2 - (squareSize / 2), // change to be in the middle
+                ballY: this.rect!.height / 2 - (squareSize / 2), // change to be in the middle
+                ballDirectionX: dirX / magnitude,
+                ballDirectionY: dirY / magnitude
+            }));
         }
-        else if (newX + squareSize >= this.rect!.right - this.rect!.left) {
+        else if (newX + squareSize > this.rect!.right - this.rect!.left) {
+            const dirX = Math.random() * 2 - 1;
+            const dirY = Math.random() * 2 - 1;
+            const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
             this.setState((prevState) => ({
                 leftPlayerScore: prevState.leftPlayerScore + 1,
-                ballX: this.rect!.width / 2 - (squareSize / 2),
-                ballY: this.rect!.height / 2 - (squareSize / 2),
-                ballDirectionY: Math.random() * 2 - 1,
-                ballDirectionX: Math.random() * 2 - 1,
-              }));
-              this.magnitude = Math.sqrt(this.state.ballDirectionX ** 2 + this.state.ballDirectionY ** 2);
-              this.normalizedSpeedX = this.state.ballDirectionX / this.magnitude;
-              this.normalizedSpeedY = this.state.ballDirectionY / this.magnitude;
+                ballX: this.rect!.width / 2 - (squareSize / 2), // change to be in the middle
+                ballY: this.rect!.height / 2 - (squareSize / 2), // change to be in the middle
+                ballDirectionX: dirX / magnitude,
+                ballDirectionY: dirY / magnitude
+            }));
         }
         else {
             this.setState((prevState) => ({
@@ -192,6 +186,8 @@ class GameBoard extends Component<IProps, IState> {
                 ballY: newY
             }));
         }
+        this.leftPaddleCollision = lpc;
+        this.rightPaddleCollision = rpc;
     };
 
     render() {
