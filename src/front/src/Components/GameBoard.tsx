@@ -128,19 +128,24 @@ class GameBoard extends Component<IProps, IState> {
     }
 
       
-    checkPaddleCollision(ballX:number, ballY:number, paddleX:number, paddleY:number){
+    checkPaddleCollision(ballX: number, ballY: number, paddleX: number, paddleY: number) {
         const ballLeft = ballX;
         const ballRight = ballX + squareSize;
         const ballTop = ballY;
         const ballBottom = ballY + squareSize;
+      
         const paddleLeft = paddleX;
         const paddleRight = paddleX + paddleWidth;
         const paddleTop = paddleY;
         const paddleBottom = paddleY + paddleHeight;
-        if (ballLeft <= paddleRight && ballRight >= paddleLeft && ballTop <= paddleBottom && ballBottom >= paddleTop)
-            return true;
+      
+        // Check if ball and paddle are colliding
+        if (ballRight > paddleLeft && ballLeft < paddleRight && ballBottom > paddleTop && ballTop < paddleBottom) {
+          return true;
+        }
         return false;
-    }
+      }
+      
 
     renderBall = () => {
         const newX = this.state.ballX + this.state.ballDirectionX * speedMultiplier;
