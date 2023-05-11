@@ -12,13 +12,13 @@ generator client {
 
 model User {
   id             Int     @id @default(autoincrement())
-  // authId      String  @unique
   username       String  @unique
   avatar         String?
   hashedPassword String?
   twoFactor      String?
 
-  personnalToken String?
+  personnal42Token String?
+  JwtToken         String?
 
   status      String @default("offline") // offline, online, ingame
   wins        Int    @default(0)

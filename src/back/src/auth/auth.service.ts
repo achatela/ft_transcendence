@@ -46,7 +46,7 @@ export class AuthService {
     }
 
 
-    async getUserToken(userCode: string): Promise<any> {
+    async getUserToken(userCode: string): Promise<{access_token: string, expires_in: string}> {
         const requestBody = new URLSearchParams({
             grant_type: 'authorization_code',
             client_id: process.env.FORTY_TWO_UID,
@@ -67,7 +67,7 @@ export class AuthService {
         const tokenExpires = data.expires_in;
         console.log(token, tokenExpires);
         // Create the user in the database
-        return (response)
+        return { access_token: token, expires_in: tokenExpires };
     }
 
     print(): void {

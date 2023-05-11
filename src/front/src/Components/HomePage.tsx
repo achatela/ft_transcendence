@@ -30,18 +30,26 @@ export default function HomePage(props: any) {
   const handlePageLoad = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
-    
+  
     if (code) {
+      // Retrieve username from the local storage
+      const username = sessionStorage.getItem('username');
+
+      console.log(username)
       fetch('http://localhost:3333/auth/get_code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({code: code}),
+        body: JSON.stringify({code: code, username: username}),
       })
       .then(response => console.log(response.json()))
+  
+      // Remove the username from the local storage
+      sessionStorage.removeItem('username');
     }
   };
+  
   
   useEffect(() => {
     handlePageLoad();
@@ -72,12 +80,16 @@ export default function HomePage(props: any) {
   // }, []);
 
   async function redirectFortyTwo(): Promise<void> {
-    // Check if login-input is empty
     const loginInput = document.querySelector(".login-input");
     // @ts-ignore: Object is possibly 'null'.
     if (loginInput.value === "") {
       return ;
     }
+    // Store username in the local storage
+    // @ts-ignore: Object is possibly 'null'.
+    sessionStorage.setItem('username', loginInput.value);
+    // @ts-ignore: Object is possibly 'null'.
+  
     const response = await fetch('http://localhost:3333/auth/redirect',
       {
         method: 'POST',
@@ -89,13 +101,10 @@ export default function HomePage(props: any) {
     });
     const answer = await response.json();
     // IF SUCCESS
-    if (answer.success === false) {
-      console.log("Error: " + answer.error)
-      return ;
-    }
     window.location.href = answer.url;
     // ELSE IF USERNAME ALREADY IN DATABASE
   }
+  
 
   return (
     <div id="tmp">

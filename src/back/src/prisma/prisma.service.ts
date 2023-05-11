@@ -5,6 +5,10 @@ const prisma = new PrismaClient();
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
+    updateUser(arg0: { where: { username: string; }; data: { personnal42Token: string; }; }) {
+        // Set the user's personnal42Token
+
+    }
     constructor() {
         super();
     }
