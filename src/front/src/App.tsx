@@ -12,8 +12,8 @@ function App() {
       {/* <ProfilePage /> */}
       {/* <ModePage /> */}
       {/* <NavBar /> */}
-      <HomePage />
-      {/* <GameBoard/> */}
+      {/* <HomePage /> */}
+      <GameBoard/>
     </div>
   );
 }

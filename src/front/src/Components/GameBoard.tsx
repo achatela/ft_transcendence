@@ -5,12 +5,14 @@ const upArrow:number = 38;
 const downArrow:number = 40;
 const zKey:number = 90;
 const sKey:number = 83;
-const speedMultiplier:number = 3;
-const paddleStep:number = 10;
+const speedMultiplier:number = 8;
+const paddleStep:number = 25;
 const paddleHeight:number = 100;
 const paddleMid:number = paddleHeight / 2;
+const paddleGap:number = 50;
 const paddleWidth:number = 20;
 const squareSize:number = 20;
+const midSquare:number = squareSize / 2;
 
 interface IProps{}
 
@@ -32,12 +34,12 @@ class GameBoard extends Component<IProps, IState> {
     rightPaddleCollision: boolean;
     constructor(props: IProps) {
         super(props);
-        const dirX = Math.random() * 2 - 1;
+        const dirX = Math.random() < 0.5 ? -1 : 1;
         const dirY = Math.random() * 2 - 1;
         const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
         this.state = {
-            leftPaddleY: 200,
-            rightPaddleY: 200,
+            leftPaddleY: 0,
+            rightPaddleY: 0,
             ballDirectionX: dirX / magnitude,
             ballDirectionY: dirY / magnitude,
             leftPlayerScore: 0,
@@ -59,6 +61,10 @@ class GameBoard extends Component<IProps, IState> {
     componentDidMount() {
         this.rect = document.querySelector('.gameBoard')!.getBoundingClientRect();
         let bottomBorder = this.rect.bottom - this.rect.top;
+        this.setState((prevState) => ({
+            leftPaddleY: bottomBorder / 2 - paddleMid,
+            rightPaddleY: bottomBorder / 2 - paddleMid
+        }));
 
         window.addEventListener('resize', this.handleResize)
  
@@ -122,20 +128,34 @@ class GameBoard extends Component<IProps, IState> {
     }
 
       
-    checkPaddleCollision(x:number, y:number, leftSidePos:number, rightSidePos:number, topSidePos:number, bottomSidePos:number){
-        if (x > leftSidePos && x < rightSidePos && y > topSidePos && y < bottomSidePos)
+    checkPaddleCollision(ballX:number, ballY:number, paddleX:number, paddleY:number){
+        const ballLeftTop = {"x": ballX, "y": ballY};
+        const ballRightTop = {"x": ballX + squareSize, "y": ballY};
+        const ballLeftBottom = {"x": ballX, "y": ballY + squareSize};
+        const ballRightBottom = {"x": ballX + squareSize, "y": ballY + squareSize};
+        const paddleLeftTop = {"x": paddleX, "y": paddleY};
+        const paddleRightTop = {"x": paddleX + paddleWidth, "y": paddleY};
+        const paddleLeftBottom = {"x": paddleX, "y": paddleY + paddleHeight};
+        const paddleRightBottom = {"x": paddleX + paddleWidth, "y": paddleY + paddleHeight};
+        if (ballLeftTop['x'] <= paddleRightTop['x'] && ballLeftTop['y'] >= paddleRightTop['y'] && ballLeftTop['x'] <= paddleRightTop['x'] && ballLeftTop['y'] >= paddleRightTop['y'])
             return true;
+        if (ballLeftBottom['x'] <= paddleRightTop['x'] && ballLeftBottom['y'] >= paddleRightTop['y'] && ballLeftBottom['x'] <= paddleRightTop['x'] && ballLeftBottom['y'] >= paddleRightTop['y'])
+            return true;
+        // if (ballRightTop['x'] >= paddleLeftTop['x'] && ballRightTop['y'] >= paddleLeftTop['y'] && ballRightTop['x'] >= paddleLeftTop['x'] && ballRightTop['y'] >= paddleLeftTop['y'])
+        //     return true;
+        // if (ballRightBottom['x'] >= paddleLeftTop['x'] && ballRightBottom['y'] >= paddleLeftTop['y'] && ballRightBottom['x'] >= paddleLeftTop['x'] && ballRightBottom['y'] >= paddleLeftTop['y'])
+        //     return true;
         return false;
     }
 
     renderBall = () => {
         const newX = this.state.ballX + this.state.ballDirectionX * speedMultiplier;
         const newY = this.state.ballY + this.state.ballDirectionY * speedMultiplier;
-        const lpc = this.checkPaddleCollision(newX, newY, 50, 50 + paddleWidth, this.state.leftPaddleY - squareSize, this.state.leftPaddleY + paddleHeight);
-        const rpc = this.checkPaddleCollision(newX, newY, this.rect!.right - this.rect!.left - 50 - paddleWidth - squareSize, this.rect!.right - this.rect!.left - 50 - squareSize, this.state.rightPaddleY - squareSize, this.state.rightPaddleY + paddleHeight);
+        const lpc = this.checkPaddleCollision(newX, newY, paddleGap, this.state.leftPaddleY);
+        const rpc = this.checkPaddleCollision(newX, newY, this.rect!.right - this.rect!.left - paddleGap - paddleWidth, this.state.rightPaddleY);
         if (lpc == true && this.leftPaddleCollision == false) {
             const dirX = -this.state.ballDirectionX;
-            const dirY = (this.state.ballY - this.state.leftPaddleY - paddleMid) / paddleMid;
+            const dirY = (this.state.ballY + squareSize / 2 - this.state.leftPaddleY - paddleMid) / paddleMid;
             const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
             this.setState((prevState) => ({
                 ballDirectionX: dirX / magnitude,
@@ -144,7 +164,7 @@ class GameBoard extends Component<IProps, IState> {
         }
         else if (rpc == true && this.rightPaddleCollision == false) {
             const dirX = -this.state.ballDirectionX;
-            const dirY = (this.state.ballY - this.state.rightPaddleY - paddleMid) / paddleMid;
+            const dirY = (this.state.ballY + squareSize / 2 - this.state.rightPaddleY - paddleMid) / paddleMid;
             const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
             this.setState((prevState) => ({
                 ballDirectionX: dirX / magnitude,
