@@ -7,25 +7,23 @@ import axios from 'axios';
 export class AuthController {
     constructor(private readonly authService: AuthService, private prismaService: PrismaService) {}
     @Post('redirect')
-    getRedirectUrl(@Body() userInput: { username: string }): any {
-        
-
-        console.log("username = ", userInput.username)
-        const redirectUrl = this.authService.redirectUrl(userInput.username);// Check if username is already in database
-        // Return error
-        // return {
-        //     success: false,
-        //     error: "Username already exists",
-        //     url: redirectUrl,
-        // }
-
-        // If the username is not in the database, create it
-        this.prismaService.createUser( {username: userInput.username });
-
+    async getRedirectUrl(@Body() userInput: { username: string }): Promise<any> {
+        try {
+            await this.prismaService.user.findUniqueOrThrow({ where: { username: userInput.username } })
+        }
+        catch {
+            const redirectUrl = this.authService.redirectUrl(userInput.username);
+            this.prismaService.createUser( {username: userInput.username });
+            return {
+                success: true,
+                url: redirectUrl,
+            };
+        }
+        console.log("User", userInput.username, "already exists")
         return {
-            success: true,
-            url: redirectUrl,
-        };
+            success: false,
+            error: "Username already exists",
+        }
     }
 
     @Post('get_code')

@@ -5,10 +5,23 @@ import AddBallButton from './AddBallButton';
 import RemoveBallButton from './RemoveBallButton';
 import './css/HomePage.css';
 
+const usernameAlreadyExists = () => {
+  return (
+    <p className="alreadyExists">Username already exists</p>
+  );
+}
+
+const cannotBeEmpty = () => {
+  return (
+    <p className="cannotBeEmpty">Username cannot be empty</p>
+  );
+}
+
 export default function HomePage(props: any) {
   const loginDivRef = useRef(null);
   const [speed, setSpeed] = useState(1);
   const [balls, setBalls] = useState([{ x: 900, y: 100 }]);
+  const [showError, setShowError] = useState(false);
 
   function addBall() {
     setBalls((prevBalls) => [
@@ -32,7 +45,6 @@ export default function HomePage(props: any) {
     const code = urlParams.get('code');
   
     if (code) {
-      // Retrieve username from the local storage
       const username = sessionStorage.getItem('username');
 
       console.log(username)
@@ -44,8 +56,6 @@ export default function HomePage(props: any) {
         body: JSON.stringify({code: code, username: username}),
       })
       .then(response => console.log(response.json()))
-  
-      // Remove the username from the local storage
       sessionStorage.removeItem('username');
     }
   };
@@ -54,30 +64,6 @@ export default function HomePage(props: any) {
   useEffect(() => {
     handlePageLoad();
   }, []);
-  
-
-  // useEffect(() => {
-  //   const togglePasswordButton = document.querySelector(".toggle-password");
-  //   const passwordInput = document.querySelector(".password-input");
-
-  //   function handleClick() {
-  //     // @ts-ignore: Object is possibly 'null'.
-  //     if (passwordInput.type === "password") {
-  //       // @ts-ignore: Object is possibly 'null'.
-  //       passwordInput.type = "text";
-  //       togglePasswordButton!.innerHTML = '&#128064;'; // Change to eye-slash icon
-  //     } else {
-  //       // @ts-ignore: Object is possibly 'null'.
-  //       passwordInput.type = "password";
-  //       togglePasswordButton!.innerHTML = '🫣'; // Change back to eye icon
-  //     }
-  //   }
-  //   togglePasswordButton!.addEventListener("click", handleClick);
-
-  //   return () => {
-  //     togglePasswordButton!.removeEventListener("click", handleClick);
-  //   };
-  // }, []);
 
   async function redirectFortyTwo(): Promise<void> {
     const loginInput = document.querySelector(".login-input");
@@ -85,10 +71,8 @@ export default function HomePage(props: any) {
     if (loginInput.value === "") {
       return ;
     }
-    // Store username in the local storage
     // @ts-ignore: Object is possibly 'null'.
     sessionStorage.setItem('username', loginInput.value);
-    // @ts-ignore: Object is possibly 'null'.
   
     const response = await fetch('http://localhost:3333/auth/redirect',
       {
@@ -100,9 +84,14 @@ export default function HomePage(props: any) {
         body: JSON.stringify({username: loginInput.value}),
     });
     const answer = await response.json();
-    // IF SUCCESS
-    window.location.href = answer.url;
-    // ELSE IF USERNAME ALREADY IN DATABASE
+    if (answer.success === true) {
+      window.location.href = answer.url;
+    }
+    else if (answer.success === false) {
+      // @ts-ignore: Object is possibly 'null'.
+      console.log(answer.error);
+      setShowError(true);
+    }
   }
   
 
@@ -113,15 +102,12 @@ export default function HomePage(props: any) {
       <div ref={loginDivRef} className="login-div" id="login-div-id">
         <div className="password-wrapper">
           <input className="login-input" type="text" placeholder="Login"/>
-          {/* <input className="password-input" type="password" placeholder="Password"/> */}
-          {/* <button className="toggle-password" type="button">🫣</button> */}
         </div>
         <div className="remember-me-wrapper">
-          {/* <input type="checkbox" id="remember-me" name="remember-me" className="remember-me-checkbox" /> */}
-          {/* <label className="password-label" htmlFor="remember-me">Remember me</label> */}
         </div>
           <button className="sign-up-button" type="button" onClick={redirectFortyTwo}>Sign Up</button>
       </div>
+      {showError && usernameAlreadyExists()}
       {balls.map((ball, index) => (
       <BouncingBall key={index} loginDiv={loginDivRef} speed={speed}/>
       ))}
