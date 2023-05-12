@@ -31,6 +31,8 @@ export class AuthController {
         const personnal42Token = await this.authService.getUserToken(userInput.code);
         this.prismaService.user.update({ where: { username: userInput.username }, data: { personnal42Token: personnal42Token.access_token } });
         // Create a JWT Token
+        // const jwtToken = this.authService.user.createJwtToken(userInput.username);
+            
         // Get avatar from 42 API
         const request = await axios.get("https://api.intra.42.fr/v2/me", { headers: { Authorization: `Bearer ${personnal42Token.access_token}` } });
         const avatar = request.data.image.versions.small;

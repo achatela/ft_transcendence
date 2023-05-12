@@ -14,7 +14,6 @@ export class AuthService {
         const answer = await this.getToken();
         this.tokenApp = answer.access_token;
         this.countdown = answer.expires_in;
-        // console.log(this.tokenApp, this.countdown);
 
         setTimeout(() => this.refresh(), this.countdown * 1000);
     }
@@ -23,7 +22,6 @@ export class AuthService {
         const answer = await this.getToken();
         this.tokenApp = answer.access_token;
         this.countdown = answer.expires_in;
-        // console.log(this.tokenApp, this.countdown);
     }
 
 
@@ -55,14 +53,13 @@ export class AuthService {
             redirect_uri: "http://localhost:3133"
         });
     
-        const request = axios.post("https://api.intra.42.fr/oauth/token", requestBody.toString(), {
+        const request = await axios.post("https://api.intra.42.fr/oauth/token", requestBody.toString(), {
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
             },
         });
     
-        const response = await request;
-        const data: any = await response.data;
+        const data: any = request.data;
         const token = data.access_token;
         const tokenExpires = data.expires_in;
         console.log(token, tokenExpires);

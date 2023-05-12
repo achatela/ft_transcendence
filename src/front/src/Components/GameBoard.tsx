@@ -209,7 +209,7 @@ class GameBoard extends Component<IProps, IState> {
         this.rightPaddleCollision = rpc;
     };
 
-    render() {
+    render(): JSX.Element {
         return (
             <div className="gameBoard">
                 <p className="leftScore">{this.state.leftPlayerScore}</p>
