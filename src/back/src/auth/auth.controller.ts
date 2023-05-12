@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import axios from 'axios';
+import { JwtModule } from '@nestjs/jwt';
 
 @Controller('auth')
 export class AuthController {
@@ -27,8 +28,10 @@ export class AuthController {
     }
 
     @Post('get_code')
-    async getCode(@Body() userInput: { code: string, username: string}): Promise<any> {
+    async getCode(@Body() userInput: { code: string, username: string}): Promise<{success: boolean, error?: string, jwt?: string}> {
         const personnal42Token = await this.authService.getUserToken(userInput.code);
+        if (personnal42Token.success === false)
+            return {success: false, error: "getUserToken failed"};
         this.prismaService.user.update({ where: { username: userInput.username }, data: { personnal42Token: personnal42Token.access_token } });
         // Create a JWT Token
         // const jwtToken = this.authService.user.createJwtToken(userInput.username);
@@ -39,7 +42,7 @@ export class AuthController {
         this.prismaService.user.update({ where: { username: userInput.username }, data: { avatar: avatar } });
         console.log("avatar = ", avatar);
         return {
-            success: true,
+            success: true
         }
     }
 }

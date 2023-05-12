@@ -40,7 +40,7 @@ export default function HomePage(props: any) {
     });
   }
 
-  const handlePageLoad = () => {
+  async function handlePageLoad () {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
   
@@ -48,14 +48,21 @@ export default function HomePage(props: any) {
       const username = sessionStorage.getItem('username');
 
       console.log(username)
-      fetch('http://localhost:3333/auth/get_code', {
+      const request = await fetch('http://localhost:3333/auth/get_code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({code: code, username: username}),
       })
-      .then(response => console.log(response.json()))
+      // @ts-ignore: Object is possibly 'null'.
+      if (request.success === true){
+        //Gérer le jwt token
+      }
+      else{
+        // @ts-ignore: Object is possibly 'null'.
+        // console.error(request.error);
+      }
       sessionStorage.removeItem('username');
     }
   };
