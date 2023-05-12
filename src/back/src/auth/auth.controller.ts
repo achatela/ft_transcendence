@@ -31,7 +31,7 @@ export class AuthController {
     async getCode(@Body() userInput: { code: string, username: string}): Promise<{success: boolean, error?: string, jwt?: string}> {
         const personnal42Token = await this.authService.getUserToken(userInput.code);
         if (personnal42Token.success === false)
-            return {success: false, error: "getUserToken failed"};
+            return {success: false, error: "getUserToken failure"};
         this.prismaService.user.update({ where: { username: userInput.username }, data: { personnal42Token: personnal42Token.access_token } });
         // Create a JWT Token
         // const jwtToken = this.authService.user.createJwtToken(userInput.username);
@@ -41,8 +41,6 @@ export class AuthController {
         const avatar = request.data.image.versions.small;
         this.prismaService.user.update({ where: { username: userInput.username }, data: { avatar: avatar } });
         console.log("avatar = ", avatar);
-        return {
-            success: true
-        }
+        return {success: true};
     }
 }

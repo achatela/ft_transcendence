@@ -3,6 +3,7 @@ import BouncingBall from './BouncingBall';
 import SpeedSlider from './SpeedSlider';
 import AddBallButton from './AddBallButton';
 import RemoveBallButton from './RemoveBallButton';
+import axios from 'axios';
 import './css/HomePage.css';
 
 const usernameAlreadyExists = () => {
@@ -40,32 +41,22 @@ export default function HomePage(props: any) {
     });
   }
 
-  async function handlePageLoad () {
+  async function handlePageLoad() {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
   
     if (code) {
       const username = sessionStorage.getItem('username');
+      const request = await axios.post('http://localhost:3333/auth/get_code', JSON.stringify({ code: code, username: username }), {headers: { 'Content-Type': 'application/json'}});
 
-      console.log(username)
-      const request = await fetch('http://localhost:3333/auth/get_code', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({code: code, username: username}),
-      })
-      // @ts-ignore: Object is possibly 'null'.
-      if (request.success === true){
-        //Gérer le jwt token
+      if (request.data.success == true) {}
+      else {
+        console.error(request.data.error);
       }
-      else{
-        // @ts-ignore: Object is possibly 'null'.
-        // console.error(request.error);
-      }
+  
       sessionStorage.removeItem('username');
     }
-  };
+  }  
   
   
   useEffect(() => {
