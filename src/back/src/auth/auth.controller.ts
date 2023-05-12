@@ -2,11 +2,11 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import axios from 'axios';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly authService: AuthService, private prismaService: PrismaService) {}
+    constructor(private readonly authService: AuthService, private prismaService: PrismaService, private jwtService: JwtService) {}
     @Post('redirect')
     async getRedirectUrl(@Body() userInput: { username: string }): Promise<any> {
         try {
@@ -33,6 +33,11 @@ export class AuthController {
         if (personnal42Token.success === false)
             return {success: false, error: "getUserToken failure"};
         this.prismaService.user.update({ where: { username: userInput.username }, data: { personnal42Token: personnal42Token.access_token } });
+        const user = await this.prismaService.user.findUnique({where: {username: userInput.username}});
+        const payload = {username: userInput.username, id: user.id};
+        const signature = this.jwtService.sign(payload, { secret: process.env.JWT_SECRET });
+        this.prismaService.user.update({ where: { username: userInput.username }, data: { JwtToken: signature } });
+        console.log(signature);
         // Create a JWT Token
         // const jwtToken = this.authService.user.createJwtToken(userInput.username);
             
@@ -41,6 +46,6 @@ export class AuthController {
         const avatar = request.data.image.versions.small;
         this.prismaService.user.update({ where: { username: userInput.username }, data: { avatar: avatar } });
         console.log("avatar = ", avatar);
-        return {success: true};
+        return {success: true, jwt: signature};
     }
 }

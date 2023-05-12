@@ -49,7 +49,10 @@ export default function HomePage(props: any) {
       const username = sessionStorage.getItem('username');
       const request = await axios.post('http://localhost:3333/auth/get_code', JSON.stringify({ code: code, username: username }), {headers: { 'Content-Type': 'application/json'}});
 
-      if (request.data.success == true) {}
+      if (request.data.success == true) {
+        sessionStorage.setItem("jwtToken", request.data.jwt);
+        console.log(sessionStorage.getItem("jwtToken"));
+      }
       else {
         console.error(request.data.error);
       }

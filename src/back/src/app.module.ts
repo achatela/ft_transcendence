@@ -9,9 +9,10 @@ import { ProfileService } from './profile/profile.service';
 import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
 import { ProfileModule } from './profile/profile.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [PrismaModule, AuthModule, ProfileModule],
+  imports: [PrismaModule, AuthModule, ProfileModule, JwtModule],
   controllers: [AppController, ProfileController, AuthController],
   providers: [AppService, ProfileService],
 })
