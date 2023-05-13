@@ -4,50 +4,39 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ProfileService {
-  constructor(private prisma: PrismaService) {}
-  getUsername(): {} {
-    return( 
-      {
-        username: 'username',
-      }
-    );
+  constructor(private prismaService: PrismaService) {}
+  async getUsername(username: string, jwt: string): Promise<string> {
+    const user = await this.prismaService.user.findUnique({ where: { username: username } });
+    if (user.JwtToken === jwt) {
+      return user.username;
+    }
   }
 
-  getWins(): {} {
-    return( 
-      {
-        wins: 1,
-      }
-    );
+  async getWins(username: string, jwt: string): Promise<number> {
+    const user = await this.prismaService.user.findUnique({ where: { username: username } });
+    if (user.JwtToken === jwt) {
+      return user.wins;
+    }
   }
 
-  getLosses(): {} {
-    return( 
-      {
-        losses: 2,
-      }
-    );
+  async getLosses(username: string, jwt: string): Promise<number> {
+    const user = await this.prismaService.user.findUnique({ where: { username: username } });
+    if (user.JwtToken === jwt) {
+      return user.losses;
+    }
   }
 
-  getAvatar(): {} {
-    return( 
-      {
-        avatarUrl: "/defaultPfp.png",
-      }
-    );
+  async getAvatar(username: string, jwt: string): Promise<string> {
+    const user = await this.prismaService.user.findUnique({ where: { username: username } });
+    if (user.JwtToken === jwt) {
+      return user.avatar;
+    }
   }
   
-  getLadderLevel(): {} {
-    return( 
-      {
-        ladderLevel: 1,
-      }
-    );
+  async getLadderLevel(username:string, jwt: string): Promise<number> {
+    const user = await this.prismaService.user.findUnique({ where: { username: username } });
+    if (user.JwtToken === jwt) {
+      return user.ladderLevel;
+    }
   }
-
-  async createUser(data: Prisma.UserCreateInput): Promise<User> {
-    return this.prisma.user.create({
-        data,
-    });
-}
 }

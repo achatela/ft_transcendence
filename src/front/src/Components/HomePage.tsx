@@ -56,9 +56,8 @@ export default function HomePage(props: any) {
       else {
         console.error(request.data.error);
       }
-  
-      sessionStorage.removeItem('username');
     }
+    console.log("username = " + sessionStorage.getItem('username'));
   }  
   
   

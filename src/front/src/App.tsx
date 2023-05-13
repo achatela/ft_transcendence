@@ -9,10 +9,10 @@ import GameBoard from './Components/GameBoard'
 function App() {
   return (
     <div>
-      {/* <ProfilePage /> */}
+      <ProfilePage />
       {/* <ModePage /> */}
       {/* <NavBar /> */}
-      <HomePage />
+      {/* <HomePage /> */}
       {/* <GameBoard/> */}
     </div>
   );
