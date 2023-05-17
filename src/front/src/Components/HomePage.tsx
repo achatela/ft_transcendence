@@ -5,6 +5,7 @@ import AddBallButton from './AddBallButton';
 import RemoveBallButton from './RemoveBallButton';
 import axios from 'axios';
 import './css/HomePage.css';
+import { promises } from 'dns';
 
 const usernameAlreadyExists = () => {
   return (
@@ -12,17 +13,25 @@ const usernameAlreadyExists = () => {
   );
 }
 
-const cannotBeEmpty = () => {
+const loginNotUnique = () => {
   return (
-    <p className="cannotBeEmpty">Username cannot be empty</p>
+    <p className="loginNotUnique">You already created a user</p>
   );
+}
+
+const loginNot = () => {
+  return (
+    <p className="loginNot">No user found with your login</p>
+  )
 }
 
 export default function HomePage(props: any) {
   const loginDivRef = useRef(null);
   const [speed, setSpeed] = useState(1);
   const [balls, setBalls] = useState([{ x: 900, y: 100 }]);
-  const [showError, setShowError] = useState(false);
+  const [showErrorUser, setShowErrorUser] = useState(false);
+  const [showErrorUnique, setShowErrorUnique] = useState(false);
+  const [showErrorNot, setShowErrorNot] = useState(false);
 
   function addBall() {
     setBalls((prevBalls) => [
@@ -44,20 +53,41 @@ export default function HomePage(props: any) {
   async function handlePageLoad() {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
-  
+
+    if (sessionStorage.getItem('sign in') === 'true'){
+      sessionStorage.setItem('sign in', 'false');
+      if (code){
+        const request = await axios.post('http://localhost:3333/auth/verify_sign_in', JSON.stringify({ code: code }), {headers: { 'Content-Type': 'application/json'}});
+        if (request.data.success == true) {
+          sessionStorage.setItem("jwtToken", request.data.jwt);
+          console.log(sessionStorage.getItem("jwtToken"));
+        }
+        else {
+          setShowErrorUnique(false)
+          setShowErrorUser(false)
+          setShowErrorNot(true)
+          console.error(request.data.error);
+        }
+      }
+      else
+        ;
+      return ;
+    }
     if (code) {
       const username = sessionStorage.getItem('username');
       const request = await axios.post('http://localhost:3333/auth/get_code', JSON.stringify({ code: code, username: username }), {headers: { 'Content-Type': 'application/json'}});
-
       if (request.data.success == true) {
         sessionStorage.setItem("jwtToken", request.data.jwt);
         console.log(sessionStorage.getItem("jwtToken"));
       }
       else {
         console.error(request.data.error);
+        sessionStorage.removeItem('username')
+        setShowErrorUser(false);
+        setShowErrorNot(false);
+        setShowErrorUnique(true);
       }
     }
-    console.log("username = " + sessionStorage.getItem('username'));
   }  
   
   
@@ -90,7 +120,24 @@ export default function HomePage(props: any) {
     else if (answer.success === false) {
       // @ts-ignore: Object is possibly 'null'.
       console.log(answer.error);
-      setShowError(true);
+      setShowErrorUnique(false)
+      setShowErrorNot(false)
+      setShowErrorUser(true);
+    }
+  }
+
+  async function redirectSignIn(): Promise<void> {
+    sessionStorage.setItem('sign in', 'true');
+    const response = await axios.post('http://localhost:3333/auth/redirect',JSON.stringify({username: undefined}), {headers: { 'Content-Type': 'application/json'}});
+    if (response.data.success === true) {
+      window.location.href = response.data.url;
+    }
+    else if (response.data.success === false) {
+      // @ts-ignore: Object is possibly 'null'.
+      console.log(answer.error);
+      setShowErrorUnique(false)
+      setShowErrorNot(false)
+      setShowErrorUser(true);
     }
   }
   
@@ -105,9 +152,12 @@ export default function HomePage(props: any) {
         </div>
         <div className="remember-me-wrapper">
         </div>
-          <button className="sign-up-button" type="button" onClick={redirectFortyTwo}>Sign Up</button>
+        <button className="sign-up-button" type="button" onClick={redirectFortyTwo}>Sign Up</button>
+        <button className="sign-in-button" type="button" onClick={redirectSignIn}>Sign In</button>
       </div>
-      {showError && usernameAlreadyExists()}
+      {showErrorUser && usernameAlreadyExists()}
+      {showErrorUnique && loginNotUnique()}
+      {showErrorNot && loginNot()}
       {balls.map((ball, index) => (
       <BouncingBall key={index} loginDiv={loginDivRef} speed={speed}/>
       ))}

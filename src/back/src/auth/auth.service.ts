@@ -72,12 +72,7 @@ export class AuthService {
         }
     }
 
-    print(): void {
-        console.log("token: ", this.tokenApp);
-        console.log("countdown: ", this.countdown);
-    }
-
-    redirectUrl(username: string): string {
+    redirectUrl(): string {
         const queryParams = new URLSearchParams({
             client_id: process.env.FORTY_TWO_UID,
             redirect_uri: "http://localhost:3133",

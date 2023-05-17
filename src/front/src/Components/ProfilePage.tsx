@@ -93,19 +93,21 @@ class ProfilePage extends Component<IProps, IState> {
             .catch(error => {
                 console.error("Error fetching ladder level:", error);
             });
-        // this.getAchievements()
     }
     
 
     render() {
         let ratio = this.state.wins * 100 / (this.state.wins + this.state.losses);
+        if (this.state.wins === 0
+            || this.state.losses === 0) 
+            ratio = 0;
         return (
             <div>
                 <p className="userName">{this.state.username}</p>
                 <div className="pictureProfile" id="pfpPlaceholder" style={{backgroundImage: `url(${this.state.avatar})`}}/>
                 <div className="stats">
                     <div className="winLose">
-                        <p>Wins/Losses: {this.state.wins}/{this.state.losses} {ratio.toFixed(2)}</p>
+                        <p>Wins/Losses: {this.state.wins}/{this.state.losses} &ensp;{ratio.toFixed(2)}%</p>
                     </div>
                     <div className="ladderLevel">
                         <p>Level: {this.state.ladderLevel}</p>
