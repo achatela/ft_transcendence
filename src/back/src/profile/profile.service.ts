@@ -5,36 +5,37 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class ProfileService {
   constructor(private prismaService: PrismaService) {}
-  async getUsername(username: string, jwt: string): Promise<string> {
-    const user = await this.prismaService.user.findUnique({ where: { username: username } });
+  async getUsername(login: string, jwt: string): Promise<string> {
+    const user = await this.prismaService.user.findUnique({ where: { login: login } });
     if (user.JwtToken === jwt) {
-      return user.username;
+      return user.login;
     }
   }
 
-  async getWins(username: string, jwt: string): Promise<number> {
-    const user = await this.prismaService.user.findUnique({ where: { username: username } });
+  async getWins(login: string, jwt: string): Promise<number> {
+    const user = await this.prismaService.user.findUnique({ where: { login: login } });
     if (user.JwtToken === jwt) {
       return user.wins;
     }
   }
 
-  async getLosses(username: string, jwt: string): Promise<number> {
-    const user = await this.prismaService.user.findUnique({ where: { username: username } });
+  async getLosses(login: string, jwt: string): Promise<number> {
+    const user = await this.prismaService.user.findUnique({ where: { login: login } });
     if (user.JwtToken === jwt) {
       return user.losses;
     }
   }
 
-  async getAvatar(username: string, jwt: string): Promise<string> {
-    const user = await this.prismaService.user.findUnique({ where: { username: username } });
+  async getAvatar(login: string, jwt: string): Promise<string> {
+    const user = await this.prismaService.user.findUnique({ where: { login: login } });
+    console.log("login = ", login, user.JwtToken, jwt)
     if (user.JwtToken === jwt) {
       return user.avatar;
     }
   }
   
-  async getLadderLevel(username:string, jwt: string): Promise<number> {
-    const user = await this.prismaService.user.findUnique({ where: { username: username } });
+  async getLadderLevel(login:string, jwt: string): Promise<number> {
+    const user = await this.prismaService.user.findUnique({ where: { login: login } });
     if (user.JwtToken === jwt) {
       return user.ladderLevel;
     }

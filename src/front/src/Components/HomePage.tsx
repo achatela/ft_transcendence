@@ -59,8 +59,11 @@ export default function HomePage(props: any) {
       if (code){
         const request = await axios.post('http://localhost:3333/auth/verify_sign_in', JSON.stringify({ code: code }), {headers: { 'Content-Type': 'application/json'}});
         if (request.data.success == true) {
+          sessionStorage.removeItem('jwtToken')
           sessionStorage.setItem("jwtToken", request.data.jwt);
+          sessionStorage.setItem("login", request.data.login);
           console.log(sessionStorage.getItem("jwtToken"));
+          console.log(sessionStorage.getItem("login"));
         }
         else {
           setShowErrorUnique(false)

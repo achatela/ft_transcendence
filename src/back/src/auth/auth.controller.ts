@@ -66,7 +66,7 @@ export class AuthController {
     }
 
     @Post('verify_sign_in')
-    async verifySignUp(@Body() userInput: { code: string }): Promise<{success: boolean, error?: string, jwt?: string}> {
+    async verifySignUp(@Body() userInput: { code: string }): Promise<{success: boolean, login?: string, error?: string, jwt?: string}> {
         const personnal42Token = await this.authService.getUserToken(userInput.code);
         if (personnal42Token.success === false)
             return {success: false, error: "getUserToken failure"};
@@ -83,6 +83,7 @@ export class AuthController {
         const signature: string = this.jwtService.sign(payload, { secret: process.env.JWT_SECRET });
         await this.prismaService.user.update({ where: { username: user.username }, data: { JwtToken: signature } });
         return {success: true,
-                jwt: personnal42Token.access_token,};
+                jwt: signature,
+                login: request.data.login};
     }
 }

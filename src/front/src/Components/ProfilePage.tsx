@@ -28,32 +28,32 @@ class ProfilePage extends Component<IProps, IState> {
     }
 
     getAvatar = async() => {
-        const response = await axios.post("http://localhost:3333/profile/avatar", JSON.stringify({ username: sessionStorage.getItem('username'), jwt: sessionStorage.getItem('jwtToken') }), {headers: { 'Content-Type': 'application/json'}});
+        const response = await axios.post("http://localhost:3333/profile/avatar", JSON.stringify({ login: sessionStorage.getItem('login'), jwt: sessionStorage.getItem('jwtToken') }), {headers: { 'Content-Type': 'application/json'}});
         return response.data.avatarUrl;
     }
 
     getUsername = async() => {
-        const response = await axios.post("http://localhost:3333/profile/username", JSON.stringify({ username: sessionStorage.getItem('username'), jwt: sessionStorage.getItem('jwtToken') }), {headers: { 'Content-Type': 'application/json'}});
+        const response = await axios.post("http://localhost:3333/profile/username", JSON.stringify({ login: sessionStorage.getItem('login'), jwt: sessionStorage.getItem('jwtToken') }), {headers: { 'Content-Type': 'application/json'}});
         return response.data.username;
     }
 
     getWins = async() => {
-        const response = await axios.post("http://localhost:3333/profile/wins", JSON.stringify({ username: sessionStorage.getItem('username'), jwt: sessionStorage.getItem('jwtToken') }), {headers: { 'Content-Type': 'application/json'}});
+        const response = await axios.post("http://localhost:3333/profile/wins", JSON.stringify({ login: sessionStorage.getItem('login'), jwt: sessionStorage.getItem('jwtToken') }), {headers: { 'Content-Type': 'application/json'}});
         return response.data.wins;
     }
 
     getLosses = async() => {
-        const response = await axios.post("http://localhost:3333/profile/losses", JSON.stringify({ username: sessionStorage.getItem('username'), jwt: sessionStorage.getItem('jwtToken') }), {headers: { 'Content-Type': 'application/json'}});
+        const response = await axios.post("http://localhost:3333/profile/losses", JSON.stringify({ login: sessionStorage.getItem('login'), jwt: sessionStorage.getItem('jwtToken') }), {headers: { 'Content-Type': 'application/json'}});
         return response.data.losses;
     }
 
     getLadderLevel = async() => {
-        const response = await axios.post("http://localhost:3333/profile/ladder_level", JSON.stringify({ username: sessionStorage.getItem('username'), jwt: sessionStorage.getItem('jwtToken') }), {headers: { 'Content-Type': 'application/json'}});
+        const response = await axios.post("http://localhost:3333/profile/ladder_level", JSON.stringify({ login: sessionStorage.getItem('login'), jwt: sessionStorage.getItem('jwtToken') }), {headers: { 'Content-Type': 'application/json'}});
         return response.data.ladderLevel;
     }
 
     getAchievements = async() => {
-        const response = await axios.post("http://localhost:3333/profile/achievements", JSON.stringify({ username: sessionStorage.getItem('username'), jwt: sessionStorage.getItem('jwtToken') }), {headers: { 'Content-Type': 'application/json'}});
+        const response = await axios.post("http://localhost:3333/profile/achievements", JSON.stringify({ login: sessionStorage.getItem('login'), jwt: sessionStorage.getItem('jwtToken') }), {headers: { 'Content-Type': 'application/json'}});
         return response.data.achievements;
     }
 
