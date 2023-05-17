@@ -3,9 +3,13 @@ import { ProfileService } from './profile.service';
 import { ProfileController } from './profile.controller';
 import { AuthModule } from 'src/auth/auth.module';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-    imports: [AuthModule],
+    imports: [
+        AuthModule,
+        JwtModule.register({}),
+    ],
     controllers: [ProfileController],
     providers: [ProfileService, PrismaService],
 })

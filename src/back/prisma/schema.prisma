@@ -19,7 +19,8 @@ model User {
   twoFactor      String?
 
   personnal42Token String?
-  JwtToken         String?
+  refreshToken     String?
+  accessToken      String?
 
   status      String @default("offline") // offline, online, ingame
   wins        Int    @default(0)

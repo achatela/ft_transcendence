@@ -59,10 +59,10 @@ export default function HomePage(props: any) {
       if (code){
         const request = await axios.post('http://localhost:3333/auth/verify_sign_in', JSON.stringify({ code: code }), {headers: { 'Content-Type': 'application/json'}});
         if (request.data.success == true) {
-          sessionStorage.removeItem('jwtToken')
-          sessionStorage.setItem("jwtToken", request.data.jwt);
+          sessionStorage.removeItem('accessToken')
+          sessionStorage.setItem("accessToken", request.data.accessToken);
           sessionStorage.setItem("login", request.data.login);
-          console.log(sessionStorage.getItem("jwtToken"));
+          console.log(sessionStorage.getItem("accessToken"));
           console.log(sessionStorage.getItem("login"));
         }
         else {
@@ -80,8 +80,8 @@ export default function HomePage(props: any) {
       const username = sessionStorage.getItem('username');
       const request = await axios.post('http://localhost:3333/auth/get_code', JSON.stringify({ code: code, username: username }), {headers: { 'Content-Type': 'application/json'}});
       if (request.data.success == true) {
-        sessionStorage.setItem("jwtToken", request.data.jwt);
-        console.log(sessionStorage.getItem("jwtToken"));
+        sessionStorage.setItem("accessToken", request.data.accessToken);
+        console.log(sessionStorage.getItem("accessToken"));
       }
       else {
         console.error(request.data.error);
