@@ -45,7 +45,7 @@ export class AuthController {
         const user = await this.prismaService.user.findUnique({where: {username: userInput.username}});
         const payload = {username: userInput.username, id: user.id};
         const refreshToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
-        const accessToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '30m' });
+        const accessToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '5m' });
         await this.prismaService.user.update({ where: { username: userInput.username }, data: { refreshToken: refreshToken, accessToken: accessToken } });
         const request = await axios.get("https://api.intra.42.fr/v2/me", { headers: { Authorization: `Bearer ${personnal42Token.access_token}` } });
         try {
@@ -76,7 +76,7 @@ export class AuthController {
         const user = await this.prismaService.user.findUnique({where: {login: request.data.login}});
         const payload = {username: user.username, id: user.id};
         const refreshToken: string = this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
-        const accessToken: string = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '30m' });
+        const accessToken: string = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '5m' });
         await this.prismaService.user.update({ where: { username: user.username }, data: { refreshToken: refreshToken, accessToken: accessToken } });
         return {
             success: true,
@@ -85,27 +85,4 @@ export class AuthController {
             login: request.data.login,
         };
     }
-
-    @Post('check_token')
-    async checkToken(user: User, refreshToken: string, accessToken: string): Promise<any> {
-        if (user.accessToken === accessToken) {
-          const accessPayload = await this.jwtService.verify(accessToken, { secret: process.env.JWT_ACCESS_SECRET });
-          if (accessPayload.exp < Date.now() / 1000) {
-            if (user.refreshToken === refreshToken) {
-              const payload = {username: user.username, id: user.id};
-              const refreshPayload = await this.jwtService.verify(refreshToken, { secret: process.env.JWT_REFRESH_SECRET });
-              if (refreshPayload.exp < Date.now() / 1000) {
-                refreshToken = this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
-                await this.prismaService.user.update({ where: { username: user.username }, data: { refreshToken: refreshToken } });
-              }
-              accessToken = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '30m' });
-              await this.prismaService.user.update({ where: { username: user.username }, data: { accessToken: accessToken } });
-              return {success: true, refreshToken: refreshToken, accessToken: accessToken};
-            }
-            return {success: false};
-          }
-          return {success: true, refreshToken: refreshToken, accessToken: accessToken};
-        }
-        return {success: false};
-      }
 }

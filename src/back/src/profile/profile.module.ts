@@ -8,7 +8,6 @@ import { JwtModule } from '@nestjs/jwt';
 @Module({
     imports: [
         AuthModule,
-        JwtModule.register({}),
     ],
     controllers: [ProfileController],
     providers: [ProfileService, PrismaService],

@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
 import axios from 'axios';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
     tokenApp: string;
     countdown: number;
     
-    constructor() {
+    constructor(private prismaService: PrismaService, private jwtService: JwtService) {
         this.init();
     }
 
@@ -79,5 +82,32 @@ export class AuthService {
         });
 
         return (`https://api.intra.42.fr/oauth/authorize?response_type=code&` + queryParams.toString())
+    }
+
+    async checkToken(user: User, refreshToken: string, accessToken: string): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
+        if (user.accessToken === accessToken) {
+            try{
+                await this.jwtService.verify(accessToken, { secret: process.env.JWT_ACCESS_SECRET });
+            }
+            catch{
+                if (user.refreshToken === refreshToken) {
+                    const payload = {username: user.username, id: user.id};
+                    accessToken = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '5m' });
+                    await this.prismaService.user.update({ where: { username: user.username }, data: { accessToken: accessToken } });
+                    try{
+                        await this.jwtService.verify(refreshToken, { secret: process.env.JWT_REFRESH_SECRET });
+                    }
+                    catch{
+                        refreshToken = this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
+                        await this.prismaService.user.update({ where: { username: user.username }, data: { refreshToken: refreshToken } });
+                        return {success: true, refreshToken: refreshToken, accessToken: accessToken};
+                    }
+                    return {success: true, refreshToken: refreshToken, accessToken: accessToken};
+                }
+                return {success: false};
+            }
+          return {success: true, refreshToken: refreshToken, accessToken: accessToken};
+        }
+        return {success: false};
     }
 }
