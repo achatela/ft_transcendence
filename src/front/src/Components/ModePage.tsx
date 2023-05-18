@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import './css/ModePage.css'
+import axios from 'axios';
 
 interface IProps {}
 
@@ -21,7 +22,7 @@ class ModePage extends Component<IProps, IState> {
         return data.currentPlayers;
     };
 
-    componentDidMount(): void {
+    async componentDidMount(): Promise<void> {
         this.getCurrentPlayer()
             .then(currentPlayers => {
                 this.setState({ currentPlayers });
@@ -29,6 +30,22 @@ class ModePage extends Component<IProps, IState> {
             .catch(error => {
                 console.error("Error fetching current players:", error);
             });
+            const request = await axios.post('http://localhost:3333/auth/refresh_token', JSON.stringify({ refreshToken: sessionStorage.getItem('refreshToken'), login: sessionStorage.getItem('login') }), {headers: { 'Content-Type': 'application/json'}});
+            if (request.data.success == true) {
+                sessionStorage.setItem("accessToken", request.data.accessToken);
+                sessionStorage.setItem("refreshToken", request.data.refreshToken);
+            }
+            else
+                console.error(request.data.error);
+            setInterval(async () => {
+              const request = await axios.post('http://localhost:3333/auth/refresh_token', JSON.stringify({ refreshToken: sessionStorage.getItem('refreshToken'), login: sessionStorage.getItem('login') }), {headers: { 'Content-Type': 'application/json'}});
+                if (request.data.success == true) {
+                    sessionStorage.setItem("accessToken", request.data.accessToken);
+                    sessionStorage.setItem("refreshToken", request.data.refreshToken);
+                }
+                else
+                    console.error(request.data.error);
+            }, 60000)
     }
     
 

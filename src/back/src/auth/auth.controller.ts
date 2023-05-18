@@ -53,7 +53,6 @@ export class AuthController {
         catch {
             await this.prismaService.user.update({ where: { username: userInput.username }, data: { avatar: request.data.image.versions.small } });
             await this.prismaService.user.update({ where: { username: userInput.username }, data: { login: request.data.login } });
-            console.log("created")
             return {success: true, refreshToken: refreshToken, accessToken: accessToken, login: request.data.login};
         }
         await this.prismaService.user.delete({ where: { username: userInput.username } })
@@ -123,6 +122,13 @@ export class AuthController {
                 accessToken: accessToken,
             };
         }
-        return ({success: true})
+        return ({success: false, error: "Invalid JWT"})
+    }
+
+    @Post('refresh_refresh')
+    async refreshRefresh(@Body() userInput: { refreshToken: string, login: string }): Promise<{success: boolean, error?: string, refreshToken?: string, accessToken?: string}> {
+        const user = await this.prismaService.user.findUnique({where: {login: userInput.login}});
+        
+        return ( { success: false } )
     }
 }

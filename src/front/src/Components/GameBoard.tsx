@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './css/GameBoard.css';
+import axios from 'axios';
 
 const upArrow:number = 38;
 const downArrow:number = 40;
@@ -58,7 +59,7 @@ class GameBoard extends Component<IProps, IState> {
         this.rect = document.querySelector('.gameBoard')!.getBoundingClientRect();
     }
 
-    componentDidMount() {
+    async componentDidMount(): Promise<void> {
         this.rect = document.querySelector('.gameBoard')!.getBoundingClientRect();
         let bottomBorder = this.rect.bottom - this.rect.top;
         this.setState((prevState) => ({
@@ -120,6 +121,22 @@ class GameBoard extends Component<IProps, IState> {
             ballX: this.rect!.width / 2 - (squareSize / 2),
             ballY: this.rect!.height / 2 - (squareSize / 2),
         }));
+        const request = await axios.post('http://localhost:3333/auth/refresh_token', JSON.stringify({ refreshToken: sessionStorage.getItem('refreshToken'), login: sessionStorage.getItem('login') }), {headers: { 'Content-Type': 'application/json'}});
+        if (request.data.success == true) {
+            sessionStorage.setItem("accessToken", request.data.accessToken);
+            sessionStorage.setItem("refreshToken", request.data.refreshToken);
+        }
+        else
+            console.error(request.data.error);
+        setInterval(async () => {
+          const request = await axios.post('http://localhost:3333/auth/refresh_token', JSON.stringify({ refreshToken: sessionStorage.getItem('refreshToken'), login: sessionStorage.getItem('login') }), {headers: { 'Content-Type': 'application/json'}});
+            if (request.data.success == true) {
+                sessionStorage.setItem("accessToken", request.data.accessToken);
+                sessionStorage.setItem("refreshToken", request.data.refreshToken);
+            }
+            else
+                console.error(request.data.error);
+        }, 60000)
     }
 
     componentWillUnmount() {
