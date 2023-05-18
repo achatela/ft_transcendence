@@ -62,8 +62,8 @@ export default function HomePage(props: any) {
           sessionStorage.removeItem('accessToken')
           sessionStorage.setItem("accessToken", request.data.accessToken);
           sessionStorage.setItem("login", request.data.login);
-          console.log(sessionStorage.getItem("accessToken"));
-          console.log(sessionStorage.getItem("login"));
+          sessionStorage.setItem("refreshToken", request.data.refreshToken);
+          window.location.href = 'http://localhost:3133/profile';
         }
         else {
           setShowErrorUnique(false)
@@ -82,7 +82,13 @@ export default function HomePage(props: any) {
       if (request.data.success == true) {
         sessionStorage.setItem("accessToken", request.data.accessToken);
         sessionStorage.setItem("login", request.data.login);
-        console.log(sessionStorage.getItem("accessToken"));
+        sessionStorage.setItem("refreshToken", request.data.refreshToken);
+        console.log('set interval')
+        setInterval(async () => {
+          console.log('refreshing token')
+          //const request = await axios.post('http://localhost:3333/auth/refresh_token', JSON.stringify({ refreshToken: sessionStorage.getItem('refreshToken') }), {headers: { 'Content-Type': 'application/json'}});
+        }, 5000);
+        window.location.href = 'http://localhost:3133/profile';
       }
       else {
         console.error(request.data.error);

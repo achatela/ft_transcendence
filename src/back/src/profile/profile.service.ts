@@ -9,16 +9,16 @@ export class ProfileService {
 
   async verifToken(refreshToken: string, accessToken: string, user: User): Promise<boolean> {
     if (user.accessToken === accessToken) {
-      const accessPayload = this.jwtService.verify(accessToken, { secret: process.env.JWT_ACCESS_SECRET });
+      const accessPayload = await this.jwtService.verify(accessToken, { secret: process.env.JWT_ACCESS_SECRET });
       if (accessPayload.exp < Date.now() / 1000) {
         if (user.refreshToken === refreshToken) {
           const payload = {username: user.username, id: user.id};
-          const refreshPayload = this.jwtService.verify(refreshToken, { secret: process.env.JWT_REFRESH_SECRET });
+          const refreshPayload = await this.jwtService.verify(refreshToken, { secret: process.env.JWT_REFRESH_SECRET });
           if (refreshPayload.exp < Date.now() / 1000) {
-            const refreshToken = this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '100d' });
+            const refreshToken = await this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '100d' });
             await this.prismaService.user.update({ where: { username: user.username }, data: { refreshToken: refreshToken } });
           }
-          const accessToken = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '60m' });
+          const accessToken = await this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '60s' });
           await this.prismaService.user.update({ where: { username: user.username }, data: { accessToken: accessToken } });
           return true;
         }
@@ -49,7 +49,6 @@ export class ProfileService {
 
   async getAvatar(login: string, refreshToken: string, accessToken: string): Promise<string> {
     const user = await this.prismaService.user.findUnique({ where: { login: login } });
-    console.log("login = ", login, user.accessToken, accessToken)
     if (await this.verifToken(refreshToken, accessToken, user))
       return user.avatar;
   }
