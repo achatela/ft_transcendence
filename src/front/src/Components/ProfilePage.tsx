@@ -27,88 +27,70 @@ class ProfilePage extends Component<IProps, IState> {
         };
     }
 
+    getUserInfo = async() => {
+        const response = await axios.post("http://localhost:3333/profile/user_info", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
+        sessionStorage.setItem("refreshToken", response.data.refreshToken);
+        sessionStorage.setItem("accessToken", response.data.accessToken);
+        return response.data.userInfo;
+    }
+
     getAvatar = async() => {
-        const response = await axios.post("http://localhost:3333/profile/avatar", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem('refreshToken'), accessToken: sessionStorage.getItem('accessToken') }), {headers: { 'Content-Type': 'application/json'}});
-        return response.data.avatarUrl;
+        const response = await axios.post("http://localhost:3333/profile/avatar", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
+        sessionStorage.setItem("refreshToken", response.data.refreshToken);
+        sessionStorage.setItem("accessToken", response.data.accessToken);
+        return response.data.avatar;
     }
 
     getUsername = async() => {
-        const response = await axios.post("http://localhost:3333/profile/username", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem('refreshToken'), accessToken: sessionStorage.getItem('accessToken') }), {headers: { 'Content-Type': 'application/json'}});
+        const response = await axios.post("http://localhost:3333/profile/username", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
+        sessionStorage.setItem("refreshToken", response.data.refreshToken);
+        sessionStorage.setItem("accessToken", response.data.accessToken);
         return response.data.username;
     }
 
     getWins = async() => {
-        const response = await axios.post("http://localhost:3333/profile/wins", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem('refreshToken'), accessToken: sessionStorage.getItem('accessToken') }), {headers: { 'Content-Type': 'application/json'}});
+        const response = await axios.post("http://localhost:3333/profile/wins", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
+        sessionStorage.setItem("refreshToken", response.data.refreshToken);
+        sessionStorage.setItem("accessToken", response.data.accessToken);
         return response.data.wins;
     }
 
     getLosses = async() => {
-        const response = await axios.post("http://localhost:3333/profile/losses", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem('refreshToken'), accessToken: sessionStorage.getItem('accessToken') }), {headers: { 'Content-Type': 'application/json'}});
+        const response = await axios.post("http://localhost:3333/profile/losses", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
+        sessionStorage.setItem("refreshToken", response.data.refreshToken);
+        sessionStorage.setItem("accessToken", response.data.accessToken);
         return response.data.losses;
     }
 
     getLadderLevel = async() => {
-        const response = await axios.post("http://localhost:3333/profile/ladder_level", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem('refreshToken'), accessToken: sessionStorage.getItem('accessToken') }), {headers: { 'Content-Type': 'application/json'}});
+        const response = await axios.post("http://localhost:3333/profile/ladder_level", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
+        sessionStorage.setItem("refreshToken", response.data.refreshToken);
+        sessionStorage.setItem("accessToken", response.data.accessToken);
         return response.data.ladderLevel;
     }
 
     getAchievements = async() => {
-        const response = await axios.post("http://localhost:3333/profile/achievements", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem('refreshToken'), accessToken: sessionStorage.getItem('accessToken') }), {headers: { 'Content-Type': 'application/json'}});
+        const response = await axios.post("http://localhost:3333/profile/achievements", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
+        sessionStorage.setItem("refreshToken", response.data.refreshToken);
+        sessionStorage.setItem("accessToken", response.data.accessToken);
         return response.data.achievements;
     }
 
     async componentDidMount(): Promise<void> {
-        this.getUsername()
-            .then(username => {
-                this.setState({ username });
+        this.getUserInfo()
+            .then(userInfo => {
+                this.setState({
+                    username: userInfo.username,
+                    avatar: userInfo.avatar,
+                    wins: userInfo.wins,
+                    losses: userInfo.losses,
+                    ladderLevel: userInfo.ladderLevel,
+                    achievements: userInfo.achievements
+                });
             })
             .catch(error => {
-                console.error("Error fetching username:", error);
+                console.error("Error fetching user info:", error);
             });
-        this.getAvatar()
-            .then(avatar => {
-                this.setState({ avatar });
-            })
-            .catch(error => {
-                console.error("Error fetching avatar:", error);
-            });
-        this.getWins()
-            .then(wins => {
-                this.setState({ wins });
-            })
-            .catch(error => {
-                console.error("Error fetching wins:", error);
-            });
-        this.getLosses()
-            .then(losses => {
-                this.setState({ losses });
-            })
-            .catch(error => {
-                console.error("Error fetching losses:", error);
-            });
-        this.getLadderLevel()
-            .then(ladderLevel => {
-                this.setState({ ladderLevel });
-            })
-            .catch(error => {
-                console.error("Error fetching ladder level:", error);
-            });
-        const request = await axios.post('http://localhost:3333/auth/refresh_token', JSON.stringify({ refreshToken: sessionStorage.getItem('refreshToken'), login: sessionStorage.getItem('login') }), {headers: { 'Content-Type': 'application/json'}});
-        if (request.data.success == true) {
-            sessionStorage.setItem("accessToken", request.data.accessToken);
-            sessionStorage.setItem("refreshToken", request.data.refreshToken);
-        }
-        else
-            console.error(request.data.error);
-        setInterval(async () => {
-          const request = await axios.post('http://localhost:3333/auth/refresh_token', JSON.stringify({ refreshToken: sessionStorage.getItem('refreshToken'), login: sessionStorage.getItem('login') }), {headers: { 'Content-Type': 'application/json'}});
-            if (request.data.success == true) {
-                sessionStorage.setItem("accessToken", request.data.accessToken);
-                sessionStorage.setItem("refreshToken", request.data.refreshToken);
-            }
-            else
-                console.error(request.data.error);
-        }, 60000)
     }
     
 

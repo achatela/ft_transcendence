@@ -7,34 +7,34 @@ import { Console } from 'console';
 @Controller('profile')
 export class ProfileController {
   constructor(private readonly profileService: ProfileService, private authService: AuthService) {}
+
+  @Post('user_info')
+  async getUserInfo(@Body() userInput: { login: string, refreshToken: string, accessToken: string} ): Promise<{userInfo: {username: string, wins: number, losses: number, avatar: string, ladderLevel: number}, refreshToken: string, accessToken: string}> {
+    return await this.profileService.getUserInfo(userInput.login, userInput.refreshToken, userInput.accessToken);
+  }
+
   @Post('username')
-  async getPlayerNumber(@Body() userInput: { login: string, refreshToken: string, accessToken: string} ): Promise<{ login: string; }> {
-    const data = await this.profileService.getUsername(userInput.login, userInput.refreshToken, userInput.accessToken);
-    return {login: data};
+  async getPlayerNumber(@Body() userInput: { login: string, refreshToken: string, accessToken: string} ): Promise<{username: string, refreshToken: string, accessToken: string}> {
+    return await this.profileService.getUsername(userInput.login, userInput.refreshToken, userInput.accessToken);
   }
 
   @Post('wins')
-  async getWins(@Body() userInput: { login: string, refreshToken: string, accessToken: string} ): Promise<{ wins: number; }> {
-    const data = await this.profileService.getWins(userInput.login, userInput.refreshToken, userInput.accessToken);
-    return {wins: data};
+  async getWins(@Body() userInput: { login: string, refreshToken: string, accessToken: string} ): Promise<{wins: number, refreshToken: string, accessToken: string}> {
+    return await this.profileService.getWins(userInput.login, userInput.refreshToken, userInput.accessToken);
   }
 
   @Post('losses')
-  async getLosses(@Body() userInput: { login: string, refreshToken: string, accessToken: string} ): Promise<{losses: number}> {
-    const data = await this.profileService.getLosses(userInput.login, userInput.refreshToken, userInput.accessToken);
-    return {losses: data};
+  async getLosses(@Body() userInput: { login: string, refreshToken: string, accessToken: string} ): Promise<{losses: number, refreshToken: string, accessToken: string}> {
+    return await this.profileService.getLosses(userInput.login, userInput.refreshToken, userInput.accessToken);
   }
 
   @Post('avatar')
-  async getAvatar(@Body() userInput: { login: string, refreshToken: string, accessToken: string} ): Promise<{avatarUrl: string}> {
-    const data = await this.profileService.getAvatar(userInput.login, userInput.refreshToken, userInput.accessToken);
-    console.log("data = ", data);
-    return {avatarUrl: data};
+  async getAvatar(@Body() userInput: { login: string, refreshToken: string, accessToken: string} ): Promise<{avatar: string, refreshToken: string, accessToken: string}> {
+    return await this.profileService.getAvatar(userInput.login, userInput.refreshToken, userInput.accessToken);
   }
 
   @Post('ladder_level')
-  async getLadderLevel(@Body() userInput: { login: string, refreshToken: string, accessToken: string} ): Promise<{ladderLevel: number}> {
-    const data = await this.profileService.getLadderLevel(userInput.login, userInput.refreshToken, userInput.accessToken);
-    return {ladderLevel: data};
+  async getLadderLevel(@Body() userInput: { login: string, refreshToken: string, accessToken: string} ): Promise<{ladderLevel: number, refreshToken: string, accessToken: string}> {
+    return await this.profileService.getLadderLevel(userInput.login, userInput.refreshToken, userInput.accessToken);
   }
 }

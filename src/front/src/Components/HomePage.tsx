@@ -41,7 +41,7 @@ export default function HomePage(props: any) {
   }
 
   function removeBall() {
-    setBalls((prevBalls) => {
+    setBalls((prevBalls) => {"accessToken"
       if (prevBalls.length > 1) {
         return prevBalls.slice(0, -1);
       } else {
@@ -83,11 +83,6 @@ export default function HomePage(props: any) {
         sessionStorage.setItem("accessToken", request.data.accessToken);
         sessionStorage.setItem("login", request.data.login);
         sessionStorage.setItem("refreshToken", request.data.refreshToken);
-        console.log('set interval')
-        setInterval(async () => {
-          console.log('refreshing token')
-          //const request = await axios.post('http://localhost:3333/auth/refresh_token', JSON.stringify({ refreshToken: sessionStorage.getItem('refreshToken') }), {headers: { 'Content-Type': 'application/json'}});
-        }, 5000);
         window.location.href = 'http://localhost:3133/profile';
       }
       else {

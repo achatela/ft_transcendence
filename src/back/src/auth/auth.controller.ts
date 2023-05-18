@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import axios from 'axios';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
 
 @Controller('auth')
 export class AuthController {
@@ -85,26 +86,26 @@ export class AuthController {
         };
     }
 
-    // @Post('refresh_token')
-    // async refreshToken(@Body() userInput: { refreshToken: string, login: string }): Promise<{success: boolean, error?: string, refreshToken?: string, accessToken?: string}> {
-    //     const user = await this.prismaService.user.findUnique({where: {login: userInput.login}});
-    //     if (user.refreshToken === userInput.refreshToken) {
-    //         const payload = {username: user.username, id: user.id};
-    //         const accessToken: string = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '30m' });
-    //         await this.prismaService.user.update({ where: { username: user.username }, data: { accessToken: accessToken } });
-    //         return {
-    //             success: true,
-    //             refreshToken: user.refreshToken,
-    //             accessToken: accessToken,
-    //         };
-    //     }
-    //     return ({success: false, error: "Invalid JWT"})
-    // }
-
-    // @Post('refresh_refresh')
-    // async refreshRefresh(@Body() userInput: { refreshToken: string, login: string }): Promise<{success: boolean, error?: string, refreshToken?: string, accessToken?: string}> {
-    //     const user = await this.prismaService.user.findUnique({where: {login: userInput.login}});
-        
-    //     return ( { success: false } )
-    // }
+    @Post('check_token')
+    async checkToken(user: User, refreshToken: string, accessToken: string): Promise<any> {
+        if (user.accessToken === accessToken) {
+          const accessPayload = await this.jwtService.verify(accessToken, { secret: process.env.JWT_ACCESS_SECRET });
+          if (accessPayload.exp < Date.now() / 1000) {
+            if (user.refreshToken === refreshToken) {
+              const payload = {username: user.username, id: user.id};
+              const refreshPayload = await this.jwtService.verify(refreshToken, { secret: process.env.JWT_REFRESH_SECRET });
+              if (refreshPayload.exp < Date.now() / 1000) {
+                refreshToken = this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
+                await this.prismaService.user.update({ where: { username: user.username }, data: { refreshToken: refreshToken } });
+              }
+              accessToken = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '30m' });
+              await this.prismaService.user.update({ where: { username: user.username }, data: { accessToken: accessToken } });
+              return {success: true, refreshToken: refreshToken, accessToken: accessToken};
+            }
+            return {success: false};
+          }
+          return {success: true, refreshToken: refreshToken, accessToken: accessToken};
+        }
+        return {success: false};
+      }
 }
