@@ -36,7 +36,7 @@ export class AuthController {
     }
 
     @Post('get_code')
-    async getCode(@Body() userInput: { code: string, username: string}): Promise<{success: boolean, error?: string, refreshToken?: string, accessToken?: string}> {
+    async getCode(@Body() userInput: { code: string, username: string}): Promise<{success: boolean, error?: string, refreshToken?: string, accessToken?: string, login?: string}> {
         const personnal42Token = await this.authService.getUserToken(userInput.code);
         if (personnal42Token.success === false)
             return {success: false, error: "getUserToken failure"};
@@ -53,7 +53,7 @@ export class AuthController {
         catch {
             await this.prismaService.user.update({ where: { username: userInput.username }, data: { avatar: request.data.image.versions.small } });
             await this.prismaService.user.update({ where: { username: userInput.username }, data: { login: request.data.login } });
-            return {success: true, refreshToken: refreshToken, accessToken: accessToken};
+            return {success: true, refreshToken: refreshToken, accessToken: accessToken, login: request.data.login};
         }
         await this.prismaService.user.delete({ where: { username: userInput.username } })
         return ({success: false, error: "Login already created a user"})
