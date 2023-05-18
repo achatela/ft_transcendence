@@ -7,7 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 export class ProfileService {
   constructor(private prismaService: PrismaService, private jwtService: JwtService) {}
 
-  async verifToken(refreshToken: string, accessToken: string, user: User): Promise<boolean> {
+  private async verifToken(refreshToken: string, accessToken: string, user: User): Promise<boolean> {
     if (user.accessToken === accessToken) {
       const accessPayload = await this.jwtService.verify(accessToken, { secret: process.env.JWT_ACCESS_SECRET });
       if (accessPayload.exp < Date.now() / 1000) {
@@ -15,10 +15,10 @@ export class ProfileService {
           const payload = {username: user.username, id: user.id};
           const refreshPayload = await this.jwtService.verify(refreshToken, { secret: process.env.JWT_REFRESH_SECRET });
           if (refreshPayload.exp < Date.now() / 1000) {
-            const refreshToken = await this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '100d' });
+            const refreshToken = await this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
             await this.prismaService.user.update({ where: { username: user.username }, data: { refreshToken: refreshToken } });
           }
-          const accessToken = await this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '60s' });
+          const accessToken = await this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '30m' });
           await this.prismaService.user.update({ where: { username: user.username }, data: { accessToken: accessToken } });
           return true;
         }

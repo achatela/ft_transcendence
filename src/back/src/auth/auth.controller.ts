@@ -43,8 +43,8 @@ export class AuthController {
         await this.prismaService.user.update({ where: { username: userInput.username }, data: { personnal42Token: personnal42Token.access_token } });
         const user = await this.prismaService.user.findUnique({where: {username: userInput.username}});
         const payload = {username: userInput.username, id: user.id};
-        const refreshToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '100d' });
-        const accessToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '60s' });
+        const refreshToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
+        const accessToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '30m' });
         await this.prismaService.user.update({ where: { username: userInput.username }, data: { refreshToken: refreshToken, accessToken: accessToken } });
         const request = await axios.get("https://api.intra.42.fr/v2/me", { headers: { Authorization: `Bearer ${personnal42Token.access_token}` } });
         try {
@@ -57,30 +57,6 @@ export class AuthController {
         }
         await this.prismaService.user.delete({ where: { username: userInput.username } })
         return ({success: false, error: "Login already created a user"})
-    }
-
-    @Post('authorize_access')
-    async authorizeAccess(@Body() userInput: { username: string, refreshToken: string, accessToken: string }): Promise<{success: boolean, error?: string}> {
-        const user = await this.prismaService.user.findUnique({where: {username: userInput.username}});
-        if (user.accessToken === userInput.accessToken) {
-            const accessPayload = await this.jwtService.verify(userInput.accessToken, { secret: process.env.JWT_ACCESS_SECRET });
-            if (accessPayload.exp < Date.now() / 1000) {
-                if (user.refreshToken === userInput.refreshToken) {
-                    const payload = {username: user.username, id: user.id};
-                    const refreshPayload = await this.jwtService.verify(userInput.refreshToken, { secret: process.env.JWT_REFRESH_SECRET });
-                    if (refreshPayload.exp < Date.now() / 1000) {
-                        const refreshToken = await this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '100d' });
-                        await this.prismaService.user.update({ where: { username: user.username }, data: { refreshToken: refreshToken } });
-                    }
-                    const accessToken = await this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '60s' });
-                    await this.prismaService.user.update({ where: { username: user.username }, data: { accessToken: accessToken } });
-                    return {success: true};
-                }
-                return {success: false, error: "Invalid JWT"};
-            }
-            return {success: true};
-        }
-        return {success: false, error: "Invalid JWT"};
     }
 
     @Post('verify_sign_in')
@@ -98,8 +74,8 @@ export class AuthController {
         await this.prismaService.user.update({ where: { login: request.data.login }, data: { personnal42Token: personnal42Token.access_token } });
         const user = await this.prismaService.user.findUnique({where: {login: request.data.login}});
         const payload = {username: user.username, id: user.id};
-        const refreshToken: string = this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '100d' });
-        const accessToken: string = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '60s' });
+        const refreshToken: string = this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
+        const accessToken: string = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '30m' });
         await this.prismaService.user.update({ where: { username: user.username }, data: { refreshToken: refreshToken, accessToken: accessToken } });
         return {
             success: true,
@@ -109,26 +85,26 @@ export class AuthController {
         };
     }
 
-    @Post('refresh_token')
-    async refreshToken(@Body() userInput: { refreshToken: string, login: string }): Promise<{success: boolean, error?: string, refreshToken?: string, accessToken?: string}> {
-        const user = await this.prismaService.user.findUnique({where: {login: userInput.login}});
-        if (user.refreshToken === userInput.refreshToken) {
-            const payload = {username: user.username, id: user.id};
-            const accessToken: string = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '60s' });
-            await this.prismaService.user.update({ where: { username: user.username }, data: { accessToken: accessToken } });
-            return {
-                success: true,
-                refreshToken: user.refreshToken,
-                accessToken: accessToken,
-            };
-        }
-        return ({success: false, error: "Invalid JWT"})
-    }
+    // @Post('refresh_token')
+    // async refreshToken(@Body() userInput: { refreshToken: string, login: string }): Promise<{success: boolean, error?: string, refreshToken?: string, accessToken?: string}> {
+    //     const user = await this.prismaService.user.findUnique({where: {login: userInput.login}});
+    //     if (user.refreshToken === userInput.refreshToken) {
+    //         const payload = {username: user.username, id: user.id};
+    //         const accessToken: string = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '30m' });
+    //         await this.prismaService.user.update({ where: { username: user.username }, data: { accessToken: accessToken } });
+    //         return {
+    //             success: true,
+    //             refreshToken: user.refreshToken,
+    //             accessToken: accessToken,
+    //         };
+    //     }
+    //     return ({success: false, error: "Invalid JWT"})
+    // }
 
-    @Post('refresh_refresh')
-    async refreshRefresh(@Body() userInput: { refreshToken: string, login: string }): Promise<{success: boolean, error?: string, refreshToken?: string, accessToken?: string}> {
-        const user = await this.prismaService.user.findUnique({where: {login: userInput.login}});
+    // @Post('refresh_refresh')
+    // async refreshRefresh(@Body() userInput: { refreshToken: string, login: string }): Promise<{success: boolean, error?: string, refreshToken?: string, accessToken?: string}> {
+    //     const user = await this.prismaService.user.findUnique({where: {login: userInput.login}});
         
-        return ( { success: false } )
-    }
+    //     return ( { success: false } )
+    // }
 }
