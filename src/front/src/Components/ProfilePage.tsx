@@ -15,6 +15,7 @@ interface IState {
 }
 
 class ProfilePage extends Component<IProps, IState> {
+    fileInputRef: React.RefObject<HTMLInputElement>;
     constructor(props: IProps) {
         super(props);
         this.state = {
@@ -25,6 +26,7 @@ class ProfilePage extends Component<IProps, IState> {
             ladderLevel: 0,
             achievements: {}
         };
+    this.fileInputRef = React.createRef();  
     }
 
     getUserInfo = async() => {
@@ -92,7 +94,28 @@ class ProfilePage extends Component<IProps, IState> {
                 console.error("Error fetching user info:", error);
             });
     }
-    
+
+    async fileChange(event: React.ChangeEvent<HTMLInputElement>) {
+        if (event.target.files && event.target.files.length > 0) {
+            const file = event.target.files[0];
+            const avatar = new FormData();
+            avatar.append('avatar', file);
+            avatar.append('login', sessionStorage.getItem('login'));
+            avatar.append('refreshToken', sessionStorage.getItem('refreshToken'));
+            avatar.append('accessToken', sessionStorage.getItem('accessToken'));
+            
+            const request = await axios.post(
+              'http://localhost:3333/profile/upload',
+              avatar,
+              {
+                headers: {
+                  'Content-Type': 'multipart/form-data',
+                },
+              }
+            );
+            console.log(request.data)
+        }
+    };
 
     render() {
         let ratio = this.state.wins * 100 / (this.state.wins + this.state.losses);
@@ -102,7 +125,11 @@ class ProfilePage extends Component<IProps, IState> {
         return (
             <div>
                 <p className="userName">{this.state.username}</p>
-                <div className="pictureProfile" id="pfpPlaceholder" style={{backgroundImage: `url(${this.state.avatar})`}}/>
+                <div className="pictureProfile" id="pfpPlaceholder" style={{backgroundImage: `url(${this.state.avatar})`}}>
+                    <button className="downloadButton" onClick={() => this.fileInputRef.current!.click()}> 
+                        <input accept="image/*" type="file" className="visuallyHidden" ref={this.fileInputRef} onChange={event => this.fileChange(event)}></input>
+                    </button>
+                </div>
                 <div className="stats">
                     <div className="winLose">
                         <p>Wins/Losses: {this.state.wins}/{this.state.losses} &ensp;{ratio.toFixed(2)}%</p>
@@ -114,7 +141,6 @@ class ProfilePage extends Component<IProps, IState> {
                         <p>Achievements: </p>
                     </div>
                 </div>
-                <p className="debug">DEBUG: wins:{this.state.wins} losses{this.state.losses} ladderLevel:{this.state.ladderLevel} avatar:{this.state.avatar}</p>
             </div>
         );
     }     

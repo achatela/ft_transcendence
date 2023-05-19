@@ -1,8 +1,12 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Req, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { ProfileService } from './profile.service';
 import { User } from '@prisma/client';
 import { AuthService } from 'src/auth/auth.service';
 import { Console } from 'console';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Controller('profile')
 export class ProfileController {
@@ -36,5 +40,32 @@ export class ProfileController {
   @Post('ladder_level')
   async getLadderLevel(@Body() userInput: { login: string, refreshToken: string, accessToken: string} ): Promise<{ladderLevel: number, refreshToken: string, accessToken: string}> {
     return await this.profileService.getLadderLevel(userInput.login, userInput.refreshToken, userInput.accessToken);
+  }
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('avatar', {
+    storage: diskStorage({
+      destination: './uploads',
+      filename: (req, file, callback) => {
+        const { login } = req;
+        const fileExtension = file.originalname.split('.').pop();
+        callback(null, `${login}.${fileExtension}`);
+      },
+    }),
+  }))
+  async uploadAvatar(@UploadedFile() file, @Req() request) {
+    const avatar = file;
+    const { login, refreshToken, accessToken } = request.body;
+    const oldPath = path.join(__dirname, '../uploads', 'undefined.png');
+    const newPath = path.join(__dirname, '../uploads', `${login}.png`);
+  
+    fs.rename(oldPath, newPath, (err) => {
+      if (err) {
+        throw err;
+      } else {
+        console.log('Successfully moved the file!');
+      }
+    });
+    return await this.profileService.setUploadedAvatar(avatar, login, refreshToken, accessToken);
   }
 }

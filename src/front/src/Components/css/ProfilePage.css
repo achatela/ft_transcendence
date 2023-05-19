@@ -9,9 +9,9 @@
 .pictureProfile {
     position: absolute;
     left: 50%;
-    transform: translate(-50%, 50%);
-    width: 12vw;
-    height: 12vw;
+    transform: translate(-50%, 70%);
+    width: 12vh;
+    height: 12vh;
     border: 3px solid white;
     background-size: cover;
     background-repeat: no-repeat;
@@ -63,4 +63,29 @@
     margin-left: 15px;
     margin-top: 30px;
     font-size: 25px;
+}
+
+.downloadButton {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: 1.5em;
+    width: 1.5em;
+    background-color: rgba(128, 128, 128, 0.753);
+    border: none;
+}
+
+.downloadButton:hover {
+    background-color: rgba(128, 128, 128, 0.9);
+}
+
+.visuallyHidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
 }
