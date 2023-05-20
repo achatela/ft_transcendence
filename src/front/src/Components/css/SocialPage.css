@@ -10,11 +10,12 @@
 
 .friend-list {
     position: absolute;
-    border: 1px solid white;
+    border: 1px solid blue;
     right: calc(0.8rem + 0.65vw);
     width: 19vw;
-    height: calc(100vh - 2.4rem);
-    margin-top: 1.2rem;
+    height: calc(100vh - 9.6rem);
+    margin-top: 8.4rem;
+    overflow-y: auto;
 }
 
 .chat {
@@ -25,3 +26,52 @@
     width: calc(100vw - 20vw - 2.4rem);
     height: calc(100vh - 2.4rem);
 }
+
+.friend-request {
+    position: absolute;
+    border: 1px solid red;
+    right: calc(0.8rem + 0.65vw);
+    width: 19vw;
+    height: calc(100vh - (100vh - 9.6rem) - 2.7rem);
+    margin-top: 1.2rem;
+    overflow-y: auto;
+}
+
+.friend-request-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .friend-request-name {
+    font-weight: bold;
+  }
+  
+  .friend-request-accept,
+  .friend-request-decline {
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 0.25rem 0.5rem;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .friend-request-accept {
+    background-color: #28a745;
+    margin-right: 15px;
+  }
+  
+  .friend-request-decline {
+    background-color: #dc3545;
+    margin-right: 10px;
+  }
+  
+  .friend-request-accept:hover,
+  .friend-request-decline:hover {
+    opacity: 0.8;
+  }
+  
+  

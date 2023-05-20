@@ -10,10 +10,13 @@ import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
 import { ProfileModule } from './profile/profile.module';
 import { JwtModule } from '@nestjs/jwt';
+import { SocialController } from 'social/social.controller';
+import { SocialModule } from 'social/social.module';
+import { SocialService } from 'social/social.service';
 
 @Module({
-  imports: [PrismaModule, AuthModule, ProfileModule, JwtModule],
-  controllers: [AppController, ProfileController, AuthController],
-  providers: [AppService, ProfileService],
+  imports: [PrismaModule, AuthModule, ProfileModule, JwtModule, SocialModule],
+  controllers: [AppController, ProfileController, AuthController, SocialController],
+  providers: [AppService, ProfileService, SocialService],
 })
 export class AppModule {}
