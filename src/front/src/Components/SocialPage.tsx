@@ -42,8 +42,33 @@ export default class SocialPage extends Component<IProps, IState> {
     this.setState({ friendRequests });
   }
 
+    async acceptFunction(): Promise<void> {
+        const request = await axios.post(
+            "http://localhost:3333/social/accept_friend_request",
+            JSON.stringify({
+                // usernameToAccept takes the username contained in the div of the friend request
+                usernameToAccept: document.querySelector(".friend-request-name").innerHTML,
+                loginUser: sessionStorage.getItem("login"),
+                refreshToken: sessionStorage.getItem("refreshToken"),
+                accessToken: sessionStorage.getItem("accessToken"),
+            }),
+            { headers: { "Content-Type": "application/json" } }
+        );
+        if (request.data.success === true) {
+            sessionStorage.setItem("refreshToken", request.data.refreshToken);
+            sessionStorage.setItem("accessToken", request.data.accessToken);
+            console.log("accepted")
+        }
+        else {
+            console.log("failed")
+        }
+    }      
+
+    async declineFunction(): Promise<void> {
+        console.log("decline")
+    }      
+
   render(): JSX.Element {
-    console.log(this.state.friendRequests);
     return (
       <div>
         <h1 className="title">social page</h1>
@@ -51,7 +76,7 @@ export default class SocialPage extends Component<IProps, IState> {
         {this.state.friendRequests ? (
           <div className="friend-request">
             {this.state.friendRequests.map((request) => (
-              <FriendRequest key={request} name={request} />
+              <FriendRequest declineFunction={this.declineFunction} acceptFunction={this.acceptFunction} key={request} name={request} />
             ))}
           </div>
         ) : (
