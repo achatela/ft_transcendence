@@ -49,12 +49,11 @@ export class ProfileService {
       return {ladderLevel: user.ladderLevel, refreshToken: ret.refreshToken, accessToken: ret.accessToken};
   }
 
-  async setUploadedAvatar(avatar: FormData, login: string, refreshToken: string, accessToken: string): Promise<{ success: boolean; refreshToken: string; accessToken: string; }> {
+  async setUploadedAvatar(avatar: FormData, login: string, refreshToken: string, accessToken: string, fileExtension: string): Promise<{ success: boolean; refreshToken: string; accessToken: string; }> {
     const user = await this.prismaService.user.findUnique({ where: { login: login } });
     const ret = await this.authService.checkToken(user, refreshToken, accessToken);
     if (ret.success == true) {
-      // needs to find a way to access it from the front
-      // await this.prismaService.user.update({ where: { username: user.username }, data: { avatar: "http://localhost:3333/uploads/" + login + ".png" } });
+      await this.prismaService.user.update({ where: { username: user.username }, data: { avatar: "http://localhost:3333/uploads/" + login + "." + fileExtension } });
       return ( { success: true, refreshToken: ret.refreshToken, accessToken: ret.accessToken} );
     }
     return ;

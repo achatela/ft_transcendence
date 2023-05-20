@@ -47,25 +47,51 @@ export class ProfileController {
     storage: diskStorage({
       destination: './uploads',
       filename: (req, file, callback) => {
-        const { login } = req;
         const fileExtension = file.originalname.split('.').pop();
-        callback(null, `${login}.${fileExtension}`);
+        callback(null, `undefined.${fileExtension}`);
       },
     }),
   }))
   async uploadAvatar(@UploadedFile() file, @Req() request) {
+    // Needs to check JWT
     const avatar = file;
+    const fileExtension = file.originalname.split('.').pop();
     const { login, refreshToken, accessToken } = request.body;
-    const oldPath = path.join(__dirname, '../uploads', 'undefined.png');
-    const newPath = path.join(__dirname, '../uploads', `${login}.png`);
-  
-    fs.rename(oldPath, newPath, (err) => {
-      if (err) {
-        throw err;
-      } else {
-        console.log('Successfully moved the file!');
+    const oldPath = path.join(__dirname, '../uploads', `undefined.${fileExtension}`);
+    const newPath = path.join(__dirname, '../uploads', `${login}.${fileExtension}`);
+    const directory = path.join(__dirname, '../uploads');
+    
+    try {
+      const files = fs.readdirSync(directory);
+      const filesToDelete = files.filter(file => file.startsWith(login));
+      for (const file of filesToDelete) {
+        const filePath = path.join(directory, file);
+    
+        try {
+          fs.unlinkSync(filePath);
+          console.log(`Old avatar deleted: ${file}`);
+        } catch {
+          console.log(`Error while deleting old avatar: ${file}`);
+        }
       }
-    });
-    return await this.profileService.setUploadedAvatar(avatar, login, refreshToken, accessToken);
+    } catch {
+      console.log("Error while reading directory");
+    }
+
+    try {
+      fs.rename(oldPath, newPath, (err) => {
+        if (err) {
+          throw err;
+        } else {
+          console.log('Successfully moved the file!');
+        }
+      });
+
+    }
+    catch {
+      console.log("Error while renaming file");
+    }
+
+    return await this.profileService.setUploadedAvatar(avatar, login, refreshToken, accessToken, fileExtension);
   }
 }

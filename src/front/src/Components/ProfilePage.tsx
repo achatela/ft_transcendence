@@ -113,8 +113,10 @@ class ProfilePage extends Component<IProps, IState> {
                 },
               }
             );
-            console.log(request.data)
+            sessionStorage.setItem("refreshToken", request.data.refreshToken);
+            sessionStorage.setItem("accessToken", request.data.accessToken);
         }
+        window.location.href = 'http://localhost:3133/profile';
     };
 
     render() {

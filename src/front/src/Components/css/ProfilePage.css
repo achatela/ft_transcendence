@@ -1,9 +1,8 @@
-
 .userName {
     font-size: 5vw;
     position: absolute;
     left: 50%;
-    transform: translate(-50%, 50%);
+    transform: translate(-50%, 65%);
 }
 
 .pictureProfile {
