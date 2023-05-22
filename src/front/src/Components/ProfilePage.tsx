@@ -3,8 +3,6 @@ import './css/ProfilePage.css';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
-// Still need to redirect when the id is not valid
-
 function withParams(WrappedComponent: React.ComponentType<any>) {
   return (props: any) => {
     const { profileId } = useParams<{ profileId: string }>();
@@ -60,6 +58,8 @@ class ProfilePage extends Component<IProps, IState> {
         )
         sessionStorage.setItem("refreshToken", request.data.refreshToken);
         sessionStorage.setItem("accessToken", request.data.accessToken);
+        if (request.data.success === false)
+            window.location.href = 'http://localhost:3133/profile';
         return request.data.userInfo;
     }
 
