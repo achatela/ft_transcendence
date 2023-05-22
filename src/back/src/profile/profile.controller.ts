@@ -12,11 +12,16 @@ import * as path from 'path';
 export class ProfileController {
   constructor(private readonly profileService: ProfileService, private authService: AuthService) {}
 
+  @Post(":id")
+  async getUserProfileById(@Body() userInput: { login: string, refreshToken: string, accessToken: string, id: number}): Promise<{success?: boolean, userInfo: { username?: string, wins?: number, losses?: number, avatar?: string, ladderLevel?: number}, refreshToken: string, accessToken: string}> {
+    return await this.profileService.getUserInfoById(userInput.id, userInput.login, userInput.refreshToken, userInput.accessToken);
+  }
+
   @Post('user_info')
   async getUserInfo(@Body() userInput: { login: string, refreshToken: string, accessToken: string} ): Promise<{userInfo: {username: string, wins: number, losses: number, avatar: string, ladderLevel: number}, refreshToken: string, accessToken: string}> {
     return await this.profileService.getUserInfo(userInput.login, userInput.refreshToken, userInput.accessToken);
   }
-
+  
   @Post('username')
   async getPlayerNumber(@Body() userInput: { login: string, refreshToken: string, accessToken: string} ): Promise<{username: string, refreshToken: string, accessToken: string}> {
     return await this.profileService.getUsername(userInput.login, userInput.refreshToken, userInput.accessToken);
@@ -52,6 +57,7 @@ export class ProfileController {
       },
     }),
   }))
+
   async uploadAvatar(@UploadedFile() file, @Req() request) {
     // Needs to check JWT
     const avatar = file;

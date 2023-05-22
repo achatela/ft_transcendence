@@ -7,6 +7,20 @@ import { AuthService } from 'src/auth/auth.service';
 export class ProfileService {
   constructor(private prismaService: PrismaService, private authService: AuthService) {}
 
+  async getUserInfoById(id: number, login: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, userInfo: { username?: string, avatar?: string, wins?: number, losses?: number, level?: number}, accessToken: string, refreshToken: string}> {
+    try {
+      const user = await this.prismaService.user.findUnique({ where: { login: login } });
+      const user2 = await this.prismaService.user.findUnique({ where: { id: id } });
+      const ret = await this.authService.checkToken(user, refreshToken, accessToken);
+      if (ret.success == true)
+        return {success: true, userInfo: {  username: user2.username, avatar: user2.avatar, wins: user2.wins, losses: user2.losses, level: user2.ladderLevel }, accessToken: ret.accessToken, refreshToken: ret.refreshToken};
+  }
+    catch(e) {
+      console.log("Error in getUserInfoById", e)
+      return { success: false, userInfo: { }, accessToken: accessToken, refreshToken: refreshToken};
+    }
+  }
+
   async getUserInfo(login: string, refreshToken: string, accessToken: string): Promise<{userInfo: {username: string, wins: number, losses: number, avatar: string, ladderLevel: number}, refreshToken: string, accessToken: string}> {
     const user = await this.prismaService.user.findUnique({ where: { login: login } });
     const ret = await this.authService.checkToken(user, refreshToken, accessToken);

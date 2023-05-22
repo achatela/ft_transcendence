@@ -1,9 +1,19 @@
 import React, { Component } from 'react';
 import './css/ProfilePage.css';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
+
+function withParams(WrappedComponent: React.ComponentType<any>) {
+  return (props: any) => {
+    const { profileId } = useParams<{ profileId: string }>();
+    return <WrappedComponent profileId={profileId} {...props} />;
+  };
+}
 
 
-interface IProps {}
+interface IProps {
+    profileId: string;
+}
 
 interface IState {
     username: string;
@@ -12,6 +22,7 @@ interface IState {
     losses: number;
     ladderLevel: number;
     achievements: {};
+    profileId: string;
 }
 
 class ProfilePage extends Component<IProps, IState> {
@@ -24,12 +35,36 @@ class ProfilePage extends Component<IProps, IState> {
             wins: 0,
             losses: 0,
             ladderLevel: 0,
-            achievements: {}
+            achievements: {},
+            profileId: props.profileId,
         };
-    this.fileInputRef = React.createRef();  
+        this.fileInputRef = React.createRef();  
+    }
+
+    getUserInfoId = async() => {
+        console.log(
+            sessionStorage.getItem('login'),
+            sessionStorage.getItem("refreshToken"),
+            sessionStorage.getItem("accessToken"),)
+        const request = await axios.post(
+            `localhost:3333/profile/${this.state.profileId}/`,
+            JSON.stringify({
+                login: sessionStorage.getItem('login'),
+                refreshToken: sessionStorage.getItem("refreshToken"),
+                accessToken: sessionStorage.getItem("accessToken"),
+                id: this.state.profileId
+            }),
+            { headers: { "Content-Type": "application/json" } }
+        )
+        sessionStorage.setItem("refreshToken", request.data.refreshToken);
+        sessionStorage.setItem("accessToken", request.data.accessToken);
+        return request.data.userInfo;
     }
 
     getUserInfo = async() => {
+        console.log(sessionStorage.getItem('login'),
+        sessionStorage.getItem("refreshToken"),
+        sessionStorage.getItem("accessToken"),)
         const response = await axios.post("http://localhost:3333/profile/user_info", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
         sessionStorage.setItem("refreshToken", response.data.refreshToken);
         sessionStorage.setItem("accessToken", response.data.accessToken);
@@ -79,6 +114,8 @@ class ProfilePage extends Component<IProps, IState> {
     }
 
     async componentDidMount(): Promise<void> {
+        if (this.props.profileId === undefined) {
+            console.log("ici")
         this.getUserInfo()
             .then(userInfo => {
                 this.setState({
@@ -93,6 +130,25 @@ class ProfilePage extends Component<IProps, IState> {
             .catch(error => {
                 console.error("Error fetching user info:", error);
             });
+        }
+        else {
+            console.log("impossible")
+            this.getUserInfoId()
+                .then(userInfo => {
+                    this.setState({
+                        username: userInfo.username,
+                        avatar: userInfo.avatar,
+                        wins: userInfo.wins,
+                        losses: userInfo.losses,
+                        ladderLevel: userInfo.ladderLevel,
+                        achievements: userInfo.achievements
+                        });
+                })
+                .catch(error => {
+                    console.error("Error fetching user info:", error);
+                }
+            );
+        }
     }
 
     async fileChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -148,4 +204,4 @@ class ProfilePage extends Component<IProps, IState> {
     }     
 }
 
-export default ProfilePage;
+export default withParams(ProfilePage);
