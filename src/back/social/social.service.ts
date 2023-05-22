@@ -69,18 +69,46 @@ export class SocialService {
             console.log("list friend", listFriend);
             return {success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken, listFriend: listFriend};
         }
-        return ;
+        return { success: false };
     } 
 
     async sendFriendRequest(login: string, accessToken: string, refreshToken: string, usernameToRequest: string): Promise<{success: boolean, accessToken?: string, refreshToken?:string}> {
-        const user1 = await this.prismaService.user.findUnique({ where: { login: login } });
-        const user2 = await this.prismaService.user.findUnique({ where: { username: usernameToRequest } });
-        const ret = await this.authService.checkToken(user1, refreshToken, accessToken);
-        if (ret.success == true) {
-            const idList = user2.idFriendsRequests;
-            idList.push(user1.id);
-            await this.prismaService.user.update({ where: { username: usernameToRequest }, data: { idFriendsRequests: idList } });
-            return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
+        try {
+            const user1 = await this.prismaService.user.findUnique({ where: { login: login } });
+            const user2 = await this.prismaService.user.findUnique({ where: { username: usernameToRequest } });
+            const ret = await this.authService.checkToken(user1, refreshToken, accessToken);
+            
+            if (ret.success == true) {
+                const idList = user2.idFriendsRequests;
+                idList.push(user1.id);
+                await this.prismaService.user.update({ where: { username: usernameToRequest }, data: { idFriendsRequests: idList } });
+                return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
+            }
+        } catch (error) {
+            console.error('Error in sendFriendRequest:', error);
+        }
+        return { success: false };
+    }
+
+    async removeFriend(usernameToRemove: string, loginUser: string, refreshToken: string, accessToken: string): Promise<{success: boolean, accessToken?: string, refreshToken?:string}> {
+        try {
+            const user1 = await this.prismaService.user.findUnique({ where: { login: loginUser } });
+            const user2 = await this.prismaService.user.findUnique({ where: { username: usernameToRemove } });
+            const ret = await this.authService.checkToken(user1, refreshToken, accessToken);
+            if (ret.success == true) {
+                const idList = user1.idFriendsList;
+                const index = idList.indexOf(user2.id);
+                idList.splice(index, 1);
+                await this.prismaService.user.update({ where: { login: loginUser }, data: { idFriendsList: idList } });
+                const idList2 = user2.idFriendsList;
+                const index2 = idList2.indexOf(user1.id);
+                idList2.splice(index2, 1);
+                await this.prismaService.user.update({ where: { username: usernameToRemove }, data: { idFriendsList: idList2 } });
+                return {success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken};
+            }
+        }
+        catch (error) {
+            console.error('Error in removeFriend:', error);
         }
         return { success: false };
     }

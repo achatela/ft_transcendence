@@ -137,6 +137,29 @@ export default class SocialPage extends Component<IProps, IState> {
       }
     }
 
+  async removeFriend(): Promise<void> {
+    const request = await axios.post(
+      "http://localhost:3333/social/remove_friend",
+      JSON.stringify({
+        usernameToRemove: document.querySelector(".friend-list-name").innerHTML,
+        loginUser: sessionStorage.getItem("login"),
+        refreshToken: sessionStorage.getItem("refreshToken"),
+        accessToken: sessionStorage.getItem("accessToken"),
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (request.data.success === true) {
+      sessionStorage.setItem("refreshToken", request.data.refreshToken);
+      sessionStorage.setItem("accessToken", request.data.accessToken);
+      console.log("removed")
+    }
+    else {
+      console.log("failed to remove")
+    }
+    window.location.href = "http://localhost:3133/social";
+    return;
+  }
+
   render(): JSX.Element {
     return (
       <div>
@@ -145,7 +168,7 @@ export default class SocialPage extends Component<IProps, IState> {
         {this.state.friendList ? (
           <div className="friend-list">
             {this.state.friendList.map((request) => (
-              <FriendList key={request} name={request} />
+              <FriendList key={request} name={request} removeFriend={this.removeFriend} />
             ))}
           </div>
         ) : (

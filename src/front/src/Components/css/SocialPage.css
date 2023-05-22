@@ -76,7 +76,10 @@
 }
   
   .friend-request-name {
-    font-weight: bold;
+    margin-top: 0.7rem;
+    height: 2rem;
+    width: 100%;
+    overflow-x: auto;
   }
   
   .friend-request-accept,
@@ -91,12 +94,10 @@
 
   .friend-request-accept {
     background-color: #28a745;
-    margin-right: 15px;
   }
   
   .friend-request-decline {
     background-color: #dc3545;
-    margin-right: 10px;
   }
   
   .friend-request-accept:hover,
@@ -115,4 +116,23 @@
   padding: 0.5rem 1rem;
   border-bottom: 1px solid #ccc;
   font-size: 2rem;
+}
+
+.friend-list-delete {
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 0.25rem 0.5rem;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: #dc3545;
+  margin-right: 10px;
+}
+
+
+.friend-list-name {
+  margin-top: 0.7rem;
+  height: 2rem;
+  width: 70%;
+  overflow-x: auto;
 }

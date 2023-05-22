@@ -2,14 +2,14 @@ import React from 'react';
 
 interface FriendListProps {
     name: string;
+    removeFriend: () => void;
 }
 
-const FriendList: React.FC<FriendListProps> = ({ name }) => {
+const FriendList: React.FC<FriendListProps> = ({ name, removeFriend }) => {
   return (
     <div className="friend-list-item">
-      <span className="friend-list-name">{name}</span>
-      <div className="friend-list-buttons">
-      </div>
+      <div className="friend-list-name">{name}</div>
+      <button className="friend-list-delete" onClick={removeFriend}>Delete</button>
     </div>
   );
 };
