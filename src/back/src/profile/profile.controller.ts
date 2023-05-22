@@ -16,11 +16,6 @@ export class ProfileController {
   async getUserInfo(@Body() userInput: { login: string, refreshToken: string, accessToken: string} ): Promise<{userInfo: {username: string, wins: number, losses: number, avatar: string, ladderLevel: number}, refreshToken: string, accessToken: string}> {
     return await this.profileService.getUserInfo(userInput.login, userInput.refreshToken, userInput.accessToken);
   }
-  
-  @Post(":id/")
-  async getUserProfileById(@Body() userInput: { login: string, refreshToken: string, accessToken: string, id: number}): Promise<{success?: boolean, userInfo: { username?: string, wins?: number, losses?: number, avatar?: string, ladderLevel?: number}, refreshToken: string, accessToken: string}> {
-    return await this.profileService.getUserInfoById(userInput.id, userInput.login, userInput.refreshToken, userInput.accessToken);
-  }
 
   @Post('username')
   async getPlayerNumber(@Body() userInput: { login: string, refreshToken: string, accessToken: string} ): Promise<{username: string, refreshToken: string, accessToken: string}> {
@@ -99,5 +94,10 @@ export class ProfileController {
     }
 
     return await this.profileService.setUploadedAvatar(avatar, login, refreshToken, accessToken, fileExtension);
+  }
+
+  @Post(":id/")
+  async getUserProfileById(@Body() userInput: { login: string, refreshToken: string, accessToken: string, id: number}): Promise<{success?: boolean, userInfo: { username?: string, wins?: number, losses?: number, avatar?: string, ladderLevel?: number}, refreshToken: string, accessToken: string}> {
+    return await this.profileService.getUserInfoById(userInput.id, userInput.login, userInput.refreshToken, userInput.accessToken);
   }
 }

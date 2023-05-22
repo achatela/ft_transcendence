@@ -1,13 +1,3 @@
-.title {
-    position: absolute;
-    left: 50%;
-    top: 20%;
-    transform: translate(-50%, 50%);
-    font-size: 2vw;
-    color: white;
-    text-align: center;
-}
-
 .friend-list {
     position: absolute;
     border: 3px solid white;
@@ -54,7 +44,10 @@
 }
 
 .add-friend-input {
+  display: block;
   background: black;
+  /* margin-left: 11%; */
+  margin-left: calc(15% - 0.6rem);
   width: 70%;
   border: 3px solid white;
   padding: 0.5em;
@@ -62,6 +55,17 @@
   outline: none;
   margin-top: 1rem;
   font-size: 1rem;
+}
+
+.add-friend-button {
+  background: black;
+  border: 3px solid white;
+  padding: 0.5em;
+  color: white;
+  outline: none;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
 }
 
 /* Rules for items in FriendRequest.tsx */

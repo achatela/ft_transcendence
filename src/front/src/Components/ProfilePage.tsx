@@ -59,14 +59,11 @@ class ProfilePage extends Component<IProps, IState> {
         sessionStorage.setItem("refreshToken", request.data.refreshToken);
         sessionStorage.setItem("accessToken", request.data.accessToken);
         if (request.data.success === false)
-            window.location.href = 'http://localhost:3133/profile';
+            window.location.href = 'http://localhost:3133/profile/';
         return request.data.userInfo;
     }
 
     getUserInfo = async() => {
-        console.log(sessionStorage.getItem('login'),
-        sessionStorage.getItem("refreshToken"),
-        sessionStorage.getItem("accessToken"),)
         const response = await axios.post("http://localhost:3333/profile/user_info/", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
         sessionStorage.setItem("refreshToken", response.data.refreshToken);
         sessionStorage.setItem("accessToken", response.data.accessToken);
@@ -74,42 +71,42 @@ class ProfilePage extends Component<IProps, IState> {
     }
 
     getAvatar = async() => {
-        const response = await axios.post("http://localhost:3333/profile/avatar", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
+        const response = await axios.post("http://localhost:3333/profile/avatar/", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
         sessionStorage.setItem("refreshToken", response.data.refreshToken);
         sessionStorage.setItem("accessToken", response.data.accessToken);
         return response.data.avatar;
     }
 
     getUsername = async() => {
-        const response = await axios.post("http://localhost:3333/profile/username", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
+        const response = await axios.post("http://localhost:3333/profile/username/", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
         sessionStorage.setItem("refreshToken", response.data.refreshToken);
         sessionStorage.setItem("accessToken", response.data.accessToken);
         return response.data.username;
     }
 
     getWins = async() => {
-        const response = await axios.post("http://localhost:3333/profile/wins", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
+        const response = await axios.post("http://localhost:3333/profile/wins/", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
         sessionStorage.setItem("refreshToken", response.data.refreshToken);
         sessionStorage.setItem("accessToken", response.data.accessToken);
         return response.data.wins;
     }
 
     getLosses = async() => {
-        const response = await axios.post("http://localhost:3333/profile/losses", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
+        const response = await axios.post("http://localhost:3333/profile/losses/", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
         sessionStorage.setItem("refreshToken", response.data.refreshToken);
         sessionStorage.setItem("accessToken", response.data.accessToken);
         return response.data.losses;
     }
 
     getLadderLevel = async() => {
-        const response = await axios.post("http://localhost:3333/profile/ladder_level", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
+        const response = await axios.post("http://localhost:3333/profile/ladder_level/", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
         sessionStorage.setItem("refreshToken", response.data.refreshToken);
         sessionStorage.setItem("accessToken", response.data.accessToken);
         return response.data.ladderLevel;
     }
 
     getAchievements = async() => {
-        const response = await axios.post("http://localhost:3333/profile/achievements", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
+        const response = await axios.post("http://localhost:3333/profile/achievements/", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
         sessionStorage.setItem("refreshToken", response.data.refreshToken);
         sessionStorage.setItem("accessToken", response.data.accessToken);
         return response.data.achievements;
@@ -117,21 +114,21 @@ class ProfilePage extends Component<IProps, IState> {
 
     async componentDidMount(): Promise<void> {
         if (this.props.profileId === undefined) {
-            console.log("ici")
-        this.getUserInfo()
-            .then(userInfo => {
-                this.setState({
-                    username: userInfo.username,
-                    avatar: userInfo.avatar,
-                    wins: userInfo.wins,
-                    losses: userInfo.losses,
-                    ladderLevel: userInfo.ladderLevel,
-                    achievements: userInfo.achievements
+            console.log("ici?????????????")
+            this.getUserInfo()
+                .then(userInfo => {
+                    this.setState({
+                        username: userInfo.username,
+                        avatar: userInfo.avatar,
+                        wins: userInfo.wins,
+                        losses: userInfo.losses,
+                        ladderLevel: userInfo.ladderLevel,
+                        achievements: userInfo.achievements
+                    });
+                })
+                .catch(error => {
+                    console.error("Error fetching user info:", error);
                 });
-            })
-            .catch(error => {
-                console.error("Error fetching user info:", error);
-            });
         }
         else {
             console.log("impossible")
@@ -163,7 +160,7 @@ class ProfilePage extends Component<IProps, IState> {
             avatar.append('accessToken', sessionStorage.getItem('accessToken'));
             
             const request = await axios.post(
-              'http://localhost:3333/profile/upload',
+              'http://localhost:3333/profile/upload/',
               avatar,
               {
                 headers: {
@@ -174,7 +171,7 @@ class ProfilePage extends Component<IProps, IState> {
             sessionStorage.setItem("refreshToken", request.data.refreshToken);
             sessionStorage.setItem("accessToken", request.data.accessToken);
         }
-        window.location.href = 'http://localhost:3133/profile';
+        window.location.href = 'http://localhost:3133/profile/';
     };
 
     render() {

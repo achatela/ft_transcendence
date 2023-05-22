@@ -72,13 +72,21 @@ export class SocialService {
         return { success: false };
     } 
 
-    async sendFriendRequest(login: string, accessToken: string, refreshToken: string, usernameToRequest: string): Promise<{success: boolean, accessToken?: string, refreshToken?:string}> {
+    async sendFriendRequest(login: string, accessToken: string, refreshToken: string, usernameToRequest: string): Promise<{error?: string, success: boolean, accessToken?: string, refreshToken?:string}> {
+        //Change error to be: "User not found" or "User already in friend list"
         try {
             const user1 = await this.prismaService.user.findUnique({ where: { login: login } });
             const user2 = await this.prismaService.user.findUnique({ where: { username: usernameToRequest } });
             const ret = await this.authService.checkToken(user1, refreshToken, accessToken);
             
             if (ret.success == true) {
+                // check if user2 is already in friend list
+                const idCheck = user1.idFriendsList;
+                for (const id of idCheck) {
+                    if (id == user2.id) {
+                        return { error: "User already in friend list.", success: false , accessToken: ret.accessToken, refreshToken: ret.refreshToken};
+                    }
+                }
                 const idList = user2.idFriendsRequests;
                 idList.push(user1.id);
                 await this.prismaService.user.update({ where: { username: usernameToRequest }, data: { idFriendsRequests: idList } });
@@ -87,7 +95,7 @@ export class SocialService {
         } catch (error) {
             console.error('Error in sendFriendRequest:', error);
         }
-        return { success: false };
+        return { error: "User not found.", success: false };
     }
 
     async removeFriend(usernameToRemove: string, loginUser: string, refreshToken: string, accessToken: string): Promise<{success: boolean, accessToken?: string, refreshToken?:string}> {

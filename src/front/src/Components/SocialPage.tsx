@@ -22,7 +22,7 @@ export default class SocialPage extends Component<IProps, IState> {
 
   async getFriendRequests(): Promise<string[]> {
     const response = await axios.post(
-      "http://localhost:3333/social/friend_request",
+      "http://localhost:3333/social/friend_request/",
       JSON.stringify({
         login: sessionStorage.getItem("login"),
         refreshToken: sessionStorage.getItem("refreshToken"),
@@ -42,7 +42,7 @@ export default class SocialPage extends Component<IProps, IState> {
 
   async getFriendList(): Promise<string[]> {
     const response = await axios.post(
-      "http://localhost:3333/social/friend_list",
+      "http://localhost:3333/social/friend_list/",
       JSON.stringify({
         login: sessionStorage.getItem("login"),
         refreshToken: sessionStorage.getItem("refreshToken"),
@@ -71,7 +71,7 @@ export default class SocialPage extends Component<IProps, IState> {
   async acceptFunction(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
     let name = event.currentTarget.dataset.name;
     const request = await axios.post(
-        "http://localhost:3333/social/accept_friend_request",
+        "http://localhost:3333/social/accept_friend_request/",
         JSON.stringify({
             // problème peut-être à cause de cette ligne, doit encore test avec beaucoup de demandes, et/ou avec accents
             usernameToAccept: name,
@@ -89,14 +89,14 @@ export default class SocialPage extends Component<IProps, IState> {
     else {
         console.log("failed to accept")
     }
-  window.location.href = "http://localhost:3133/social";
+  window.location.href = "http://localhost:3133/social/";
 }      
 
 
 async declineFunction(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
   const name = event.currentTarget.dataset.name;
   const request = await axios.post(
-    "http://localhost:3333/social/decline_friend_request",
+    "http://localhost:3333/social/decline_friend_request/",
     JSON.stringify({
       usernameToDecline: name,
       loginUser: sessionStorage.getItem("login"),
@@ -113,14 +113,13 @@ async declineFunction(event: React.MouseEvent<HTMLButtonElement>): Promise<void>
   else {
     console.log("failed to decline")
   }
-  window.location.href = "http://localhost:3133/social";
+  window.location.href = "http://localhost:3133/social/";
 }
 
     async sendFriendRequest(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
-
       let inputElement = document.querySelector(".add-friend-input") as HTMLInputElement;
       const request = await axios.post(
-        "http://localhost:3333/social/send_friend_request",
+        "http://localhost:3333/social/send_friend_request/",
         JSON.stringify({
           usernameToSend: inputElement.value,
           loginUser: sessionStorage.getItem("login"),
@@ -132,10 +131,16 @@ async declineFunction(event: React.MouseEvent<HTMLButtonElement>): Promise<void>
       if (request.data.success === true) {
         sessionStorage.setItem("refreshToken", request.data.refreshToken);
         sessionStorage.setItem("accessToken", request.data.accessToken);
-        console.log("sent")
+        inputElement.value = "Friend request sent !";
       }
       else {
+        if (request.data.error === "User already in friend list."){
+          sessionStorage.setItem("refreshToken", request.data.refreshToken);
+          sessionStorage.setItem("accessToken", request.data.accessToken);
+          inputElement.value = request.data.error;
+        }
         console.log("failed to send")
+        inputElement.value = request.data.error;
       }
     }
 
@@ -159,15 +164,13 @@ async declineFunction(event: React.MouseEvent<HTMLButtonElement>): Promise<void>
       else {
         console.log("failed to remove")
       }
-      window.location.href = "http://localhost:3133/social";
+      window.location.href = "http://localhost:3133/social/";
       return;
   }  
 
   render(): JSX.Element {
     return (
       <div>
-        <h1 className="title">social page</h1>
-
         {this.state.friendList ? (
           <div className="friend-list">
             {this.state.friendList.map((request) => (
@@ -180,7 +183,7 @@ async declineFunction(event: React.MouseEvent<HTMLButtonElement>): Promise<void>
         <div className="add-friend">
           <p className="add-friend-text">Add Friend</p>
           <input className="add-friend-input" type="text"/>
-          <button onClick={this.sendFriendRequest}>Send</button>
+          <button className="add-friend-button" onClick={this.sendFriendRequest}>Send</button>
         </div>
         {this.state.friendRequests ? (
           <div className="friend-request">
