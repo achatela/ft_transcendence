@@ -3,6 +3,8 @@ import './css/ProfilePage.css';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
+// Still need to redirect when the id is not valid
+
 function withParams(WrappedComponent: React.ComponentType<any>) {
   return (props: any) => {
     const { profileId } = useParams<{ profileId: string }>();
@@ -22,7 +24,7 @@ interface IState {
     losses: number;
     ladderLevel: number;
     achievements: {};
-    profileId: string;
+    profileId: number;
 }
 
 class ProfilePage extends Component<IProps, IState> {
@@ -36,7 +38,7 @@ class ProfilePage extends Component<IProps, IState> {
             losses: 0,
             ladderLevel: 0,
             achievements: {},
-            profileId: props.profileId,
+            profileId: parseInt(props.profileId),
         };
         this.fileInputRef = React.createRef();  
     }
@@ -47,7 +49,7 @@ class ProfilePage extends Component<IProps, IState> {
             sessionStorage.getItem("refreshToken"),
             sessionStorage.getItem("accessToken"),)
         const request = await axios.post(
-            `localhost:3333/profile/${this.state.profileId}/`,
+            `http://localhost:3333/profile/${this.state.profileId}/`,
             JSON.stringify({
                 login: sessionStorage.getItem('login'),
                 refreshToken: sessionStorage.getItem("refreshToken"),
@@ -65,7 +67,7 @@ class ProfilePage extends Component<IProps, IState> {
         console.log(sessionStorage.getItem('login'),
         sessionStorage.getItem("refreshToken"),
         sessionStorage.getItem("accessToken"),)
-        const response = await axios.post("http://localhost:3333/profile/user_info", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
+        const response = await axios.post("http://localhost:3333/profile/user_info/", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), {headers: { 'Content-Type': 'application/json'}});
         sessionStorage.setItem("refreshToken", response.data.refreshToken);
         sessionStorage.setItem("accessToken", response.data.accessToken);
         return response.data.userInfo;
@@ -140,7 +142,7 @@ class ProfilePage extends Component<IProps, IState> {
                         avatar: userInfo.avatar,
                         wins: userInfo.wins,
                         losses: userInfo.losses,
-                        ladderLevel: userInfo.ladderLevel,
+                        ladderLevel: userInfo.level,
                         achievements: userInfo.achievements
                         });
                 })
