@@ -68,53 +68,55 @@ export default class SocialPage extends Component<IProps, IState> {
     this.setState({ friendList: friendList });
   }
 
-    async acceptFunction(): Promise<void> {
-        const request = await axios.post(
-            "http://localhost:3333/social/accept_friend_request",
-            JSON.stringify({
-                // problème peut-être à cause de cette ligne, doit encore test avec beaucoup de demandes, et/ou avec accents
-                usernameToAccept: document.querySelector(".friend-request-name").innerHTML,
-                loginUser: sessionStorage.getItem("login"),
-                refreshToken: sessionStorage.getItem("refreshToken"),
-                accessToken: sessionStorage.getItem("accessToken"),
-            }),
-            { headers: { "Content-Type": "application/json" } }
-        );
-        if (request.data.success === true) {
-            sessionStorage.setItem("refreshToken", request.data.refreshToken);
-            sessionStorage.setItem("accessToken", request.data.accessToken);
-            console.log("accepted")
-        }
-        else {
-            console.log("failed to accept")
-        }
-      window.location.href = "http://localhost:3133/social";
-    }      
-
-
-    async declineFunction(): Promise<void> {
-      const request = await axios.post(
-        "http://localhost:3333/social/decline_friend_request",
+  async acceptFunction(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
+    let name = event.currentTarget.dataset.name;
+    const request = await axios.post(
+        "http://localhost:3333/social/accept_friend_request",
         JSON.stringify({
-          usernameToDecline: document.querySelector(".friend-request-name").innerHTML,
-          loginUser: sessionStorage.getItem("login"),
-          refreshToken: sessionStorage.getItem("refreshToken"),
-          accessToken: sessionStorage.getItem("accessToken"),
+            // problème peut-être à cause de cette ligne, doit encore test avec beaucoup de demandes, et/ou avec accents
+            usernameToAccept: name,
+            loginUser: sessionStorage.getItem("login"),
+            refreshToken: sessionStorage.getItem("refreshToken"),
+            accessToken: sessionStorage.getItem("accessToken"),
         }),
         { headers: { "Content-Type": "application/json" } }
-      );
-      if (request.data.success === true) {
+    );
+    if (request.data.success === true) {
         sessionStorage.setItem("refreshToken", request.data.refreshToken);
         sessionStorage.setItem("accessToken", request.data.accessToken);
-        console.log("declined")
-      }
-      else {
-        console.log("failed to decline")
-      }
-      window.location.href = "http://localhost:3133/social";
+        console.log("accepted")
     }
+    else {
+        console.log("failed to accept")
+    }
+  window.location.href = "http://localhost:3133/social";
+}      
 
-    async sendFriendRequest(): Promise<void> {
+
+async declineFunction(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
+  const name = event.currentTarget.dataset.name;
+  const request = await axios.post(
+    "http://localhost:3333/social/decline_friend_request",
+    JSON.stringify({
+      usernameToDecline: name,
+      loginUser: sessionStorage.getItem("login"),
+      refreshToken: sessionStorage.getItem("refreshToken"),
+      accessToken: sessionStorage.getItem("accessToken"),
+    }),
+    { headers: { "Content-Type": "application/json" } }
+  );
+  if (request.data.success === true) {
+    sessionStorage.setItem("refreshToken", request.data.refreshToken);
+    sessionStorage.setItem("accessToken", request.data.accessToken);
+    console.log("declined")
+  }
+  else {
+    console.log("failed to decline")
+  }
+  window.location.href = "http://localhost:3133/social";
+}
+
+    async sendFriendRequest(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
 
       let inputElement = document.querySelector(".add-friend-input") as HTMLInputElement;
       const request = await axios.post(
@@ -137,28 +139,29 @@ export default class SocialPage extends Component<IProps, IState> {
       }
     }
 
-  async removeFriend(): Promise<void> {
-    const request = await axios.post(
-      "http://localhost:3333/social/remove_friend",
-      JSON.stringify({
-        usernameToRemove: document.querySelector(".friend-list-name").innerHTML,
-        loginUser: sessionStorage.getItem("login"),
-        refreshToken: sessionStorage.getItem("refreshToken"),
-        accessToken: sessionStorage.getItem("accessToken"),
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (request.data.success === true) {
-      sessionStorage.setItem("refreshToken", request.data.refreshToken);
-      sessionStorage.setItem("accessToken", request.data.accessToken);
-      console.log("removed")
-    }
-    else {
-      console.log("failed to remove")
-    }
-    window.location.href = "http://localhost:3133/social";
-    return;
-  }
+    async removeFriend(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
+      let name = event.currentTarget.dataset.name;
+      const request = await axios.post(
+        "http://localhost:3333/social/remove_friend",
+        JSON.stringify({
+          usernameToRemove: name,
+          loginUser: sessionStorage.getItem("login"),
+          refreshToken: sessionStorage.getItem("refreshToken"),
+          accessToken: sessionStorage.getItem("accessToken"),
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (request.data.success === true) {
+        sessionStorage.setItem("refreshToken", request.data.refreshToken);
+        sessionStorage.setItem("accessToken", request.data.accessToken);
+        console.log("removed")
+      }
+      else {
+        console.log("failed to remove")
+      }
+      window.location.href = "http://localhost:3133/social";
+      return;
+  }  
 
   render(): JSX.Element {
     return (

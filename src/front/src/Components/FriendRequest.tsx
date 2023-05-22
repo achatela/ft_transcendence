@@ -2,8 +2,8 @@ import React from 'react';
 
 interface FriendRequestProps {
     name: string;
-    acceptFunction: () => Promise<void>;
-    declineFunction: () => Promise<void>;
+    acceptFunction: (event: React.MouseEvent<HTMLButtonElement>) => Promise<void>;
+    declineFunction: (event: React.MouseEvent<HTMLButtonElement>) => Promise<void>;
 }
 
 const FriendRequest: React.FC<FriendRequestProps> = ({ name, acceptFunction, declineFunction }) => {
@@ -11,8 +11,8 @@ const FriendRequest: React.FC<FriendRequestProps> = ({ name, acceptFunction, dec
     <div className="friend-request-item">
       <div className="friend-request-name">{name}</div>
       <div className="friend-request-buttons">
-        <button className="friend-request-accept" onClick={acceptFunction}>Accept</button>
-        <button className="friend-request-decline" onClick={declineFunction}>Decline</button>
+        <button className="friend-request-accept" onClick={acceptFunction} data-name={name}>Accept</button>
+        <button className="friend-request-decline" onClick={declineFunction} data-name={name}>Decline</button>
       </div>
     </div>
   );
