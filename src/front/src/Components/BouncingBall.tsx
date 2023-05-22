@@ -103,18 +103,11 @@ class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
 
   updatePosition = () => {
     const { position, direction, speedValue } = this.state;
-
-    // const magnitude = Math.sqrt(direction.dx ** 2 + direction.dy ** 2);
-    // const normalisedSpeedX = direction.dx / magnitude;
-    // const normalisedSpeedY = direction.dy / magnitude;
-  
     let newX: number = position.x;
     let newY: number = position.y;
   
     newX += this.normalizedSpeedX * speedValue * this.speed;
     newY += this.normalizedSpeedY * speedValue * this.speed;
-  
-    // Use the stored element references
     const elements = [this.loginDiv, this.addedDiv, this.removeDiv].filter(el => el !== null) as HTMLElement[];
   
     if (newX > window.innerWidth - (12 + this.squareSize)

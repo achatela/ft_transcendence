@@ -16,7 +16,17 @@ export class SocialController {
     }
 
     @Post('decline_friend_request')
-    async declineFriendRequest(@Body() userInput: {usernameToAccept:string, loginUser: string, accessToken: string, refreshToken: string, }): Promise<{success: boolean, accessToken?: string, refreshToken?:string}> {
-        return await this.socialService.declineFriendRequest(userInput.usernameToAccept, userInput.loginUser,  userInput.accessToken, userInput.refreshToken);
+    async declineFriendRequest(@Body() userInput: {usernameToDecline:string, loginUser: string, accessToken: string, refreshToken: string, }): Promise<{success: boolean, accessToken?: string, refreshToken?:string}> {
+        return await this.socialService.declineFriendRequest(userInput.usernameToDecline, userInput.loginUser,  userInput.accessToken, userInput.refreshToken);
+    }
+
+    @Post('friend_list')
+    async getFriendList(@Body() userInput: {login: string, accessToken: string, refreshToken: string}): Promise<{success: boolean, accessToken?: string, refreshToken?:string, listFriend?: string[]}> {
+        return await this.socialService.getFriendList(userInput.login, userInput.accessToken, userInput.refreshToken);
+    }
+
+    @Post('send_friend_request')
+    async sendFriendRequest(@Body() userInput: {loginUser: string, accessToken: string, refreshToken: string, usernameToSend: string}): Promise<{success: boolean, accessToken?: string, refreshToken?:string}> {
+        return await this.socialService.sendFriendRequest(userInput.loginUser, userInput.accessToken, userInput.refreshToken, userInput.usernameToSend);
     }
 }

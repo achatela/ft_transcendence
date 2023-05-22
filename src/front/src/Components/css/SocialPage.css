@@ -10,26 +10,26 @@
 
 .friend-list {
     position: absolute;
-    border: 1px solid blue;
+    border: 3px solid white;
     right: calc(0.8rem + 0.65vw);
     width: 19vw;
-    height: calc(100vh - 9.6rem);
+    height: calc(100vh - 9.9rem - 8.4rem);
     margin-top: 8.4rem;
     overflow-y: auto;
 }
 
 .chat {
     position: absolute;
-    border: 1px solid white;
+    border: 3px solid white;
     top: 1.2rem;
     left: 1.2rem;
     width: calc(100vw - 20vw - 2.4rem);
-    height: calc(100vh - 2.4rem);
+    height: calc(100vh - 2.7rem);
 }
 
 .friend-request {
     position: absolute;
-    border: 1px solid red;
+    border: 3px solid white;
     right: calc(0.8rem + 0.65vw);
     width: 19vw;
     height: calc(100vh - (100vh - 9.6rem) - 2.7rem);
@@ -37,13 +37,43 @@
     overflow-y: auto;
 }
 
+.add-friend {
+    position: absolute;
+    border: 3px solid white;
+    right: calc(0.8rem + 0.65vw);
+    width: 19vw;
+    height: 8.4rem;
+    margin-top: 12rem;
+    text-align: center;
+    bottom: 1.1em;
+}
+
+.add-friend-text {
+  margin-top: 1rem;
+  font-size: 2rem;
+}
+
+.add-friend-input {
+  background: black;
+  width: 70%;
+  border: 3px solid white;
+  padding: 0.5em;
+  color: white;
+  outline: none;
+  margin-top: 1rem;
+  font-size: 1rem;
+}
+
+/* Rules for items in FriendRequest.tsx */
+
 .friend-request-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 1rem;
-    border-bottom: 1px solid #ccc;
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #ccc;
+  font-size: 2rem;
+}
   
   .friend-request-name {
     font-weight: bold;
@@ -73,5 +103,16 @@
   .friend-request-decline:hover {
     opacity: 0.8;
   }
+
   
-  
+
+/* Rules for items in FriendList.tsx */
+
+.friend-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #ccc;
+  font-size: 2rem;
+}
