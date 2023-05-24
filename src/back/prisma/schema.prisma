@@ -33,7 +33,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  messages  Message[]
+  enabled2FA Boolean @default(false)
+  secret2FA  String?
+
+  messages Message[]
 }
 
 model Message {
@@ -48,8 +51,8 @@ model Message {
 }
 
 model Chat {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   messages  Message[]
 }

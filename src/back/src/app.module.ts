@@ -13,10 +13,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { SocialController } from 'social/social.controller';
 import { SocialModule } from 'social/social.module';
 import { SocialService } from 'social/social.service';
+import { twoFaController } from './twoFa/twoFa.controller';
+import { twoFaModule } from './twoFa/twoFa.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, ProfileModule, JwtModule, SocialModule],
-  controllers: [AppController, ProfileController, AuthController, SocialController],
+  imports: [PrismaModule, AuthModule, ProfileModule, JwtModule, SocialModule, twoFaModule],
+  controllers: [AppController, ProfileController, AuthController, SocialController, twoFaController],
   providers: [AppService, ProfileService, SocialService],
 })
 export class AppModule {}

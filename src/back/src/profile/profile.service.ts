@@ -7,7 +7,6 @@ import { AuthService } from 'src/auth/auth.service';
 export class ProfileService {
   constructor(private prismaService: PrismaService, private authService: AuthService) {}
 
-
   async checkUserExists(login: string, refreshToken: string, accessToken: string, id: number): Promise<{ success: boolean; refreshToken: string; accessToken: string; }> {
     try {
       await this.prismaService.user.findUniqueOrThrow({ where: { id: id } });
