@@ -7,13 +7,13 @@ export class SocialService {
     constructor(private prismaService: PrismaService, private authService: AuthService) {}
         
     async getFriendRequest(login: string, accessToken: string, refreshToken: string): Promise<{success: boolean, accessToken?: string, refreshToken?: string, listRequest?: string[]}> {
-        const user = await this.prismaService.user.findUnique({ where: { login: login } });
+        const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
         const ret = await this.authService.checkToken(user, refreshToken, accessToken);
         if (ret.success == true) {
             const idList = user.idFriendsRequests;
             const listRequest = [];
             for (const id of idList) {
-                const user = await this.prismaService.user.findUnique({ where: { id: id } });
+                const user = await this.prismaService.user.findUniqueOrThrow({ where: { id: id } });
                 listRequest.push(user.username);
             }
             console.log("list request", listRequest);
@@ -23,8 +23,8 @@ export class SocialService {
     }
 
     async acceptFriendRequest(usernameToAccept:string, loginUser: string, accessToken: string, refreshToken: string): Promise<{success: boolean, accessToken?: string, refreshToken?:string}> {
-        const user1 = await this.prismaService.user.findUnique({ where: { login: loginUser } });
-        const user2 = await this.prismaService.user.findUnique({ where: { username: usernameToAccept } });
+        const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { login: loginUser } });
+        const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { username: usernameToAccept } });
         const ret = await this.authService.checkToken(user1, refreshToken, accessToken);
         if (ret.success == true) {
             const idList = user1.idFriendsList;
@@ -43,8 +43,8 @@ export class SocialService {
     }
 
     async declineFriendRequest(usernameToDecline:string, loginUser: string, accessToken: string, refreshToken: string): Promise<{success: boolean, accessToken?: string, refreshToken?:string}> {
-        const user1 = await this.prismaService.user.findUnique({ where: { login: loginUser } });
-        const user2 = await this.prismaService.user.findUnique({ where: { username: usernameToDecline } });
+        const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { login: loginUser } });
+        const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { username: usernameToDecline } });
         const ret = await this.authService.checkToken(user1, refreshToken, accessToken);
         if (ret.success == true) {
             const idList = user1.idFriendsRequests;
@@ -57,13 +57,13 @@ export class SocialService {
     }
 
     async getFriendList(login: string, accessToken: string, refreshToken: string): Promise<{success: boolean, accessToken?: string, refreshToken?:string, listFriend?: string[]}> {
-        const user = await this.prismaService.user.findUnique({ where: { login: login } });
+        const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
         const ret = await this.authService.checkToken(user, refreshToken, accessToken);
         if (ret.success == true) {
             const idList = user.idFriendsList;
             const listFriend = [];
             for (const id of idList) {
-                const userTmp = await this.prismaService.user.findUnique({ where: { id: id } });
+                const userTmp = await this.prismaService.user.findUniqueOrThrow({ where: { id: id } });
                 listFriend.push(userTmp.username);
             }
             console.log("list friend", listFriend);
@@ -75,8 +75,8 @@ export class SocialService {
     async sendFriendRequest(login: string, accessToken: string, refreshToken: string, usernameToRequest: string): Promise<{error?: string, success: boolean, accessToken?: string, refreshToken?:string}> {
         //Change error to be: "User not found" or "User already in friend list"
         try {
-            const user1 = await this.prismaService.user.findUnique({ where: { login: login } });
-            const user2 = await this.prismaService.user.findUnique({ where: { username: usernameToRequest } });
+            const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
+            const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { username: usernameToRequest } });
             const ret = await this.authService.checkToken(user1, refreshToken, accessToken);
             
             if (ret.success == true) {
@@ -100,8 +100,8 @@ export class SocialService {
 
     async removeFriend(usernameToRemove: string, loginUser: string, refreshToken: string, accessToken: string): Promise<{success: boolean, accessToken?: string, refreshToken?:string}> {
         try {
-            const user1 = await this.prismaService.user.findUnique({ where: { login: loginUser } });
-            const user2 = await this.prismaService.user.findUnique({ where: { username: usernameToRemove } });
+            const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { login: loginUser } });
+            const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { username: usernameToRemove } });
             const ret = await this.authService.checkToken(user1, refreshToken, accessToken);
             if (ret.success == true) {
                 const idList = user1.idFriendsList;

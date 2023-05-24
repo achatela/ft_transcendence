@@ -23,7 +23,7 @@ export class AuthController {
         }
         catch {
             const redirectUrl = this.authService.redirectUrl();
-            this.prismaService.createUser( {username: userInput.username });
+            await this.prismaService.createUser( {username: userInput.username });
             return {
                 success: true,
                 url: redirectUrl,
@@ -42,7 +42,7 @@ export class AuthController {
         if (personnal42Token.success === false)
             return {success: false, error: "getUserToken failure"};
         await this.prismaService.user.update({ where: { username: userInput.username }, data: { personnal42Token: personnal42Token.access_token } });
-        const user = await this.prismaService.user.findUnique({where: {username: userInput.username}});
+        const user = await this.prismaService.user.findUniqueOrThrow({where: {username: userInput.username}});
         const payload = {username: userInput.username, id: user.id};
         const refreshToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
         const accessToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '5m' });
@@ -73,7 +73,7 @@ export class AuthController {
             return {success: false, error: "Login doesn't exists"};
         }
         await this.prismaService.user.update({ where: { login: request.data.login }, data: { personnal42Token: personnal42Token.access_token } });
-        const user = await this.prismaService.user.findUnique({where: {login: request.data.login}});
+        const user = await this.prismaService.user.findUniqueOrThrow({where: {login: request.data.login}});
         const payload = {username: user.username, id: user.id};
         const refreshToken: string = this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
         const accessToken: string = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '5m' });

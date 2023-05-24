@@ -10,8 +10,8 @@ export class ProfileService {
 
   async checkUserExists(login: string, refreshToken: string, accessToken: string, id: number): Promise<{ success: boolean; refreshToken: string; accessToken: string; }> {
     try {
-      await this.prismaService.user.findUnique({ where: { id: id } });
-      const user = await this.prismaService.user.findUnique({ where: { login: login } });
+      await this.prismaService.user.findUniqueOrThrow({ where: { id: id } });
+      const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
       const ret = await this.authService.checkToken(user, refreshToken, accessToken);
       if (ret.success == true)
         return {success: true, refreshToken: ret.refreshToken, accessToken: ret.accessToken};
@@ -24,8 +24,8 @@ export class ProfileService {
 
   async getUserInfoById(id: number, login: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, userInfo: { username?: string, avatar?: string, wins?: number, losses?: number, level?: number}, accessToken: string, refreshToken: string}> {
     try {
-      const user = await this.prismaService.user.findUnique({ where: { login: login } });
-      const user2 = await this.prismaService.user.findUnique({ where: { id: id } });
+      const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
+      const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { id: id } });
       const ret = await this.authService.checkToken(user, refreshToken, accessToken);
       if (ret.success == true)
         return {success: true, userInfo: {  username: user2.username, avatar: user2.avatar, wins: user2.wins, losses: user2.losses, level: user2.ladderLevel }, accessToken: ret.accessToken, refreshToken: ret.refreshToken};
@@ -37,49 +37,49 @@ export class ProfileService {
   }
 
   async getUserInfo(login: string, refreshToken: string, accessToken: string): Promise<{userInfo: {username: string, wins: number, losses: number, avatar: string, ladderLevel: number}, refreshToken: string, accessToken: string}> {
-    const user = await this.prismaService.user.findUnique({ where: { login: login } });
+    const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
     const ret = await this.authService.checkToken(user, refreshToken, accessToken);
     if (ret.success == true)
       return {userInfo: {username: user.username, wins: user.wins, losses: user.losses, avatar: user.avatar, ladderLevel: user.ladderLevel}, refreshToken: ret.refreshToken, accessToken: ret.accessToken};
   }
 
   async getUsername(login: string, refreshToken: string, accessToken: string): Promise<{username: string, refreshToken: string, accessToken: string}> {
-    const user = await this.prismaService.user.findUnique({ where: { login: login } });
+    const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
     const ret = await this.authService.checkToken(user, refreshToken, accessToken);
     if (ret.success == true)
       return {username: user.username, refreshToken: ret.refreshToken, accessToken: ret.accessToken};
   }
 
   async getWins(login: string, refreshToken: string, accessToken: string): Promise<{wins: number, refreshToken: string, accessToken: string}> {
-    const user = await this.prismaService.user.findUnique({ where: { login: login } });
+    const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
     const ret = await this.authService.checkToken(user, refreshToken, accessToken);
     if (ret.success == true)
       return {wins: user.wins, refreshToken: ret.refreshToken, accessToken: ret.accessToken};
   }
 
   async getLosses(login: string, refreshToken: string, accessToken: string): Promise<{losses: number, refreshToken: string, accessToken: string}> {
-    const user = await this.prismaService.user.findUnique({ where: { login: login } });
+    const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
     const ret = await this.authService.checkToken(user, refreshToken, accessToken);
     if (ret.success == true)
       return {losses: user.losses, refreshToken: ret.refreshToken, accessToken: ret.accessToken};
   }
 
   async getAvatar(login: string, refreshToken: string, accessToken: string): Promise<{avatar: string, refreshToken: string, accessToken: string}> {
-    const user = await this.prismaService.user.findUnique({ where: { login: login } });
+    const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
     const ret = await this.authService.checkToken(user, refreshToken, accessToken);
     if (ret.success == true)
       return {avatar: user.avatar, refreshToken: ret.refreshToken, accessToken: ret.accessToken};
   }
   
   async getLadderLevel(login:string, refreshToken: string, accessToken: string): Promise<{ladderLevel: number, refreshToken: string, accessToken: string}> {
-    const user = await this.prismaService.user.findUnique({ where: { login: login } });
+    const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
     const ret = await this.authService.checkToken(user, refreshToken, accessToken);
     if (ret.success == true)
       return {ladderLevel: user.ladderLevel, refreshToken: ret.refreshToken, accessToken: ret.accessToken};
   }
 
   async setUploadedAvatar(avatar: FormData, login: string, refreshToken: string, accessToken: string, fileExtension: string): Promise<{ success: boolean; refreshToken: string; accessToken: string; }> {
-    const user = await this.prismaService.user.findUnique({ where: { login: login } });
+    const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
     const ret = await this.authService.checkToken(user, refreshToken, accessToken);
     if (ret.success == true) {
       await this.prismaService.user.update({ where: { username: user.username }, data: { avatar: "http://localhost:3333/uploads/" + login + "." + fileExtension } });
