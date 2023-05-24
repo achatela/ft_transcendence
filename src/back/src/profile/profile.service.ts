@@ -7,6 +7,21 @@ import { AuthService } from 'src/auth/auth.service';
 export class ProfileService {
   constructor(private prismaService: PrismaService, private authService: AuthService) {}
 
+
+  async checkUserExists(login: string, refreshToken: string, accessToken: string, id: number): Promise<{ success: boolean; refreshToken: string; accessToken: string; }> {
+    try {
+      await this.prismaService.user.findUnique({ where: { id: id } });
+      const user = await this.prismaService.user.findUnique({ where: { login: login } });
+      const ret = await this.authService.checkToken(user, refreshToken, accessToken);
+      if (ret.success == true)
+        return {success: true, refreshToken: ret.refreshToken, accessToken: ret.accessToken};
+    }
+    catch(e) { 
+      console.log("Error in checkUserExists: Can't find user with id: ", id);
+      return { success: false, refreshToken: refreshToken, accessToken: accessToken};
+    }
+  }
+
   async getUserInfoById(id: number, login: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, userInfo: { username?: string, avatar?: string, wins?: number, losses?: number, level?: number}, accessToken: string, refreshToken: string}> {
     try {
       const user = await this.prismaService.user.findUnique({ where: { login: login } });

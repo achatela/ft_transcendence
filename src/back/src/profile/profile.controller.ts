@@ -42,6 +42,11 @@ export class ProfileController {
     return await this.profileService.getLadderLevel(userInput.login, userInput.refreshToken, userInput.accessToken);
   }
 
+  @Post('user_check')
+  async checkUserExists(@Body() userInput: { login: string, refreshToken: string, accessToken: string, id: number} ): Promise<{success: boolean, refreshToken: string, accessToken: string}> {
+    return await this.profileService.checkUserExists(userInput.login, userInput.refreshToken, userInput.accessToken, userInput.id);
+  }
+
   @Post('upload')
   @UseInterceptors(FileInterceptor('avatar', {
     storage: diskStorage({

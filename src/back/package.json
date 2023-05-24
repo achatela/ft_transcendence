@@ -27,6 +27,7 @@
     "@nestjs/platform-express": "^9.0.0",
     "@prisma/client": "^4.13.0",
     "axios": "^1.4.0",
+    "jsonwebtoken": "^9.0.0",
     "multer": "^1.4.5-lts.1",
     "nestjs-form-data": "^1.8.7",
     "passport": "^0.6.0",

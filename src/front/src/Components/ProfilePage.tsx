@@ -42,10 +42,6 @@ class ProfilePage extends Component<IProps, IState> {
     }
 
     getUserInfoId = async() => {
-        console.log(
-            sessionStorage.getItem('login'),
-            sessionStorage.getItem("refreshToken"),
-            sessionStorage.getItem("accessToken"),)
         const request = await axios.post(
             `http://localhost:3333/profile/${this.state.profileId}/`,
             JSON.stringify({
@@ -114,7 +110,6 @@ class ProfilePage extends Component<IProps, IState> {
 
     async componentDidMount(): Promise<void> {
         if (this.props.profileId === undefined) {
-            console.log("ici?????????????")
             this.getUserInfo()
                 .then(userInfo => {
                     this.setState({
@@ -131,7 +126,7 @@ class ProfilePage extends Component<IProps, IState> {
                 });
         }
         else {
-            console.log("impossible")
+            this.checkUserExists()
             this.getUserInfoId()
                 .then(userInfo => {
                     this.setState({
@@ -148,6 +143,14 @@ class ProfilePage extends Component<IProps, IState> {
                 }
             );
         }
+    }
+
+    async checkUserExists() {
+        const request = await axios.post('http://localhost:3333/profile/user_check/', JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken"), id: this.state.profileId }), { headers: { 'Content-Type': 'application/json' } });
+        if (request.data.success === false)
+            window.location.href = 'http://localhost:3133/profile/';
+        sessionStorage.setItem("refreshToken", request.data.refreshToken);
+        sessionStorage.setItem("accessToken", request.data.accessToken);
     }
 
     async fileChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -183,9 +186,11 @@ class ProfilePage extends Component<IProps, IState> {
             <div>
                 <p className="userName">{this.state.username}</p>
                 <div className="pictureProfile" id="pfpPlaceholder" style={{backgroundImage: `url(${this.state.avatar})`}}>
-                    <button className="downloadButton" onClick={() => this.fileInputRef.current!.click()}> 
-                        <input accept="image/*" type="file" className="visuallyHidden" ref={this.fileInputRef} onChange={event => this.fileChange(event)}></input>
-                    </button>
+                    {this.props.profileId === undefined &&
+                        <button className="downloadButton" onClick={() => this.fileInputRef.current!.click()}> 
+                            <input accept="image/*" type="file" className="visuallyHidden" ref={this.fileInputRef} onChange={event => this.fileChange(event)}></input>
+                        </button>
+                    }
                 </div>
                 <div className="stats">
                     <div className="winLose">
