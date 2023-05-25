@@ -12,4 +12,4 @@ import { SocialService } from './social.service';
     controllers: [SocialController],
     providers: [SocialService, PrismaService],
 })
-export class SocialModule {}
+export class SocialModule { }

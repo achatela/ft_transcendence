@@ -10,40 +10,40 @@ import * as path from 'path';
 
 @Controller('profile')
 export class ProfileController {
-  constructor(private readonly profileService: ProfileService, private authService: AuthService) {}
+  constructor(private readonly profileService: ProfileService, private authService: AuthService) { }
 
   @Post('user_info')
-  async getUserInfo(@Body() userInput: { login: string, refreshToken: string, accessToken: string} ): Promise<{userInfo: {username: string, wins: number, losses: number, avatar: string, ladderLevel: number}, refreshToken: string, accessToken: string}> {
+  async getUserInfo(@Body() userInput: { login: string, refreshToken: string, accessToken: string }): Promise<{ userInfo: { username: string, wins: number, losses: number, avatar: string, ladderLevel: number }, refreshToken: string, accessToken: string }> {
     return await this.profileService.getUserInfo(userInput.login, userInput.refreshToken, userInput.accessToken);
   }
 
   @Post('username')
-  async getPlayerNumber(@Body() userInput: { login: string, refreshToken: string, accessToken: string} ): Promise<{username: string, refreshToken: string, accessToken: string}> {
+  async getPlayerNumber(@Body() userInput: { login: string, refreshToken: string, accessToken: string }): Promise<{ username: string, refreshToken: string, accessToken: string }> {
     return await this.profileService.getUsername(userInput.login, userInput.refreshToken, userInput.accessToken);
   }
 
   @Post('wins')
-  async getWins(@Body() userInput: { login: string, refreshToken: string, accessToken: string} ): Promise<{wins: number, refreshToken: string, accessToken: string}> {
+  async getWins(@Body() userInput: { login: string, refreshToken: string, accessToken: string }): Promise<{ wins: number, refreshToken: string, accessToken: string }> {
     return await this.profileService.getWins(userInput.login, userInput.refreshToken, userInput.accessToken);
   }
 
   @Post('losses')
-  async getLosses(@Body() userInput: { login: string, refreshToken: string, accessToken: string} ): Promise<{losses: number, refreshToken: string, accessToken: string}> {
+  async getLosses(@Body() userInput: { login: string, refreshToken: string, accessToken: string }): Promise<{ losses: number, refreshToken: string, accessToken: string }> {
     return await this.profileService.getLosses(userInput.login, userInput.refreshToken, userInput.accessToken);
   }
 
   @Post('avatar')
-  async getAvatar(@Body() userInput: { login: string, refreshToken: string, accessToken: string} ): Promise<{avatar: string, refreshToken: string, accessToken: string}> {
+  async getAvatar(@Body() userInput: { login: string, refreshToken: string, accessToken: string }): Promise<{ avatar: string, refreshToken: string, accessToken: string }> {
     return await this.profileService.getAvatar(userInput.login, userInput.refreshToken, userInput.accessToken);
   }
 
   @Post('ladder_level')
-  async getLadderLevel(@Body() userInput: { login: string, refreshToken: string, accessToken: string} ): Promise<{ladderLevel: number, refreshToken: string, accessToken: string}> {
+  async getLadderLevel(@Body() userInput: { login: string, refreshToken: string, accessToken: string }): Promise<{ ladderLevel: number, refreshToken: string, accessToken: string }> {
     return await this.profileService.getLadderLevel(userInput.login, userInput.refreshToken, userInput.accessToken);
   }
 
   @Post('user_check')
-  async checkUserExists(@Body() userInput: { login: string, refreshToken: string, accessToken: string, id: number} ): Promise<{success: boolean, refreshToken: string, accessToken: string}> {
+  async checkUserExists(@Body() userInput: { login: string, refreshToken: string, accessToken: string, id: number }): Promise<{ success: boolean, refreshToken: string, accessToken: string }> {
     return await this.profileService.checkUserExists(userInput.login, userInput.refreshToken, userInput.accessToken, userInput.id);
   }
 
@@ -66,13 +66,13 @@ export class ProfileController {
     const oldPath = path.join(__dirname, '../uploads', `undefined.${fileExtension}`);
     const newPath = path.join(__dirname, '../uploads', `${login}.${fileExtension}`);
     const directory = path.join(__dirname, '../uploads');
-    
+
     try {
       const files = fs.readdirSync(directory);
       const filesToDelete = files.filter(file => file.startsWith(login));
       for (const file of filesToDelete) {
         const filePath = path.join(directory, file);
-    
+
         try {
           fs.unlinkSync(filePath);
           console.log(`Old avatar deleted: ${file}`);
@@ -102,7 +102,7 @@ export class ProfileController {
   }
 
   @Post(":id/")
-  async getUserProfileById(@Body() userInput: { login: string, refreshToken: string, accessToken: string, id: number}): Promise<{success?: boolean, userInfo: { username?: string, wins?: number, losses?: number, avatar?: string, ladderLevel?: number}, refreshToken: string, accessToken: string}> {
+  async getUserProfileById(@Body() userInput: { login: string, refreshToken: string, accessToken: string, id: number }): Promise<{ success?: boolean, userInfo: { username?: string, wins?: number, losses?: number, avatar?: string, ladderLevel?: number }, refreshToken: string, accessToken: string }> {
     return await this.profileService.getUserInfoById(userInput.id, userInput.login, userInput.refreshToken, userInput.accessToken);
   }
 }

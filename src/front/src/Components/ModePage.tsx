@@ -2,7 +2,7 @@ import { Component } from 'react';
 import './css/ModePage.css'
 import axios from 'axios';
 
-interface IProps {}
+interface IProps { }
 
 interface IState {
     currentPlayers: number;
@@ -16,7 +16,7 @@ class ModePage extends Component<IProps, IState> {
         };
     }
 
-    getCurrentPlayer = async () =>{
+    getCurrentPlayer = async () => {
         const response = await fetch('http://localhost:3333/player_number');
         const data = await response.json();
         return data.currentPlayers;
@@ -31,7 +31,7 @@ class ModePage extends Component<IProps, IState> {
                 console.error("Error fetching current players:", error);
             });
     }
-    
+
 
     // componentDidUpdate(prevProps: Readonly<{}>, prevState: Readonly<{}>, snapshot?: any): void {
     //     this.getCurrentPlayers();
@@ -39,17 +39,17 @@ class ModePage extends Component<IProps, IState> {
 
     render() {
         return (
-        <div className="divModePage">
-            <p className="modePageTitle">Select a Game Mode: {this.state.currentPlayers}</p>
-            <div className="normalGameMode">
-                <p className="classicPong">Classic Pong</p>
-            <div className="imgPlaceHolder"></div>
+            <div className="divModePage">
+                <p className="modePageTitle">Select a Game Mode: {this.state.currentPlayers}</p>
+                <div className="normalGameMode">
+                    <p className="classicPong">Classic Pong</p>
+                    <div className="imgPlaceHolder"></div>
+                </div>
+                <div className="customGameMode">
+                    <p className="customPong">Custom Pong</p>
+                    <div className="imgPlaceHolder2"></div>
+                </div>
             </div>
-            <div className="customGameMode">
-                <p className="customPong">Custom Pong</p>
-                <div className="imgPlaceHolder2"></div>
-            </div>
-        </div>
         );
     }
 }

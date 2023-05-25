@@ -20,28 +20,28 @@ class TwoFa extends Component<IProps, IState> {
 
     generateKey = async () => {
         const request = await axios.post('http://localhost:3333/2fa/create',
-        JSON.stringify(
-        {
-            login: sessionStorage.getItem('login'),
-            refreshToken: sessionStorage.getItem('refreshToken'),
-            accessToken: sessionStorage.getItem('accessToken'),
-        }
+            JSON.stringify(
+                {
+                    login: sessionStorage.getItem('login'),
+                    refreshToken: sessionStorage.getItem('refreshToken'),
+                    accessToken: sessionStorage.getItem('accessToken'),
+                }
 
-        ),
-        {headers: { 'Content-Type': 'application/json'}});
+            ),
+            { headers: { 'Content-Type': 'application/json' } });
         console.log(request.data);
     }
 
     sendInput = async () => {
         const request = await axios.post("http://localhost:3333/2fa/verify",
-        JSON.stringify(
-        {
-            token: "252911",
-            login: sessionStorage.getItem('login'),
-            // refreshToken: sessionStorage.getItem('refreshToken'),
-            // accessToken: sessionStorage.getItem('accessToken'),
-        }),
-        {headers: { 'Content-Type': 'application/json'}});
+            JSON.stringify(
+                {
+                    token: "252911",
+                    login: sessionStorage.getItem('login'),
+                    // refreshToken: sessionStorage.getItem('refreshToken'),
+                    // accessToken: sessionStorage.getItem('accessToken'),
+                }),
+            { headers: { 'Content-Type': 'application/json' } });
         console.log(request.data);
     }
 

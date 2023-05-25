@@ -10,7 +10,7 @@ const jwt = require('jsonwebtoken');
 export class AuthService {
     tokenApp: string;
     countdown: number;
-    
+
     constructor(private prismaService: PrismaService, private jwtService: JwtService) {
         this.init();
     }
@@ -49,7 +49,7 @@ export class AuthService {
     }
 
 
-    async getUserToken(userCode: string): Promise<{success: boolean, access_token?: string, expires_in?: string}> {
+    async getUserToken(userCode: string): Promise<{ success: boolean, access_token?: string, expires_in?: string }> {
         const requestBody = new URLSearchParams({
             grant_type: 'authorization_code',
             client_id: process.env.FORTY_TWO_UID,
@@ -57,8 +57,8 @@ export class AuthService {
             code: userCode,
             redirect_uri: "http://localhost:3133"
         });
-    
-        try{
+
+        try {
             const request = await axios.post("https://api.intra.42.fr/oauth/token", requestBody.toString(), {
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded",
@@ -71,9 +71,9 @@ export class AuthService {
             // Create the user in the database
             return { success: true, access_token: token, expires_in: tokenExpires };
         }
-        catch{
+        catch {
             console.error("in getUserToken catch");
-            return {success: false};
+            return { success: false };
         }
     }
 
@@ -103,28 +103,28 @@ export class AuthService {
 
     async checkToken(user: User, refreshToken: string, accessToken: string): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
         if (user.accessToken === accessToken) {
-            try{
+            try {
                 await this.jwtService.verify(accessToken, { secret: process.env.JWT_ACCESS_SECRET });
             }
-            catch{
+            catch {
                 if (user.refreshToken === refreshToken) {
-                    const payload = {username: user.username, id: user.id};
+                    const payload = { username: user.username, id: user.id };
                     accessToken = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '5m' });
                     await this.prismaService.user.update({ where: { username: user.username }, data: { accessToken: accessToken } });
-                    try{
+                    try {
                         await this.jwtService.verify(refreshToken, { secret: process.env.JWT_REFRESH_SECRET });
                     }
-                    catch{
+                    catch {
                         refreshToken = this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
                         await this.prismaService.user.update({ where: { username: user.username }, data: { refreshToken: refreshToken } });
-                        return {success: true, refreshToken: refreshToken, accessToken: accessToken};
+                        return { success: true, refreshToken: refreshToken, accessToken: accessToken };
                     }
-                    return {success: true, refreshToken: refreshToken, accessToken: accessToken};
+                    return { success: true, refreshToken: refreshToken, accessToken: accessToken };
                 }
-                return {success: false};
+                return { success: false };
             }
-          return {success: true, refreshToken: refreshToken, accessToken: accessToken};
+            return { success: true, refreshToken: refreshToken, accessToken: accessToken };
         }
-        return {success: false};
+        return { success: false };
     }
 }

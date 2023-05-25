@@ -2,20 +2,20 @@ import React, { Component } from 'react';
 import './css/GameBoard.css';
 import axios from 'axios';
 
-const upArrow:number = 38;
-const downArrow:number = 40;
-const zKey:number = 90;
-const sKey:number = 83;
-const speedMultiplier:number = 8;
-const paddleStep:number = 25;
-const paddleHeight:number = 100;
-const paddleMid:number = paddleHeight / 2;
-const paddleGap:number = 50;
-const paddleWidth:number = 20;
-const squareSize:number = 20;
-const midSquare:number = squareSize / 2;
+const upArrow: number = 38;
+const downArrow: number = 40;
+const zKey: number = 90;
+const sKey: number = 83;
+const speedMultiplier: number = 8;
+const paddleStep: number = 25;
+const paddleHeight: number = 100;
+const paddleMid: number = paddleHeight / 2;
+const paddleGap: number = 50;
+const paddleWidth: number = 20;
+const squareSize: number = 20;
+const midSquare: number = squareSize / 2;
 
-interface IProps{}
+interface IProps { }
 
 interface IState {
     ballX: number;
@@ -48,7 +48,7 @@ class GameBoard extends Component<IProps, IState> {
             ballX: 0,
             ballY: 0
         };
-        this.interval = setInterval(() => {}, 10);
+        this.interval = setInterval(() => { }, 10);
         this.rect = null;
         this.leftPaddleCollision = false;
         this.rightPaddleCollision = false;
@@ -68,11 +68,11 @@ class GameBoard extends Component<IProps, IState> {
         }));
 
         window.addEventListener('resize', this.handleResize)
- 
+
         this.interval = setInterval(this.renderBall, 10);
         document.addEventListener('keydown', (event) => {
             if (event.keyCode === upArrow) {
-                if (this.state.rightPaddleY < paddleStep){
+                if (this.state.rightPaddleY < paddleStep) {
                     this.setState((prevState) => ({
                         rightPaddleY: 0,
                     }));
@@ -93,8 +93,8 @@ class GameBoard extends Component<IProps, IState> {
                         rightPaddleY: prevState.rightPaddleY + paddleStep,
                     }));
             }
-            else if (event.keyCode === zKey){
-                if (this.state.leftPaddleY < paddleStep){
+            else if (event.keyCode === zKey) {
+                if (this.state.leftPaddleY < paddleStep) {
                     this.setState((prevState) => ({
                         leftPaddleY: 0,
                     }));
@@ -105,7 +105,7 @@ class GameBoard extends Component<IProps, IState> {
                     }));
                 }
             }
-            else if (event.keyCode === sKey){
+            else if (event.keyCode === sKey) {
                 if (this.state.leftPaddleY + paddleHeight + paddleStep > bottomBorder)
                     this.setState((prevState) => ({
                         leftPaddleY: bottomBorder - paddleHeight - 4,
@@ -128,25 +128,25 @@ class GameBoard extends Component<IProps, IState> {
         // Needs to remove event listener
     }
 
-      
+
     checkPaddleCollision(ballX: number, ballY: number, paddleX: number, paddleY: number) {
         const ballLeft = ballX;
         const ballRight = ballX + squareSize;
         const ballTop = ballY;
         const ballBottom = ballY + squareSize;
-      
+
         const paddleLeft = paddleX;
         const paddleRight = paddleX + paddleWidth;
         const paddleTop = paddleY;
         const paddleBottom = paddleY + paddleHeight;
-      
+
         // Check if ball and paddle are colliding
         if (ballRight > paddleLeft && ballLeft < paddleRight && ballBottom > paddleTop && ballTop < paddleBottom) {
-          return true;
+            return true;
         }
         return false;
-      }
-      
+    }
+
 
     renderBall = () => {
         const newX = this.state.ballX + this.state.ballDirectionX * speedMultiplier;
@@ -215,9 +215,9 @@ class GameBoard extends Component<IProps, IState> {
             <div className="gameBoard">
                 <p className="leftScore">{this.state.leftPlayerScore}</p>
                 <p className="rightScore">{this.state.rightPlayerScore}</p>
-                <div className="leftPaddle" style={{top: this.state.leftPaddleY}}></div>
-                <div className="ball" style={{ left: this.state.ballX, top: this.state.ballY}}></div>
-                <div className="rightPaddle" style={{top: this.state.rightPaddleY}}></div>
+                <div className="leftPaddle" style={{ top: this.state.leftPaddleY }}></div>
+                <div className="ball" style={{ left: this.state.ballX, top: this.state.ballY }}></div>
+                <div className="rightPaddle" style={{ top: this.state.rightPaddleY }}></div>
             </div>
         );
     }

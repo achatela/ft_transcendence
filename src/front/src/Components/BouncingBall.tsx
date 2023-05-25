@@ -8,7 +8,7 @@ interface State {
   speedValue: number;
 }
 
-class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
+class BouncingBall extends Component<{ speed: number, loginDiv: any }, State> {
   animationRef: number;
   lastFrameTime: number;
   speed: number;
@@ -20,11 +20,11 @@ class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
   magnitude: number;
   normalizedSpeedX: number;
   normalizedSpeedY: number;
-  constructor(props: {speed: number, loginDiv: any}) {
+  constructor(props: { speed: number, loginDiv: any }) {
     super(props);
     this.state = {
       start: 0,
-      position: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight},
+      position: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight },
       direction: { dx: Math.random() * 2 - 1, dy: Math.random() * 2 - 1 },
       speedValue: 1,
     };
@@ -56,13 +56,13 @@ class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
     ) {
       return false;
     }
-  
+
     const elements = [
       document.querySelector(".login-div"),
       document.querySelector(".addBallButton"),
       document.querySelector(".removeBallButton"),
     ];
-  
+
     // Check if the position overlaps with any of the elements
     for (const element of elements) {
       if (element) {
@@ -77,10 +77,10 @@ class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
         }
       }
     }
-  
+
     // If the position is valid, return true
     return true;
-  };  
+  };
 
   checkCollisions = (newX: number, newY: number, squareSize: number, elements: HTMLElement[]) => {
     for (const element of elements) {
@@ -105,11 +105,11 @@ class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
     const { position, direction, speedValue } = this.state;
     let newX: number = position.x;
     let newY: number = position.y;
-  
+
     newX += this.normalizedSpeedX * speedValue * this.speed;
     newY += this.normalizedSpeedY * speedValue * this.speed;
     const elements = [this.loginDiv, this.addedDiv, this.removeDiv].filter(el => el !== null) as HTMLElement[];
-  
+
     if (newX > window.innerWidth - (12 + this.squareSize)
       || newX < 12
       || this.checkCollisions(newX, position.y, this.squareSize, elements)) {
@@ -138,10 +138,10 @@ class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
   handleResize = () => {
     let newPosition = this.state.position;
     newPosition = this.getRandomPosition();
-    while (this.isValidSpawn(newPosition.x, newPosition.y, this.squareSize) === false){
+    while (this.isValidSpawn(newPosition.x, newPosition.y, this.squareSize) === false) {
       newPosition = this.getRandomPosition();
     }
-    this.setState({position: newPosition});
+    this.setState({ position: newPosition });
   };
 
   componentDidMount() {
@@ -166,27 +166,26 @@ class BouncingBall extends Component<{speed: number, loginDiv: any}, State> {
     speedSlider.addEventListener('input', this.handleSpeedChange);
     this.handleSpeedChange();
   }
-  
+
   componentWillUnmount() {
     const speedSlider = document.getElementById('myRange');
     cancelAnimationFrame(this.animationRef);
     clearInterval(this.intervalId);
     speedSlider!.removeEventListener('input', this.handleSpeedChange);
   }
-  
+
   getRandomPosition = () => {
     return {
       x: Math.random() * window.innerWidth,
       y: Math.random() * window.innerHeight,
     };
   };
-  
+
   render() {
     return (
       <div className="bouncing-ball" style={{ left: this.state.position.x, top: this.state.position.y }}></div>
     );
   }
-  }
-  
-  export default BouncingBall;
-  
+}
+
+export default BouncingBall;

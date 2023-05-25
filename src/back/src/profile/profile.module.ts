@@ -12,4 +12,4 @@ import { JwtModule } from '@nestjs/jwt';
     controllers: [ProfileController],
     providers: [ProfileService, PrismaService],
 })
-export class ProfileModule {}
+export class ProfileModule { }

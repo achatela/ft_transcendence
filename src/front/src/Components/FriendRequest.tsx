@@ -1,9 +1,9 @@
 import React from 'react';
 
 interface FriendRequestProps {
-    name: string;
-    acceptFunction: (event: React.MouseEvent<HTMLButtonElement>) => Promise<void>;
-    declineFunction: (event: React.MouseEvent<HTMLButtonElement>) => Promise<void>;
+  name: string;
+  acceptFunction: (event: React.MouseEvent<HTMLButtonElement>) => Promise<void>;
+  declineFunction: (event: React.MouseEvent<HTMLButtonElement>) => Promise<void>;
 }
 
 const FriendRequest: React.FC<FriendRequestProps> = ({ name, acceptFunction, declineFunction }) => {

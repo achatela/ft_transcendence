@@ -5,22 +5,22 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class twoFaService {
-    constructor(private authService: AuthService, private prismaService: PrismaService) {}
+    constructor(private authService: AuthService, private prismaService: PrismaService) { }
 
     async create2Fa(login: string, accessToken: string, refreshToken: string): Promise<void> {
-        try{
+        try {
             const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
-            const secret = speakeasy.generateSecret({account: "ft_transcendence" , name: '42'})
+            const secret = speakeasy.generateSecret({ account: "ft_transcendence", name: '42' })
             // const ret = await this.authService.checkToken(user, refreshToken, accessToken);
             // if (ret.success == true) {
-                await this.prismaService.user.update({ where: { login: login }, data: { secret2FA: secret.secret } });
+            await this.prismaService.user.update({ where: { login: login }, data: { secret2FA: secret.secret } });
             // }
             console.log(secret);
         }
         catch (e) {
             console.log("Error while creating 2FA");
         }
-        return ;
+        return;
     }
 
     async verify2Fa(token: number, login: string): Promise<void> {
@@ -35,6 +35,6 @@ export class twoFaService {
         catch (e) {
             console.log("Error while verifying 2FA", e);
         }
-        return ;
+        return;
     }
 }

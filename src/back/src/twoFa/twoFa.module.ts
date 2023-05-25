@@ -6,9 +6,9 @@ import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
-      AuthModule,
+    AuthModule,
   ],
   providers: [twoFaService, AuthService, PrismaService],
   exports: [twoFaService],
 })
-export class twoFaModule {}
+export class twoFaModule { }

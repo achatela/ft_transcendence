@@ -41,7 +41,8 @@ export default function HomePage(props: any) {
   }
 
   function removeBall() {
-    setBalls((prevBalls) => {"accessToken"
+    setBalls((prevBalls) => {
+      "accessToken"
       if (prevBalls.length > 1) {
         return prevBalls.slice(0, -1);
       } else {
@@ -54,10 +55,10 @@ export default function HomePage(props: any) {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
 
-    if (sessionStorage.getItem('sign in') === 'true'){
+    if (sessionStorage.getItem('sign in') === 'true') {
       sessionStorage.setItem('sign in', 'false');
-      if (code){
-        const request = await axios.post('http://localhost:3333/auth/verify_sign_in', JSON.stringify({ code: code }), {headers: { 'Content-Type': 'application/json'}});
+      if (code) {
+        const request = await axios.post('http://localhost:3333/auth/verify_sign_in', JSON.stringify({ code: code }), { headers: { 'Content-Type': 'application/json' } });
         if (request.data.success == true) {
           sessionStorage.removeItem('accessToken')
           sessionStorage.setItem("accessToken", request.data.accessToken);
@@ -74,11 +75,11 @@ export default function HomePage(props: any) {
       }
       else
         ;
-      return ;
+      return;
     }
     if (code) {
       const username = sessionStorage.getItem('username');
-      const request = await axios.post('http://localhost:3333/auth/get_code', JSON.stringify({ code: code, username: username }), {headers: { 'Content-Type': 'application/json'}});
+      const request = await axios.post('http://localhost:3333/auth/get_code', JSON.stringify({ code: code, username: username }), { headers: { 'Content-Type': 'application/json' } });
       if (request.data.success == true) {
         sessionStorage.setItem("accessToken", request.data.accessToken);
         sessionStorage.setItem("login", request.data.login);
@@ -93,9 +94,9 @@ export default function HomePage(props: any) {
         setShowErrorUnique(true);
       }
     }
-  }  
-  
-  
+  }
+
+
   useEffect(() => {
     handlePageLoad();
   }, []);
@@ -104,11 +105,11 @@ export default function HomePage(props: any) {
     const loginInput = document.querySelector(".login-input");
     // @ts-ignore: Object is possibly 'null'.
     if (loginInput.value === "") {
-      return ;
+      return;
     }
     // @ts-ignore: Object is possibly 'null'.
     sessionStorage.setItem('username', loginInput.value);
-  
+
     const response = await fetch('http://localhost:3333/auth/redirect',
       {
         method: 'POST',
@@ -116,8 +117,8 @@ export default function HomePage(props: any) {
           'Content-Type': 'application/json',
         },
         // @ts-ignore: Object is possibly 'null'.
-        body: JSON.stringify({username: loginInput.value}),
-    });
+        body: JSON.stringify({ username: loginInput.value }),
+      });
     const answer = await response.json();
     if (answer.success === true) {
       window.location.href = answer.url;
@@ -131,9 +132,9 @@ export default function HomePage(props: any) {
     }
   }
 
-  async function redirectSignIn(): Promise<void> {
+  async function redirectSignIn(): Promise<void> {
     sessionStorage.setItem('sign in', 'true');
-    const response = await axios.post('http://localhost:3333/auth/redirect',JSON.stringify({username: undefined}), {headers: { 'Content-Type': 'application/json'}});
+    const response = await axios.post('http://localhost:3333/auth/redirect', JSON.stringify({ username: undefined }), { headers: { 'Content-Type': 'application/json' } });
     if (response.data.success === true) {
       window.location.href = response.data.url;
     }
@@ -145,7 +146,7 @@ export default function HomePage(props: any) {
       setShowErrorUser(true);
     }
   }
-  
+
 
   return (
     <div id="tmp">
@@ -153,7 +154,7 @@ export default function HomePage(props: any) {
       <h1 className="transcendence-title">PONG</h1>
       <div ref={loginDivRef} className="login-div" id="login-div-id">
         <div className="password-wrapper">
-          <input className="login-input" type="text" placeholder="Login"/>
+          <input className="login-input" type="text" placeholder="Login" />
         </div>
         <div className="remember-me-wrapper">
         </div>
@@ -164,10 +165,10 @@ export default function HomePage(props: any) {
       {showErrorUnique && loginNotUnique()}
       {showErrorNot && loginNot()}
       {balls.map((ball, index) => (
-      <BouncingBall key={index} loginDiv={loginDivRef} speed={speed}/>
+        <BouncingBall key={index} loginDiv={loginDivRef} speed={speed} />
       ))}
-    <AddBallButton onAddBall={addBall}/>
-    <RemoveBallButton onRemoveBall={removeBall} />
+      <AddBallButton onAddBall={addBall} />
+      <RemoveBallButton onRemoveBall={removeBall} />
     </div>
   );
 }

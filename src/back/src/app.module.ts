@@ -21,4 +21,4 @@ import { twoFaModule } from './twoFa/twoFa.module';
   controllers: [AppController, ProfileController, AuthController, SocialController, twoFaController],
   providers: [AppService, ProfileService, SocialService],
 })
-export class AppModule {}
+export class AppModule { }

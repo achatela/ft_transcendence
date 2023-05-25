@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { AuthModule} from './auth/auth.module';
+import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
