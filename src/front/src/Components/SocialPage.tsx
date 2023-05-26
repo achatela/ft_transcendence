@@ -171,7 +171,7 @@ export default class SocialPage extends Component<IProps, IState> {
     return (
       <div>
         {this.state.friendList ? (
-          <div className="friend-list">
+          <div className="friend-list" onClick={() => { console.log("test") }}>
             {this.state.friendList.map((request) => (
               <FriendList key={request} name={request} removeFriend={this.removeFriend} />
             ))}
