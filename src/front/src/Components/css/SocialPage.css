@@ -17,7 +17,7 @@
   height: calc(100vh - 2.7rem);
 }
 
-.friend-request {
+.friend-requests {
   position: absolute;
   border: 3px solid white;
   right: calc(0.8rem + 0.65vw);
@@ -70,7 +70,7 @@
 
 /* Rules for items in FriendRequest.tsx */
 
-.friend-request-item {
+.friend-requests-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -79,15 +79,15 @@
   font-size: 2rem;
 }
 
-.friend-request-name {
+.friend-requests-name {
   margin-top: 0.7rem;
   height: 2rem;
   width: 100%;
   overflow-x: auto;
 }
 
-.friend-request-accept,
-.friend-request-decline {
+.friend-requests-accept,
+.friend-requests-decline {
   color: white;
   border: none;
   border-radius: 3px;
@@ -96,16 +96,16 @@
   cursor: pointer;
 }
 
-.friend-request-accept {
+.friend-requests-accept {
   background-color: #28a745;
 }
 
-.friend-request-decline {
+.friend-requests-decline {
   background-color: #dc3545;
 }
 
-.friend-request-accept:hover,
-.friend-request-decline:hover {
+.friend-requests-accept:hover,
+.friend-requests-decline:hover {
   opacity: 0.8;
 }
 
