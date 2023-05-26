@@ -24,7 +24,6 @@ export class twoFaService {
     }
 
     async verify2Fa(token: string, login: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string }> {
-        console.log("token", token, "login", login);
         try {
             // Use verifyToken to check if the token is valid
             const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
@@ -34,19 +33,15 @@ export class twoFaService {
                 const ret = await this.authService.checkToken(user, user.refreshToken, user.accessToken);
                 if (ret.success == true) {
                     // await this.prismaService.user.update({ where: { login: login }, data: { secret2FA: null } });
-                    console.log("code is valid")
                     return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
                 }
-                console.log("code is invalid")
                 return { success: false };
             }
-            console.log("code is invalid")
             return { success: false };
         }
         catch (e) {
             console.log("Error while verifying 2FA");
         }
-        console.log("code is invalid")
         return { success: false };
     }
 

@@ -61,7 +61,7 @@ export class AuthController {
     }
 
     @Post('verify_sign_in')
-    async verifySignUp(@Body() userInput: { code: string }): Promise<{ success: boolean, login?: string, error?: string, refreshToken?: string, accessToken?: string }> {
+    async verifySignUp(@Body() userInput: { code: string }): Promise<{ success: boolean, login?: string, error?: string, refreshToken?: string, accessToken?: string, twoFa?: boolean }> {
         const personnal42Token = await this.authService.getUserToken(userInput.code);
         if (personnal42Token.success === false)
             return { success: false, error: "getUserToken failure" };
@@ -83,6 +83,7 @@ export class AuthController {
             refreshToken: refreshToken,
             accessToken: accessToken,
             login: request.data.login,
+            twoFa: user.enabled2FA,
         };
     }
 }
