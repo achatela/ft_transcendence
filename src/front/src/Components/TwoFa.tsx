@@ -20,8 +20,10 @@ class TwoFa extends Component<IProps, IState> {
 
 	sendInput = async () => {
 		const token = (document.querySelector('.input-2fa') as HTMLInputElement).value;
-		if (token.length !== 6)
+		if (token.length !== 6) {
+			this.setState({ success: false })
 			return;
+		}
 		const request = await axios.post("http://localhost:3333/2fa/verify",
 			JSON.stringify({
 				token: token,
@@ -42,9 +44,26 @@ class TwoFa extends Component<IProps, IState> {
 		}
 	}
 
+	componentDidMount = async () => {
+		const request = await axios.post("http://localhost:3333/2fa/get_qr",
+			JSON.stringify({
+				login: sessionStorage.getItem('login'),
+				refreshToken: sessionStorage.getItem('refreshToken'),
+				accessToken: sessionStorage.getItem('accessToken'),
+			}),
+			{ headers: { 'Content-Type': 'application/json' } });
+		if (request.data.success === true) {
+			// add qr code as background image url
+			// @ts-ignore: Object is possibly 'null'.
+			document.querySelector('.qr-div').style.backgroundImage = `url(${request.data.qrCode})`;
+		}
+
+	}
+
 	render() {
 		return (
 			<div>
+				<div className="qr-div"></div>
 				{this.state.success === false ? <p className="error">Invalid 2FA code</p> : <p></p>}
 				<input className="input-2fa" type="text" maxLength={6} />
 				<button className="send-input" onClick={this.sendInput}>Validate 2FA</button>

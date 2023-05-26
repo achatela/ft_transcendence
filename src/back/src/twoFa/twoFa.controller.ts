@@ -24,4 +24,9 @@ export class twoFaController {
     async disable2Fa(@Body() userInput: { login: string, refreshToken: string, accessToken: string }): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
         return await this.twoFaService.disable2Fa(userInput.login, userInput.refreshToken, userInput.accessToken);
     }
+
+    @Post('get_qr')
+    async getQr(@Body() userInput: { login: string, refreshToken: string, accessToken: string }): Promise<{ success: boolean, refreshToken?: string, accessToken?: string, qrCode?: string }> {
+        return await this.twoFaService.getQr(userInput.login, userInput.refreshToken, userInput.accessToken);
+    }
 }

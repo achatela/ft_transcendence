@@ -79,4 +79,19 @@ export class twoFaService {
         }
         return { success: false };
     }
+
+    async getQr(login: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, refreshToken?: string, accessToken?: string, qrCode?: string }> {
+        try {
+            const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
+            const ret = await this.authService.checkToken(user, refreshToken, accessToken);
+            if (ret.success == true) {
+                return { success: true, refreshToken: ret.refreshToken, accessToken: ret.accessToken, qrCode: user.qrCode2FA };
+            }
+            return { success: false };
+        }
+        catch (e) {
+            console.log("Error while getting QR code");
+        }
+        return { success: false };
+    }
 }
