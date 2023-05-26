@@ -26,6 +26,7 @@ interface IState {
     rightPlayerScore: number;
     leftPaddleY: number;
     rightPaddleY: number;
+    canvasContext: CanvasRenderingContext2D | null;
 }
 
 class GameBoard extends Component<IProps, IState> {
@@ -33,6 +34,7 @@ class GameBoard extends Component<IProps, IState> {
     rect: DOMRect | null;
     leftPaddleCollision: boolean;
     rightPaddleCollision: boolean;
+    canvasRef: React.RefObject<HTMLCanvasElement>;
     constructor(props: IProps) {
         super(props);
         const dirX = Math.random() < 0.5 ? -1 : 1;
@@ -46,12 +48,14 @@ class GameBoard extends Component<IProps, IState> {
             leftPlayerScore: 0,
             rightPlayerScore: 0,
             ballX: 0,
-            ballY: 0
+            ballY: 0,
+            canvasContext: null
         };
         this.interval = setInterval(() => { }, 10);
         this.rect = null;
         this.leftPaddleCollision = false;
         this.rightPaddleCollision = false;
+        this.canvasRef = React.createRef();
     }
 
     handleResize() {
@@ -120,6 +124,7 @@ class GameBoard extends Component<IProps, IState> {
         this.setState((prevState) => ({
             ballX: this.rect!.width / 2 - (squareSize / 2),
             ballY: this.rect!.height / 2 - (squareSize / 2),
+            canvasContext: this.canvasRef.current?.getContext('2d')
         }));
     }
 
@@ -201,6 +206,14 @@ class GameBoard extends Component<IProps, IState> {
             }));
         }
         else {
+            const ctx = this.state.canvasContext;
+            if (ctx) {
+                ctx.clearRect(0, 0, this.rect!.width, this.rect!.height);
+                ctx.fillStyle = 'white';
+                ctx.fillRect(paddleGap, this.state.leftPaddleY, paddleWidth, paddleHeight);
+                ctx.fillRect(this.rect!.right - this.rect!.left - paddleGap - paddleWidth, this.state.rightPaddleY, paddleWidth, paddleHeight);
+                ctx.fillRect(newX, newY, squareSize, squareSize);
+            }
             this.setState((prevState) => ({
                 ballX: newX,
                 ballY: newY
@@ -215,9 +228,7 @@ class GameBoard extends Component<IProps, IState> {
             <div className="gameBoard">
                 <p className="leftScore">{this.state.leftPlayerScore}</p>
                 <p className="rightScore">{this.state.rightPlayerScore}</p>
-                <div className="leftPaddle" style={{ top: this.state.leftPaddleY }}></div>
-                <div className="ball" style={{ left: this.state.ballX, top: this.state.ballY }}></div>
-                <div className="rightPaddle" style={{ top: this.state.rightPaddleY }}></div>
+                <canvas ref={this.canvasRef} width={this.rect?.width} height={this.rect?.height} />
             </div>
         );
     }
