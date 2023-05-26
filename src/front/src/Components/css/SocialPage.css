@@ -1,41 +1,41 @@
 .friend-list {
-    position: absolute;
-    border: 3px solid white;
-    right: calc(0.8rem + 0.65vw);
-    width: 19vw;
-    height: calc(100vh - 9.9rem - 8.4rem);
-    margin-top: 8.4rem;
-    overflow-y: auto;
+  position: absolute;
+  border: 3px solid white;
+  right: calc(0.8rem + 0.65vw);
+  width: 19vw;
+  height: calc(100vh - 9.9rem - 8.4rem);
+  margin-top: 8.4rem;
+  overflow-y: auto;
 }
 
 .chat {
-    position: absolute;
-    border: 3px solid white;
-    top: 1.2rem;
-    left: 1.2rem;
-    width: calc(100vw - 20vw - 2.4rem);
-    height: calc(100vh - 2.7rem);
+  position: absolute;
+  border: 3px solid white;
+  top: 1.2rem;
+  left: 1.2rem;
+  width: calc(100vw - 20vw - 2.4rem);
+  height: calc(100vh - 2.7rem);
 }
 
 .friend-request {
-    position: absolute;
-    border: 3px solid white;
-    right: calc(0.8rem + 0.65vw);
-    width: 19vw;
-    height: calc(100vh - (100vh - 9.6rem) - 2.7rem);
-    margin-top: 1.2rem;
-    overflow-y: auto;
+  position: absolute;
+  border: 3px solid white;
+  right: calc(0.8rem + 0.65vw);
+  width: 19vw;
+  height: calc(100vh - (100vh - 9.6rem) - 2.7rem);
+  margin-top: 1.2rem;
+  overflow-y: auto;
 }
 
 .add-friend {
-    position: absolute;
-    border: 3px solid white;
-    right: calc(0.8rem + 0.65vw);
-    width: 19vw;
-    height: 8.4rem;
-    margin-top: 12rem;
-    text-align: center;
-    bottom: 1.1em;
+  position: absolute;
+  border: 3px solid white;
+  right: calc(0.8rem + 0.65vw);
+  width: 19vw;
+  height: 8.4rem;
+  margin-top: 12rem;
+  text-align: center;
+  bottom: 1.1em;
 }
 
 .add-friend-text {
@@ -78,38 +78,38 @@
   border-bottom: 1px solid #ccc;
   font-size: 2rem;
 }
-  
-  .friend-request-name {
-    margin-top: 0.7rem;
-    height: 2rem;
-    width: 100%;
-    overflow-x: auto;
-  }
-  
-  .friend-request-accept,
-  .friend-request-decline {
-    color: white;
-    border: none;
-    border-radius: 3px;
-    padding: 0.25rem 0.5rem;
-    font-size: 14px;
-    cursor: pointer;
-  }
 
-  .friend-request-accept {
-    background-color: #28a745;
-  }
-  
-  .friend-request-decline {
-    background-color: #dc3545;
-  }
-  
-  .friend-request-accept:hover,
-  .friend-request-decline:hover {
-    opacity: 0.8;
-  }
+.friend-request-name {
+  margin-top: 0.7rem;
+  height: 2rem;
+  width: 100%;
+  overflow-x: auto;
+}
 
-  
+.friend-request-accept,
+.friend-request-decline {
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 0.25rem 0.5rem;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.friend-request-accept {
+  background-color: #28a745;
+}
+
+.friend-request-decline {
+  background-color: #dc3545;
+}
+
+.friend-request-accept:hover,
+.friend-request-decline:hover {
+  opacity: 0.8;
+}
+
+
 
 /* Rules for items in FriendList.tsx */
 
@@ -118,8 +118,10 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 1rem;
+  padding-bottom: 0px;
   border-bottom: 1px solid #ccc;
   font-size: 2rem;
+  cursor: pointer;
 }
 
 .friend-list-delete {

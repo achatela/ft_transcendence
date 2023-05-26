@@ -219,17 +219,25 @@ class ProfilePage extends Component<IProps, IState> {
             ratio = 0;
         return (
             <div>
-                <div className="TwoFa">
-                    {this.state.is2FAEnabled ?
-                        <p className="TwoFATrue">2FA is enabled</p> :
-                        <p className="TwoFAFalse">2FA is disabled</p>
-                    }
-                    {this.state.is2FAEnabled ?
-                        <button className="TwoFaButton" onClick={() => this.disable2FA()}>Disable</button> :
-                        <button className="TwoFaButton" onClick={() => this.enable2FA()}>Enable</button>
-                    }
-                </div>
-                {this.state.qrCode !== "" ?
+                {this.props.profileId === undefined && (
+                    <div className="TwoFa">
+                        {this.state.is2FAEnabled ? (
+                            <p className="TwoFATrue">2FA is enabled</p>
+                        ) : (
+                            <p className="TwoFAFalse">2FA is disabled</p>
+                        )}
+                        {this.state.is2FAEnabled ? (
+                            <button className="TwoFaButton" onClick={() => this.disable2FA()}>
+                                Disable
+                            </button>
+                        ) : (
+                            <button className="TwoFaButton" onClick={() => this.enable2FA()}>
+                                Enable
+                            </button>
+                        )}
+                    </div>
+                )}
+                {this.props.profileId === undefined && this.state.qrCode !== "" ?
                     <div className="qrCode" style={{ backgroundImage: `url(${this.state.qrCode})` }}></div> :
                     <div className="empty"></div>
                 }

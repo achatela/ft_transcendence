@@ -73,7 +73,6 @@ export default class SocialPage extends Component<IProps, IState> {
     const request = await axios.post(
       "http://localhost:3333/social/accept_friend_request/",
       JSON.stringify({
-        // problème peut-être à cause de cette ligne, doit encore test avec beaucoup de demandes, et/ou avec accents
         usernameToAccept: name,
         loginUser: sessionStorage.getItem("login"),
         refreshToken: sessionStorage.getItem("refreshToken"),
