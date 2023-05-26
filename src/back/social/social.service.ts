@@ -120,4 +120,19 @@ export class SocialService {
         }
         return { success: false };
     }
+
+    async getFriendId(username: string, login: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, id?: number }> {
+        try {
+            const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
+            const ret = await this.authService.checkToken(user, refreshToken, accessToken);
+            if (ret.success == true) {
+                const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { username: username } });
+                return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken, id: user2.id };
+            }
+        }
+        catch (error) {
+            console.error('Error in getFriendId:', error);
+        }
+        return { success: false };
+    }
 }

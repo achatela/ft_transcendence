@@ -167,13 +167,35 @@ export default class SocialPage extends Component<IProps, IState> {
     return;
   }
 
+  async getFriendId(event: React.MouseEvent<HTMLDivElement>): Promise<void> {
+    let name = event.currentTarget.dataset.name;
+    const request = await axios.post(
+      "http://localhost:3333/social/get_friend_id",
+      JSON.stringify({
+        username: name,
+        login: sessionStorage.getItem("login"),
+        accessToken: sessionStorage.getItem("accessToken"),
+        refreshToken: sessionStorage.getItem("refreshToken"),
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (request.data.success === true) {
+      sessionStorage.setItem("refreshToken", request.data.refreshToken);
+      sessionStorage.setItem("accessToken", request.data.accessToken);
+      window.location.href = "http://localhost:3133/profile/" + request.data.id;
+    }
+    else {
+      console.log("failed to get id")
+    }
+  }
+
   render(): JSX.Element {
     return (
       <div>
         {this.state.friendList ? (
-          <div className="friend-list" onClick={() => { console.log("test") }}>
+          <div className="friend-list">
             {this.state.friendList.map((request) => (
-              <FriendList key={request} name={request} removeFriend={this.removeFriend} />
+              <FriendList key={request} name={request} removeFriend={this.removeFriend} getID={this.getFriendId} />
             ))}
           </div>
         ) : (

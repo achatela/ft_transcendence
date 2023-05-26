@@ -36,4 +36,9 @@ export class SocialController {
     async removeFriend(@Body() userInput: { usernameToRemove: string, loginUser: string, refreshToken: string, accessToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string }> {
         return await this.socialService.removeFriend(userInput.usernameToRemove, userInput.loginUser, userInput.refreshToken, userInput.accessToken);
     }
+
+    @Post('get_friend_id')
+    async getFriendId(@Body() userInput: { username: string, login: string, accessToken: string, refreshToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, id?: number }> {
+        return await this.socialService.getFriendId(userInput.username, userInput.login, userInput.refreshToken, userInput.accessToken);
+    }
 }
