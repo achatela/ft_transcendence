@@ -35,6 +35,7 @@ model User {
 
   enabled2FA Boolean @default(false)
   secret2FA  String?
+  qrCode2FA  String?
 
   messages Message[]
 }

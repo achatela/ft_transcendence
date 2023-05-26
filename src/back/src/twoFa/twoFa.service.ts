@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import * as speakeasy from 'node-2fa';
+import * as node2fa from 'node-2fa';
 import { AuthService } from 'src/auth/auth.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -7,15 +7,15 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class twoFaService {
     constructor(private authService: AuthService, private prismaService: PrismaService) { }
 
-    async create2Fa(login: string, accessToken: string, refreshToken: string): Promise<void> {
+    async create2Fa(login: string, accessToken: string, refreshToken: string): Promise<{ success: boolean, accessToken: string, refreshToken: string }> {
         try {
             const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
-            const secret = speakeasy.generateSecret({ account: "ft_transcendence", name: '42' })
-            // const ret = await this.authService.checkToken(user, refreshToken, accessToken);
-            // if (ret.success == true) {
-            await this.prismaService.user.update({ where: { login: login }, data: { secret2FA: secret.secret } });
-            // }
-            console.log(secret);
+            const secret = node2fa.generateSecret({ account: "ft_transcendence", name: '42' })
+            const ret = await this.authService.checkToken(user, refreshToken, accessToken);
+            if (ret.success == true) {
+                await this.prismaService.user.update({ where: { login: login }, data: { enabled2FA: true, secret2FA: secret.secret, qrCode2FA: secret.qr } });
+                return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
+            }
         }
         catch (e) {
             console.log("Error while creating 2FA");
@@ -23,18 +23,65 @@ export class twoFaService {
         return;
     }
 
-    async verify2Fa(token: number, login: string): Promise<void> {
+    async verify2Fa(token: string, login: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string }> {
         console.log("token", token, "login", login);
         try {
             // Use verifyToken to check if the token is valid
             const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
             const secret = user.secret2FA;
-            const verified = speakeasy.verifyToken(secret, 'base32', token);
-            console.log(verified);
+            const verified = node2fa.verifyToken(secret, token);
+            if (verified != null && verified.delta == 0) {
+                const ret = await this.authService.checkToken(user, user.refreshToken, user.accessToken);
+                if (ret.success == true) {
+                    // await this.prismaService.user.update({ where: { login: login }, data: { secret2FA: null } });
+                    console.log("code is valid")
+                    return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
+                }
+                console.log("code is invalid")
+                return { success: false };
+            }
+            console.log("code is invalid")
+            return { success: false };
         }
         catch (e) {
-            console.log("Error while verifying 2FA", e);
+            console.log("Error while verifying 2FA");
         }
-        return;
+        console.log("code is invalid")
+        return { success: false };
+    }
+
+    async check2Fa(login: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, refreshToken?: string, accessToken?: string, qrCode?: string }> {
+        // Check if the user has 2FA enabled
+        try {
+            const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
+            if (user.enabled2FA === true) {
+                const ret = await this.authService.checkToken(user, refreshToken, accessToken);
+                if (ret.success == true) {
+                    return { success: true, refreshToken: ret.refreshToken, accessToken: ret.accessToken, qrCode: user.qrCode2FA };
+                }
+                return { success: false };
+            }
+            return { success: false };
+        }
+        catch (e) {
+            console.log("Error while checking 2FA");
+        }
+        return { success: false };
+    }
+
+    async disable2Fa(login: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
+        try {
+            const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
+            const ret = await this.authService.checkToken(user, refreshToken, accessToken);
+            if (ret.success == true) {
+                await this.prismaService.user.update({ where: { login: login }, data: { enabled2FA: false, secret2FA: null } });
+                return { success: true, refreshToken: ret.refreshToken, accessToken: ret.accessToken };
+            }
+            return { success: false };
+        }
+        catch (e) {
+            console.log("Error while disabling 2FA");
+        }
+        return { success: false };
     }
 }

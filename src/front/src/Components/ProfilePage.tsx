@@ -23,6 +23,8 @@ interface IState {
     ladderLevel: number;
     achievements: {};
     profileId: number;
+    is2FAEnabled: boolean;
+    qrCode: string;
 }
 
 class ProfilePage extends Component<IProps, IState> {
@@ -37,6 +39,8 @@ class ProfilePage extends Component<IProps, IState> {
             ladderLevel: 0,
             achievements: {},
             profileId: parseInt(props.profileId),
+            is2FAEnabled: false,
+            qrCode: "",
         };
         this.fileInputRef = React.createRef();
     }
@@ -108,7 +112,19 @@ class ProfilePage extends Component<IProps, IState> {
         return response.data.achievements;
     }
 
+    get2FAStatus = async () => {
+        const response = await axios.post("http://localhost:3333/2fa/check_2fa/", JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+        if (response.data.success === true) {
+            sessionStorage.setItem("accessToken", response.data.accessToken);
+            sessionStorage.setItem("refreshToken", response.data.refreshToken);
+            this.setState({ qrCode: response.data.qrCode });
+            return true;
+        }
+        return false;
+    }
+
     async componentDidMount(): Promise<void> {
+        this.setState({ is2FAEnabled: await this.get2FAStatus() });
         if (this.props.profileId === undefined) {
             this.getUserInfo()
                 .then(userInfo => {
@@ -177,13 +193,46 @@ class ProfilePage extends Component<IProps, IState> {
         window.location.href = 'http://localhost:3133/profile/';
     };
 
+    async disable2FA() {
+        const request = await axios.post('http://localhost:3333/2fa/disable_2fa/', JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+        if (request.data.success === true) {
+            sessionStorage.setItem("refreshToken", request.data.refreshToken);
+            sessionStorage.setItem("accessToken", request.data.accessToken);
+            window.location.href = 'http://localhost:3133/profile/';
+        }
+    }
+
+    async enable2FA() {
+        const request = await axios.post('http://localhost:3333/2fa/create/', JSON.stringify({ login: sessionStorage.getItem('login'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+        if (request.data.success === true) {
+            sessionStorage.setItem("refreshToken", request.data.refreshToken);
+            sessionStorage.setItem("accessToken", request.data.accessToken);
+            window.location.href = 'http://localhost:3133/profile/';
+        }
+    }
+
     render() {
+        console.log(this.state.qrCode)
         let ratio = this.state.wins * 100 / (this.state.wins + this.state.losses);
         if (this.state.wins === 0
             || this.state.losses === 0)
             ratio = 0;
         return (
             <div>
+                <div className="TwoFa">
+                    {this.state.is2FAEnabled ?
+                        <p className="TwoFATrue">2FA is enabled</p> :
+                        <p className="TwoFAFalse">2FA is disabled</p>
+                    }
+                    {this.state.is2FAEnabled ?
+                        <button className="TwoFaButton" onClick={() => this.disable2FA()}>Disable</button> :
+                        <button className="TwoFaButton" onClick={() => this.enable2FA()}>Enable</button>
+                    }
+                </div>
+                {this.state.qrCode !== "" ?
+                    <div className="qrCode" style={{ backgroundImage: `url(${this.state.qrCode})` }}></div> :
+                    <div className="empty"></div>
+                }
                 <p className="userName">{this.state.username}</p>
                 <div className="pictureProfile" id="pfpPlaceholder" style={{ backgroundImage: `url(${this.state.avatar})` }}>
                     {this.props.profileId === undefined &&

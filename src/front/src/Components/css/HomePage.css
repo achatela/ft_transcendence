@@ -26,7 +26,9 @@
     border: white 5px solid;
 }
 
-.login-input[type="text"], .password-input[type="password"], .password-input[type="text"] {
+.login-input[type="text"],
+.password-input[type="password"],
+.password-input[type="text"] {
     background: black;
     width: 70%;
     margin-left: 14%;
@@ -62,7 +64,8 @@
 }
 
 
-.login-input, .password-input {
+.login-input,
+.password-input {
     height: 2vh;
     width: 100%;
     padding: 0.5em;
