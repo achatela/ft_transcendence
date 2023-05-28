@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
 
-const socket = io('http://localhost:3133');
+// const socket = io('http://localhost:3133');
 
 interface ChatProps {
-    userId: number;
+  userId: number;
 }
 
 const Chat: React.FC<ChatProps> = ({ userId }) => {
@@ -12,17 +12,17 @@ const Chat: React.FC<ChatProps> = ({ userId }) => {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    socket.on('chat', (chat) => {
-      setChat(chat);
-    });
+    // socket.on('chat', (chat) => {
+    // setChat(chat);
+    // });
 
-    return () => {
-      socket.off('chat');
-    };
+    // return () => {
+    // socket.off('chat');
+    // };
   }, []);
 
   const sendMessage = () => {
-    socket.emit('chat', { message, userId });
+    // socket.emit('chat', { message, userId });
     setMessage('');
   };
 
