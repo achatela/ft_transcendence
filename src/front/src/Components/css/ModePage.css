@@ -122,3 +122,36 @@
     display: block;
     /* Add this line to make the button a block element */
 }
+
+.dot-1,
+.dot-2,
+.dot-3 {
+    animation: dots 1s infinite;
+    opacity: 0;
+}
+
+@keyframes dots {
+    0% {
+        opacity: 0;
+    }
+
+    33% {
+        opacity: 1;
+    }
+
+    66% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.dot-2 {
+    animation-delay: 0.33s;
+}
+
+.dot-3 {
+    animation-delay: 0.66s;
+}

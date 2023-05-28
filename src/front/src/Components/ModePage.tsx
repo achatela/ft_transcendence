@@ -181,7 +181,7 @@ class ModePage extends Component<IProps, IState> {
                 )}
                 {sessionStorage.getItem("queueing") && (
                     <div className="queueing">
-                        <p className="queueingP">Queueing for {sessionStorage.getItem("queueing")}...</p> {/* animation for the ... */}
+                        <p className="queueingP">Queueing for {sessionStorage.getItem("queueing")}<span className="dot-1">.</span><span className="dot-2">.</span><span className="dot-3">.</span></p>
                         <button className="cancelButton" onClick={this.cancelQueue} >Cancel</button>
                     </div>
                 )}
