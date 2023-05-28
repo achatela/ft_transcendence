@@ -15,9 +15,10 @@ import { SocialModule } from 'social/social.module';
 import { SocialService } from 'social/social.service';
 import { twoFaController } from './twoFa/twoFa.controller';
 import { twoFaModule } from './twoFa/twoFa.module';
+import { PongModule } from './pong/pong.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, ProfileModule, JwtModule, SocialModule, twoFaModule],
+  imports: [PrismaModule, AuthModule, ProfileModule, JwtModule, SocialModule, twoFaModule, PongModule],
   controllers: [AppController, ProfileController, AuthController, SocialController, twoFaController],
   providers: [AppService, ProfileService, SocialService],
 })
