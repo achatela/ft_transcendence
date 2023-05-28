@@ -47,6 +47,30 @@ class ModePage extends Component<IProps, IState> {
                 }
             }, 1000);
         }
+        else if (sessionStorage.getItem("queueing") === "Custom Pong") {
+            setInterval(async () => {
+                const response = await axios.post('http://localhost:3333/pong/custom/queue_status/',
+                    JSON.stringify({
+                        login: sessionStorage.getItem('login'),
+                        refreshToken: sessionStorage.getItem('refreshToken'),
+                        accessToken: sessionStorage.getItem('accessToken'),
+                    }),
+                    { headers: { 'Content-Type': 'application/json' } }
+                );
+                if (response.data.success === true) {
+                    sessionStorage.setItem('accessToken', response.data.accessToken);
+                    sessionStorage.setItem('refreshToken', response.data.refreshToken);
+                    if (response.data.queueStatus === "found") {
+                        sessionStorage.setItem("queueing", "");
+                        window.location.href = "/game";
+                    }
+                }
+                else {
+                    sessionStorage.setItem("queueing", "");
+                    window.location.href = "/mode";
+                }
+            }, 1000);
+        }
         // this.getCurrentPlayer()
         // .then(currentPlayers => {
         //     this.setState({ currentPlayers });
@@ -77,23 +101,23 @@ class ModePage extends Component<IProps, IState> {
     };
 
     queueCustom = async () => {
-        // const response = await axios.post('http://localhost:3333/pong/classic/queue_up/',
-        //     JSON.stringify({
-        //         login: sessionStorage.getItem('login'),
-        //         refreshToken: sessionStorage.getItem('refreshToken'),
-        //         accessToken: sessionStorage.getItem('accessToken'),
-        //     }),
-        //     { headers: { 'Content-Type': 'application/json' } }
-        // );
-        // if (response.data.success === true) {
-        //     sessionStorage.setItem('accessToken', response.data.accessToken);
-        //     sessionStorage.setItem('refreshToken', response.data.refreshToken);
-        //     sessionStorage.setItem("queueing", "Custom Pong");
-        //     window.location.href = "/mode";
-        // }
-        // else {
-        //     console.log("pas coucou")
-        // }
+        const response = await axios.post('http://localhost:3333/pong/custom/queue_up/',
+            JSON.stringify({
+                login: sessionStorage.getItem('login'),
+                refreshToken: sessionStorage.getItem('refreshToken'),
+                accessToken: sessionStorage.getItem('accessToken'),
+            }),
+            { headers: { 'Content-Type': 'application/json' } }
+        );
+        if (response.data.success === true) {
+            sessionStorage.setItem('accessToken', response.data.accessToken);
+            sessionStorage.setItem('refreshToken', response.data.refreshToken);
+            sessionStorage.setItem("queueing", "Custom Pong");
+            window.location.href = "/mode";
+        }
+        else {
+            console.log("pas coucou")
+        }
     };
 
     cancelQueue = async () => {
@@ -117,9 +141,25 @@ class ModePage extends Component<IProps, IState> {
                 window.location.href = "/mode";
             }
         }
-        else {
-            sessionStorage.setItem("queueing", "");
-            window.location.href = "/mode";
+        else if (sessionStorage.getItem("queueing") === "Custom Pong") {
+            const response = await axios.post('http://localhost:3333/pong/custom/queue_down/',
+                JSON.stringify({
+                    login: sessionStorage.getItem('login'),
+                    refreshToken: sessionStorage.getItem('refreshToken'),
+                    accessToken: sessionStorage.getItem('accessToken'),
+                }),
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+            if (response.data.success === true) {
+                sessionStorage.setItem('accessToken', response.data.accessToken);
+                sessionStorage.setItem('refreshToken', response.data.refreshToken);
+                sessionStorage.setItem("queueing", "");
+                window.location.href = "/mode";
+            }
+            else {
+                sessionStorage.setItem("queueing", "");
+                window.location.href = "/mode";
+            }
         }
     }
 
