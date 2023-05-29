@@ -37,6 +37,8 @@ model User {
   secret2FA  String?
   qrCode2FA  String?
 
+  blockedIds Int[]
+
   messages Message[]
 }
 
@@ -52,10 +54,24 @@ model Message {
 }
 
 model Chat {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  messages  Message[]
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  socketId String?
+
+  type String @default("public")
+
+  mutedIds Int[]
+
+  owner    Int?
+  admin    Int[]
+  usersIds Int[]
+
+  bannedIds Int[]
+
+  password String?
+  messages Message[]
 }
 
 model Queue {

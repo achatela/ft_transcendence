@@ -3,8 +3,8 @@
   border: 3px solid white;
   right: calc(0.8rem + 0.65vw);
   width: 19vw;
-  height: calc(100vh - 9.9rem - 8.4rem);
-  margin-top: 8.4rem;
+  height: calc(100vh - 9.9rem - 8.4rem - 10.8rem);
+  margin-top: 19.2rem;
   overflow-y: auto;
 }
 
@@ -22,9 +22,56 @@
   border: 3px solid white;
   right: calc(0.8rem + 0.65vw);
   width: 19vw;
-  height: calc(100vh - (100vh - 9.6rem) - 2.7rem);
+  height: calc(100vh - (100vh - 9.6rem) + 8.1rem);
   margin-top: 1.2rem;
   overflow-y: auto;
+}
+
+.friend-requests-p {
+  width: calc(100% - 6px);
+  text-align: center;
+  border: 3px solid white;
+  padding-top: 1rem;
+  padding-bottom: 1vh;
+  font-size: 2rem;
+}
+
+.friend-list-p {
+  width: calc(100% - 6px);
+  text-align: center;
+  border: 3px solid white;
+  padding-top: 1rem;
+  padding-bottom: 1vh;
+  font-size: 2rem;
+}
+
+.chat-text {
+  width: calc(100% - 6px);
+  text-align: center;
+  border: 3px solid white;
+  padding-top: 1rem;
+  padding-bottom: 1vh;
+  font-size: 2rem;
+}
+
+.chat-list {
+  width: 15%;
+  height: calc(100vh - 8.3rem);
+  text-align: center;
+  border: 3px solid white;
+  padding-top: 1rem;
+  padding-bottom: 1vh;
+  font-size: 2rem;
+}
+
+.chat-list-text {
+  margin-top: -1rem;
+  width: calc(100% - 6px);
+  text-align: center;
+  border: 3px solid white;
+  padding-top: 1rem;
+  padding-bottom: 1vh;
+  font-size: 2rem;
 }
 
 .add-friend {

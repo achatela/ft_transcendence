@@ -96,14 +96,14 @@ export default class SocialPage extends Component<IProps, IState> {
     }
   }
 
- 
+
 
 
   render(): JSX.Element {
     return (
       <div>
         {this.state.friendList ? (
-          <FriendList friendList={this.state.friendList}/>
+          <FriendList friendList={this.state.friendList} />
         ) : (
           <div className="friend-list">Loading...</div>
         )}
@@ -113,11 +113,16 @@ export default class SocialPage extends Component<IProps, IState> {
           <button className="add-friend-button" onClick={this.sendFriendRequest}>Send</button>
         </div>
         {this.state.friendRequests ? (
-          <FriendRequests friendRequests={this.state.friendRequests}/>
+          <FriendRequests friendRequests={this.state.friendRequests} />
         ) : (
           <div className="friend-requests">Loading...</div>
         )}
-        <div className="chat"></div>
+        <div className="chat">
+          <p className="chat-text">Chat</p>
+          <div className="chat-list">
+            <p className="chat-list-text">Chat list</p>
+          </div>
+        </div>
       </div>
     );
   }
