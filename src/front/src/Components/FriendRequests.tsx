@@ -57,7 +57,7 @@ const FriendRequests: React.FC<FriendRequestsProps> = ({ friendRequests }) => {
     <div className="friend-requests">
       <p className='friend-requests-p'>Friend Requests</p>
       {friendRequests.map((username) => (
-        <div className="friend-requests-item">
+        <div key={username} className="friend-requests-item">
           <div className="friend-requests-name">{username}</div>
           <div className="friend-requests-buttons">
             <button className="friend-requests-accept" onClick={acceptFunction} data-name={username}>Accept</button>

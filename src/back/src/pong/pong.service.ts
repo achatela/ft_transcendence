@@ -8,6 +8,8 @@ import { AuthService } from 'src/auth/auth.service';
 export class PongService {
   private queueClassic: number[] = [];
   private queueCustom: number[] = [];
+  private gameStates: { [id: number]: { user1: string, user2: string } } = {};
+
   constructor(private prismaService: PrismaService, private authService: AuthService) {
     setInterval(() => {
       this.checkQueueClassic();
@@ -34,7 +36,7 @@ export class PongService {
   }
 
   async checkQueueCustom(): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
-    console.log('custom', this.queueCustom)
+    // console.log('custom', this.queueCustom)
     try {
       if (this.queueCustom.length >= 2) {
         const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueCustom[0] } });
@@ -99,7 +101,7 @@ export class PongService {
   }
 
   async checkQueueClassic(): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
-    console.log('classic', this.queueClassic)
+    // console.log('classic', this.queueClassic)
     try {
       if (this.queueClassic.length >= 2) {
         const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueClassic[0] } });

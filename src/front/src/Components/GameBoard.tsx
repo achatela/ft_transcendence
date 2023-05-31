@@ -2,6 +2,11 @@ import React, { Component } from 'react';
 import './css/GameBoard.css';
 import axios from 'axios';
 
+const io = require("socket.io-client");
+const socket = io("http://localhost:3131/");
+
+socket.emit("events", { message: "hello" });
+
 const upArrow: number = 38;
 const downArrow: number = 40;
 const zKey: number = 90;

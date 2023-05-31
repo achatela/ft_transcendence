@@ -6,6 +6,12 @@
   height: calc(100vh - 9.9rem - 8.4rem - 10.8rem);
   margin-top: 19.2rem;
   overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.friend-list::-webkit-scrollbar {
+  display: none;
 }
 
 .chat {
@@ -25,6 +31,12 @@
   height: calc(100vh - (100vh - 9.6rem) + 8.1rem);
   margin-top: 1.2rem;
   overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.friend-requests::-webkit-scrollbar {
+  display: none;
 }
 
 .friend-requests-p {

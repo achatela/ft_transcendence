@@ -4,6 +4,7 @@ import "./css/SocialPage.css";
 import FriendRequests from "./FriendRequests";
 import FriendList from "./FriendList";
 
+
 interface IProps { }
 
 interface IState {

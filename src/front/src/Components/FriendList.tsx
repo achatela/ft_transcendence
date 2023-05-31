@@ -56,7 +56,7 @@ const FriendList: React.FC<FriendListProps> = ({ friendList }) => {
     <div className="friend-list">
       <p className='friend-list-p'>Friends List</p>
       {friendList.map((username) => (
-        <div className="friend-list-item">
+        <div key={username} className="friend-list-item">
           <div className="friend-list-name" onClick={getFriendId} data-name={username}>{username}</div>
           <button className="friend-list-delete" onClick={removeFriend} data-name={username}>Delete</button>
         </div>

@@ -3,32 +3,19 @@ import { PongService } from './pong.service';
 import { CreatePongDto } from './dto/create-pong.dto';
 import { UpdatePongDto } from './dto/update-pong.dto';
 
-@WebSocketGateway()
+@WebSocketGateway(3131, { cors: true })
 export class PongGateway {
   constructor(private readonly pongService: PongService) { }
 
-  @SubscribeMessage('createPong')
-  create(@MessageBody() createPongDto: CreatePongDto) {
-    return this.pongService.create(createPongDto);
+  @SubscribeMessage('connect')
+  async handleConnect(@MessageBody() data: string): Promise<string> {
+    console.log("connect", data);
+    return data;
   }
 
-  @SubscribeMessage('findAllPong')
-  findAll() {
-    return this.pongService.findAll();
-  }
-
-  @SubscribeMessage('findOnePong')
-  findOne(@MessageBody() id: number) {
-    return this.pongService.findOne(id);
-  }
-
-  @SubscribeMessage('updatePong')
-  update(@MessageBody() updatePongDto: UpdatePongDto) {
-    return this.pongService.update(updatePongDto.id, updatePongDto);
-  }
-
-  @SubscribeMessage('removePong')
-  remove(@MessageBody() id: number) {
-    return this.pongService.remove(id);
+  @SubscribeMessage('events')
+  handleEvent(@MessageBody() data: string): string {
+    console.log("events", data);
+    return data;
   }
 }
