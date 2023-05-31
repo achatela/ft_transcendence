@@ -5,7 +5,11 @@ import axios from 'axios';
 const io = require("socket.io-client");
 const socket = io("http://localhost:3131/");
 
-socket.emit("events", { message: "hello" });
+socket.on("connect", () => {
+    sessionStorage.setItem("socketId", socket.id);
+    console.log(sessionStorage.getItem("socketId"))
+});
+socket.emit("events", { socketId: sessionStorage.getItem("socketId") });
 
 const upArrow: number = 38;
 const downArrow: number = 40;
@@ -156,6 +160,15 @@ class GameBoard extends Component<IProps, IState> {
         }
         return false;
     }
+
+    componentDidUnmount() {
+        clearInterval(this.interval);
+        socket.on('disconnect', () => {
+            console.log('disconnected');
+        }
+        );
+    }
+
 
 
     renderBall = () => {

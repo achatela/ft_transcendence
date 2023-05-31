@@ -8,7 +8,7 @@ import { AuthService } from 'src/auth/auth.service';
 export class PongService {
   private queueClassic: number[] = [];
   private queueCustom: number[] = [];
-  private gameStates: { [id: number]: { user1: string, user2: string } } = {};
+  gameStates: [{ id1: number, id2: number, x: number, y: number, dx: number, dy: number, paddleLeft: number, paddleRight: number }] = [{ id1: 0, id2: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0 }];
 
   constructor(private prismaService: PrismaService, private authService: AuthService) {
     setInterval(() => {
@@ -41,7 +41,9 @@ export class PongService {
       if (this.queueCustom.length >= 2) {
         const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueCustom[0] } });
         const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueCustom[1] } });
+        this.gameStates.push({ id1: user1.id, id2: user2.id, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0 });
         this.queueCustom.splice(0, 2);
+        console.log('gameStates in custom', this.gameStates);
         await this.prismaService.user.update({ where: { id: user1.id }, data: { status: 'playing custom' } });
         await this.prismaService.user.update({ where: { id: user2.id }, data: { status: 'playing custom' } });
         return { success: true };
@@ -106,7 +108,9 @@ export class PongService {
       if (this.queueClassic.length >= 2) {
         const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueClassic[0] } });
         const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueClassic[1] } });
+        this.gameStates.push({ id1: user1.id, id2: user2.id, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0 });
         this.queueClassic.splice(0, 2);
+        console.log('gameStates in classic', this.gameStates);
         await this.prismaService.user.update({ where: { id: user1.id }, data: { status: 'playing classic' } });
         await this.prismaService.user.update({ where: { id: user2.id }, data: { status: 'playing classic' } });
         return { success: true };

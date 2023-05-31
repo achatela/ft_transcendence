@@ -2,10 +2,31 @@ import { WebSocketGateway, SubscribeMessage, MessageBody } from '@nestjs/websock
 import { PongService } from './pong.service';
 import { CreatePongDto } from './dto/create-pong.dto';
 import { UpdatePongDto } from './dto/update-pong.dto';
+import { Socket } from 'dgram';
 
-@WebSocketGateway(3131, { cors: true })
+@WebSocketGateway(3130, { cors: true })
 export class PongGateway {
-  constructor(private readonly pongService: PongService) { }
+  constructor(private pongService: PongService) {
+    const io = require('socket.io')(3131, {
+      cors: {
+        origin: '*',
+      }
+    }
+    );
+    // this.pongService.gameStates.push({ id1: 0, id2: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0 });
+    io.on('connection', (socket) => {
+      console.log("connection");
+      socket.on('connect', (data) => {
+        console.log("connect", data);
+      });
+      socket.on('events', (data) => {
+        console.log("events", data);
+      });
+      socket.on('disconnect', () => {
+        console.log("disconnect");
+      });
+    });
+  }
 
   @SubscribeMessage('connect')
   async handleConnect(@MessageBody() data: string): Promise<string> {
@@ -15,7 +36,7 @@ export class PongGateway {
 
   @SubscribeMessage('events')
   handleEvent(@MessageBody() data: string): string {
-    console.log("events", data);
+    console.log("events 3130", data);
     return data;
   }
 }
