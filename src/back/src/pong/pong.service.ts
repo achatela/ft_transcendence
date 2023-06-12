@@ -3,12 +3,14 @@ import { CreatePongDto } from './dto/create-pong.dto';
 import { UpdatePongDto } from './dto/update-pong.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthService } from 'src/auth/auth.service';
+import { map } from 'rxjs';
 
 @Injectable()
 export class PongService {
   private queueClassic: number[] = [];
   private queueCustom: number[] = [];
   gameStates: [{ id1: number, id2: number, socketLeft: number, socketRight: number, x: number, y: number, dx: number, dy: number, paddleLeft: number, paddleRight: number }] = [{ id1: 0, id2: 0, socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0 }];
+  map1 = new Map();
 
   constructor(private prismaService: PrismaService, private authService: AuthService) {
     setInterval(() => {
@@ -26,9 +28,11 @@ export class PongService {
       if (index !== -1) {
         if (this.gameStates[index].id1 === user.id && this.gameStates[index].socketLeft === 0) {
           this.gameStates[index].socketLeft = socketId;
+          this.map1.set(socketId, index);
         }
         else {
           this.gameStates[index].socketRight = socketId;
+          this.map1.set(socketId, index);
         }
         console.log('gameStates in classic', this.gameStates);
         return { success: true };

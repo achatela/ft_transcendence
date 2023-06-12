@@ -18,7 +18,7 @@ export class PongGateway {
     io.on('connection', (socket) => {
       socket.emit('gameState', {});
       socket.on('connectGameClassic', (data) => {
-        this.pongService.changeSocketClassic(data.socketId, socket.login);
+        this.pongService.changeSocketClassic(data.socketId, data.login);
         console.log("connected to game", data);
       });
       socket.on('moveUp', (data) => {
