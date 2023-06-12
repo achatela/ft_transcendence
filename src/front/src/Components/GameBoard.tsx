@@ -3,13 +3,6 @@ import './css/GameBoard.css';
 import axios from 'axios';
 
 const io = require("socket.io-client");
-const socket = io("http://localhost:3131/");
-
-socket.on("connect", () => {
-    sessionStorage.setItem("socketId", socket.id);
-    console.log(sessionStorage.getItem("socketId"))
-});
-socket.emit("events", { socketId: sessionStorage.getItem("socketId") });
 
 const upArrow: number = 38;
 const downArrow: number = 40;
@@ -36,6 +29,7 @@ interface IState {
     leftPaddleY: number;
     rightPaddleY: number;
     canvasContext: CanvasRenderingContext2D | null;
+    socket: any;
 }
 
 class GameBoard extends Component<IProps, IState> {
@@ -50,6 +44,7 @@ class GameBoard extends Component<IProps, IState> {
         const dirY = Math.random() * 2 - 1;
         const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
         this.state = {
+            socket: null,
             leftPaddleY: 0,
             rightPaddleY: 0,
             ballDirectionX: dirX / magnitude,
@@ -72,7 +67,29 @@ class GameBoard extends Component<IProps, IState> {
         this.rect = document.querySelector('.gameBoard')!.getBoundingClientRect();
     }
 
+    sleep(time: number) {
+        return new Promise((resolve) => setTimeout(resolve, time));
+    }
+
+    async setSocket() {
+        await this.setState((prevState) => ({
+            socket: io("http://localhost:3131/"),
+        }));
+        this.sleep(75).then(() => {
+            this.state.socket.emit("connectGameClassic", {
+                socketId: this.state.socket.id,
+                login: sessionStorage.getItem("login"),
+            });
+            this.state.socket.on("gameState", (data: any) => {
+                console.log("server response")
+            });
+            this.state.socket.emit("events", { socketId: this.state.socket.id, login: sessionStorage.getItem("login") });
+            console.log("socketId", this.state.socket.id)
+        });
+    }
+
     async componentDidMount(): Promise<void> {
+        this.setSocket();
         this.rect = document.querySelector('.gameBoard')!.getBoundingClientRect();
         let bottomBorder = this.rect.bottom - this.rect.top;
         this.setState((prevState) => ({
@@ -85,6 +102,7 @@ class GameBoard extends Component<IProps, IState> {
         this.interval = setInterval(this.renderBall, 10);
         document.addEventListener('keydown', (event) => {
             if (event.keyCode === upArrow) {
+                this.state.socket.emit("moveUp", { socketId: this.state.socket.id });
                 if (this.state.rightPaddleY < paddleStep) {
                     this.setState((prevState) => ({
                         rightPaddleY: 0,
@@ -97,6 +115,7 @@ class GameBoard extends Component<IProps, IState> {
                 }
             }
             else if (event.keyCode === downArrow) {
+                this.state.socket.emit("moveDown", { socketId: this.state.socket.id });
                 if (this.state.rightPaddleY + paddleHeight + paddleStep > bottomBorder)
                     this.setState((prevState) => ({
                         rightPaddleY: bottomBorder - paddleHeight - 4,
@@ -107,6 +126,7 @@ class GameBoard extends Component<IProps, IState> {
                     }));
             }
             else if (event.keyCode === zKey) {
+                this.state.socket.emit("moveUp", { socketId: this.state.socket.id });
                 if (this.state.leftPaddleY < paddleStep) {
                     this.setState((prevState) => ({
                         leftPaddleY: 0,
@@ -119,6 +139,7 @@ class GameBoard extends Component<IProps, IState> {
                 }
             }
             else if (event.keyCode === sKey) {
+                this.state.socket.emit("moveDown", { socketId: this.state.socket.id });
                 if (this.state.leftPaddleY + paddleHeight + paddleStep > bottomBorder)
                     this.setState((prevState) => ({
                         leftPaddleY: bottomBorder - paddleHeight - 4,
@@ -139,6 +160,11 @@ class GameBoard extends Component<IProps, IState> {
 
     componentWillUnmount() {
         clearInterval(this.interval);
+        this.state.socket.on('disconnect', () => {
+            console.log('disconnected');
+        }
+        );
+        window.removeEventListener('resize', this.handleResize)
         // Needs to remove event listener
     }
 
@@ -161,13 +187,13 @@ class GameBoard extends Component<IProps, IState> {
         return false;
     }
 
-    componentDidUnmount() {
-        clearInterval(this.interval);
-        socket.on('disconnect', () => {
-            console.log('disconnected');
-        }
-        );
-    }
+    // componentDidUnmount() {
+    //     clearInterval(this.interval);
+    //     this.state.socket.on('disconnect', () => {
+    //         console.log('disconnected');
+    //     }
+    //     );
+    // }
 
 
 

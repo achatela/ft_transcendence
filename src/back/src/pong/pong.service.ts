@@ -8,7 +8,7 @@ import { AuthService } from 'src/auth/auth.service';
 export class PongService {
   private queueClassic: number[] = [];
   private queueCustom: number[] = [];
-  gameStates: [{ id1: number, id2: number, x: number, y: number, dx: number, dy: number, paddleLeft: number, paddleRight: number }] = [{ id1: 0, id2: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0 }];
+  gameStates: [{ id1: number, id2: number, socketLeft: number, socketRight: number, x: number, y: number, dx: number, dy: number, paddleLeft: number, paddleRight: number }] = [{ id1: 0, id2: 0, socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0 }];
 
   constructor(private prismaService: PrismaService, private authService: AuthService) {
     setInterval(() => {
@@ -17,6 +17,26 @@ export class PongService {
     setInterval(() => {
       this.checkQueueCustom();
     }, 1000);
+  }
+
+  async changeSocketClassic(socketId: number, login: string): Promise<{ success: boolean }> {
+    try {
+      const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
+      const index = this.gameStates.findIndex((gameState) => gameState.id1 === user.id || gameState.id2 === user.id);
+      if (index !== -1) {
+        if (this.gameStates[index].id1 === user.id && this.gameStates[index].socketLeft === 0) {
+          this.gameStates[index].socketLeft = socketId;
+        }
+        else {
+          this.gameStates[index].socketRight = socketId;
+        }
+        console.log('gameStates in classic', this.gameStates);
+        return { success: true };
+      }
+    } catch (e) {
+      console.log(e);
+    }
+    return { success: false };
   }
 
   async queueStatusCustomPong(login: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, refreshToken?: string, accessToken?: string, queueStatus?: string }> {
@@ -41,7 +61,7 @@ export class PongService {
       if (this.queueCustom.length >= 2) {
         const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueCustom[0] } });
         const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueCustom[1] } });
-        this.gameStates.push({ id1: user1.id, id2: user2.id, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0 });
+        this.gameStates.push({ id1: 0, id2: 0, socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0 });
         this.queueCustom.splice(0, 2);
         console.log('gameStates in custom', this.gameStates);
         await this.prismaService.user.update({ where: { id: user1.id }, data: { status: 'playing custom' } });
@@ -108,7 +128,7 @@ export class PongService {
       if (this.queueClassic.length >= 2) {
         const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueClassic[0] } });
         const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueClassic[1] } });
-        this.gameStates.push({ id1: user1.id, id2: user2.id, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0 });
+        this.gameStates.push({ id1: 0, id2: 0, socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0 });
         this.queueClassic.splice(0, 2);
         console.log('gameStates in classic', this.gameStates);
         await this.prismaService.user.update({ where: { id: user1.id }, data: { status: 'playing classic' } });
