@@ -6,6 +6,7 @@ import ModePage from './Components/ModePage'
 import ProfilePage from './Components/ProfilePage'
 import GameBoard from './Components/GameBoard'
 import SocialPage from './Components/SocialPage'
+import Chat from './Components/Chat'
 import TwoFa from './Components/TwoFa'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
@@ -19,6 +20,7 @@ function App() {
         <Route path="/profile/:profileId" element={<ProfilePage />} />
         <Route path="/game" element={<GameBoard />} />
         <Route path="/social" element={<SocialPage />} />
+        <Route path="/chat" element={<Chat />} />
         <Route path="/two_fa" element={<TwoFa />} />
       </Routes>
     </BrowserRouter>

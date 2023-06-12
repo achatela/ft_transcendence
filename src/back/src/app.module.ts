@@ -17,10 +17,11 @@ import { twoFaController } from './twoFa/twoFa.controller';
 import { twoFaModule } from './twoFa/twoFa.module';
 import { PongModule } from './pong/pong.module';
 import { PongController } from './pong/pong.controller';
+import { ChatGateway } from './chat/chat.gateway';
 
 @Module({
   imports: [PrismaModule, AuthModule, ProfileModule, JwtModule, SocialModule, twoFaModule, PongModule],
   controllers: [AppController, ProfileController, AuthController, SocialController, twoFaController, PongController],
-  providers: [AppService, ProfileService, SocialService],
+  providers: [AppService, ProfileService, SocialService, ChatGateway],
 })
 export class AppModule { }
