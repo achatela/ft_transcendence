@@ -83,7 +83,11 @@ class GameBoard extends Component<IProps, IState> {
             this.state.socket.on("gameState", (data: any) => {
                 console.log("server response")
             });
+            this.state.socket.on('update', (data: any) => {
+                console.log(data);
+            });
             this.state.socket.emit("events", { socketId: this.state.socket.id, login: sessionStorage.getItem("login") });
+            this.state.socket.emit("update", { socketId: this.state.socket.id });
             console.log("socketId", this.state.socket.id)
         });
     }

@@ -21,6 +21,19 @@ export class PongService {
     }, 1000);
   }
 
+  getGameState(socketId: number): { success: boolean, gameState?: { x: number, y: number, dx: number, dy: number, paddleLeft: number, paddleRight: number } } {
+    try {
+      const index = this.map1.get(socketId);
+      if (index !== undefined) {
+        console.log(this.gameStates[index])
+        return { success: true, gameState: { x: this.gameStates[index].x, y: this.gameStates[index].y, dx: this.gameStates[index].dx, dy: this.gameStates[index].dy, paddleLeft: this.gameStates[index].paddleLeft, paddleRight: this.gameStates[index].paddleRight } };
+      }
+    } catch (e) {
+      console.log(e);
+    }
+    return { success: false };
+  }
+
   async changeSocketClassic(socketId: number, login: string): Promise<{ success: boolean }> {
     try {
       const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });

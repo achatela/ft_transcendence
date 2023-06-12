@@ -27,6 +27,12 @@ export class PongGateway {
       socket.on('moveDown', (data) => {
         console.log("player moved down", data.socketId);
       });
+      socket.on('update', (data) => {
+        setInterval(() => {
+          socket.emit('update', this.pongService.getGameState(data.socketId));
+        }, 2000); // 30 fps je crois
+        console.log("update", data);
+      });
       socket.on('disconnect', () => {
         console.log("disconnect");
       });
