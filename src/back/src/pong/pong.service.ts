@@ -5,11 +5,26 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthService } from 'src/auth/auth.service';
 import { map } from 'rxjs';
 
+
+const widthGameboard: number = 1000;
+const heightGameboard: number = 600;
+const widthGameboardMid: number = widthGameboard / 2;
+const heightGameboardMid: number = heightGameboard / 2;
+const speedMultiplier: number = 8;
+const paddleStep: number = 25;
+const paddleHeight: number = 100;
+const paddleMid: number = paddleHeight / 2;
+const paddleGap: number = 50;
+const paddleWidth: number = 20;
+const squareSize: number = 20;
+const midSquare: number = squareSize / 2;
+
+
 @Injectable()
 export class PongService {
   private queueClassic: number[] = [];
   private queueCustom: number[] = [];
-  gameStates: [{ id1: number, id2: number, socketLeft: number, socketRight: number, x: number, y: number, dx: number, dy: number, paddleLeft: number, paddleRight: number }] = [{ id1: 0, id2: 0, socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0 }];
+  gameStates: [{ id1: number, id2: number, socketLeft: number, socketRight: number, x: number, y: number, dx: number, dy: number, paddleLeft: number, paddleRight: number, leftScore: number, rightScore: number, prevLpc: boolean, prevRpc: boolean }] = [{ id1: 1, id2: 0, socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false }];
   map1 = new Map();
 
   constructor(private prismaService: PrismaService, private authService: AuthService) {
@@ -21,17 +36,147 @@ export class PongService {
     }, 1000);
   }
 
-  getGameState(socketId: number): { success: boolean, gameState?: { x: number, y: number, dx: number, dy: number, paddleLeft: number, paddleRight: number } } {
+  moveUp(socketId: number) {
     try {
       const index = this.map1.get(socketId);
       if (index !== undefined) {
-        console.log(this.gameStates[index])
-        return { success: true, gameState: { x: this.gameStates[index].x, y: this.gameStates[index].y, dx: this.gameStates[index].dx, dy: this.gameStates[index].dy, paddleLeft: this.gameStates[index].paddleLeft, paddleRight: this.gameStates[index].paddleRight } };
+        if (this.gameStates[index].socketLeft === socketId) {
+          if (this.gameStates[index].paddleLeft - paddleStep < 0)
+            this.gameStates[index].paddleLeft = 0;
+          else
+            this.gameStates[index].paddleLeft -= paddleStep;
+          // this.gameStates[index].paddleLeft -= paddleStep;
+        }
+        else {
+          if (this.gameStates[index].paddleRight - paddleStep < 0)
+            this.gameStates[index].paddleRight = 0;
+          else
+            this.gameStates[index].paddleRight -= paddleStep;
+          // this.gameStates[index].paddleLeft -= paddleStep;
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  moveDown(socketId: number) {
+    try {
+      const index = this.map1.get(socketId);
+      if (index !== undefined) {
+        if (this.gameStates[index].socketLeft === socketId) {
+          if (this.gameStates[index].paddleLeft + paddleHeight + paddleStep > heightGameboard)
+            this.gameStates[index].paddleLeft = heightGameboard - paddleHeight;
+          else
+            this.gameStates[index].paddleLeft += paddleStep;
+        }
+        else {
+          if (this.gameStates[index].paddleRight + paddleHeight + paddleStep > heightGameboard)
+            this.gameStates[index].paddleRight = heightGameboard - paddleHeight;
+          else
+            this.gameStates[index].paddleRight += paddleStep;
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  checkPaddleCollision(ballX: number, ballY: number, paddleX: number, paddleY: number) {
+    const ballLeft = ballX;
+    const ballRight = ballX + squareSize;
+    const ballTop = ballY;
+    const ballBottom = ballY + squareSize;
+
+    const paddleLeft = paddleX;
+    const paddleRight = paddleX + paddleWidth;
+    const paddleTop = paddleY;
+    const paddleBottom = paddleY + paddleHeight;
+
+    // Check if ball and paddle are colliding
+    if (ballRight > paddleLeft && ballLeft < paddleRight && ballBottom > paddleTop && ballTop < paddleBottom) {
+      return true;
+    }
+    return false;
+  }
+
+  gameLogicClassic(index: number) {
+    let gameState = this.gameStates[index];
+
+    const newX = gameState.x + gameState.dx * speedMultiplier;
+    const newY = gameState.y + gameState.dy * speedMultiplier;
+    const lpc = this.checkPaddleCollision(newX, newY, paddleGap, gameState.paddleLeft);
+    const rpc = this.checkPaddleCollision(newX, newY, widthGameboard - paddleGap - paddleWidth, gameState.paddleRight);
+    if (lpc == true && gameState.prevLpc == false) {
+      const dirX = -gameState.dx;
+      const dirY = (gameState.y + squareSize / 2 - gameState.paddleLeft - paddleMid) / paddleMid;
+      const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
+      gameState.dx = dirX / magnitude;
+      gameState.dy = dirY / magnitude;
+    }
+    else if (rpc == true && gameState.prevRpc == false) {
+      const dirX = -gameState.dx;
+      const dirY = (gameState.y + squareSize / 2 - gameState.paddleRight - paddleMid) / paddleMid;
+      const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
+      gameState.dx = dirX / magnitude;
+      gameState.dy = dirY / magnitude;
+    }
+    else if (newY < 0 || newY + squareSize > heightGameboard) {
+      gameState.dy = -gameState.dy;
+    }
+    else if (newX < 0) {
+      const dirX = Math.random() * 2 - 1;
+      const dirY = Math.random() * 2 - 1;
+      const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
+      gameState.rightScore++;
+      gameState.x = widthGameboardMid - midSquare;
+      gameState.y = heightGameboardMid - midSquare;
+      gameState.dx = dirX / magnitude;
+      gameState.dy = dirY / magnitude;
+    }
+    else if (newX + squareSize > widthGameboard) {
+      const dirX = Math.random() * 2 - 1;
+      const dirY = Math.random() * 2 - 1;
+      const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
+      gameState.leftScore++;
+      gameState.x = widthGameboardMid - midSquare;
+      gameState.y = heightGameboardMid - midSquare;
+      gameState.dx = dirX / magnitude;
+      gameState.dy = dirY / magnitude;
+    }
+    else {
+      gameState.x = newX;
+      gameState.y = newY;
+    }
+    gameState.prevLpc = lpc;
+    gameState.prevRpc = rpc;
+  }
+
+  getGameState(socketId: number): { success: boolean, gameState?: { x: number, y: number, dx: number, dy: number, paddleLeft: number, paddleRight: number, leftScore: number, rightScore: number } } {
+    try {
+      const index = this.map1.get(socketId);
+      if (index !== undefined) {
+        this.gameLogicClassic(index);
+        return { success: true, gameState: { x: this.gameStates[index].x, y: this.gameStates[index].y, dx: this.gameStates[index].dx, dy: this.gameStates[index].dy, paddleLeft: this.gameStates[index].paddleLeft, paddleRight: this.gameStates[index].paddleRight, leftScore: this.gameStates[index].leftScore, rightScore: this.gameStates[index].rightScore } };
       }
     } catch (e) {
       console.log(e);
     }
     return { success: false };
+  }
+
+  gameStartClassic(index: number) {
+    let gameState = this.gameStates[index];
+
+    gameState.x = widthGameboardMid - (squareSize / 2);
+    gameState.y = heightGameboardMid - (squareSize / 2);
+    gameState.dx = Math.random() < 0.5 ? -1 : 1;
+    gameState.dy = Math.random() * 2 - 1;
+    let magnitude = Math.sqrt(gameState.dx ** 2) + Math.sqrt(gameState.dy ** 2);
+    gameState.dx /= magnitude;
+    gameState.dy /= magnitude;
+    gameState.paddleLeft = heightGameboardMid - paddleMid;
+    gameState.paddleRight = heightGameboardMid - paddleMid;
   }
 
   async changeSocketClassic(socketId: number, login: string): Promise<{ success: boolean }> {
@@ -42,10 +187,14 @@ export class PongService {
         if (this.gameStates[index].id1 === user.id && this.gameStates[index].socketLeft === 0) {
           this.gameStates[index].socketLeft = socketId;
           this.map1.set(socketId, index);
+          if (this.gameStates[index].socketRight !== 0 && this.gameStates[index].socketLeft !== 0)
+            this.gameStartClassic(index);
         }
         else {
           this.gameStates[index].socketRight = socketId;
           this.map1.set(socketId, index);
+          if (this.gameStates[index].socketRight !== 0 && this.gameStates[index].socketLeft !== 0)
+            this.gameStartClassic(index);
         }
         console.log('gameStates in classic', this.gameStates);
         return { success: true };
@@ -78,7 +227,7 @@ export class PongService {
       if (this.queueCustom.length >= 2) {
         const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueCustom[0] } });
         const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueCustom[1] } });
-        this.gameStates.push({ id1: 0, id2: 0, socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0 });
+        this.gameStates.push({ id1: 0, id2: 0, socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false });
         this.queueCustom.splice(0, 2);
         console.log('gameStates in custom', this.gameStates);
         await this.prismaService.user.update({ where: { id: user1.id }, data: { status: 'playing custom' } });
@@ -145,7 +294,7 @@ export class PongService {
       if (this.queueClassic.length >= 2) {
         const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueClassic[0] } });
         const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueClassic[1] } });
-        this.gameStates.push({ id1: 0, id2: 0, socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0 });
+        this.gameStates.push({ id1: 0, id2: 0, socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false });
         this.queueClassic.splice(0, 2);
         console.log('gameStates in classic', this.gameStates);
         await this.prismaService.user.update({ where: { id: user1.id }, data: { status: 'playing classic' } });
