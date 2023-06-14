@@ -18,7 +18,7 @@ export class PongGateway {
     );
     // this.pongService.gameStates.push({ id1: 0, id2: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0 });
     io.on('connection', (socket) => {
-      let interval;
+      let interval: NodeJS.Timer;
       socket.emit('gameState', {});
       socket.on('connectGameClassic', (data) => {
         this.pongService.changeSocketClassic(data.socketId, data.login);
@@ -37,9 +37,9 @@ export class PongGateway {
         interval = setInterval(() => {
           const ret = this.pongService.getGameState(data.socketId);
           socket.emit('update', ret);
-          if (ret.success === false) {
-            clearInterval(interval);
-          }
+          // if (ret.success === false) {
+          //   clearInterval(interval);
+          // }
         }, 33); // 30 fps je crois
         console.log("update", data);
       });

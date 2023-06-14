@@ -86,14 +86,15 @@ class GameBoard extends Component<IProps, IState> {
     }
 
     displayGame(data: any) {
-        this.setState((prevState) => ({
-            leftPaddleY: data.gameState.paddleLeft * this.state.magicHeightRatio,
-            rightPaddleY: data.gameState.paddleRight * this.state.magicHeightRatio,
-            ballX: data.gameState.x * this.state.magicWidthRatio,
-            ballY: data.gameState.y * this.state.magicHeightRatio,
-            leftPlayerScore: data.gameState.leftScore,
-            rightPlayerScore: data.gameState.rightScore,
-        }));
+        if (data.success == true)
+            this.setState((prevState) => ({
+                leftPaddleY: data.gameState.paddleLeft * this.state.magicHeightRatio,
+                rightPaddleY: data.gameState.paddleRight * this.state.magicHeightRatio,
+                ballX: data.gameState.x * this.state.magicWidthRatio,
+                ballY: data.gameState.y * this.state.magicHeightRatio,
+                leftPlayerScore: data.gameState.leftScore,
+                rightPlayerScore: data.gameState.rightScore,
+            }));
         // const ctx = this.state.canvasContext;
         // if (ctx) {
         // ctx.clearRect(0, 0, this.rect!.width, this.rect!.height);
