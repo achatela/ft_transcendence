@@ -119,7 +119,7 @@ class GameBoard extends Component<IProps, IState> {
             });
             this.state.socket.on('update', (data: any) => {
                 this.displayGame(data);
-                console.log(data);
+                // console.log(data);
             });
             this.state.socket.emit("events", { socketId: this.state.socket.id, login: sessionStorage.getItem("login") });
             this.state.socket.emit("update", { socketId: this.state.socket.id });
@@ -204,6 +204,7 @@ class GameBoard extends Component<IProps, IState> {
 
     componentWillUnmount() {
         clearInterval(this.interval);
+        this.state.socket.emit("disconnect", { socketId: this.state.socket.id });
         this.state.socket.on('disconnect', () => {
             console.log('disconnected');
         }
@@ -321,7 +322,6 @@ class GameBoard extends Component<IProps, IState> {
     };
 
     render(): JSX.Element {
-        console.log(this.state)
         return (
             <div className="gameBoard">
                 <p className="leftScore">{this.state.leftPlayerScore}</p>

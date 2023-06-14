@@ -36,6 +36,24 @@ export class PongService {
     }, 1000);
   }
 
+  disconnectSocket(socketId: number) {
+    try {
+      const index = this.map1.get(socketId);
+      if (index !== undefined) {
+        if (this.gameStates[index].socketLeft === socketId) {
+          this.gameStates[index].socketLeft = 0;
+          // this.gameStates[index].id1 = 0;
+        }
+        else {
+          this.gameStates[index].socketRight = 0;
+          // this.gameStates[index].id2 = 0;
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   moveUp(socketId: number) {
     try {
       const index = this.map1.get(socketId);
@@ -155,6 +173,9 @@ export class PongService {
   getGameState(socketId: number): { success: boolean, gameState?: { x: number, y: number, dx: number, dy: number, paddleLeft: number, paddleRight: number, leftScore: number, rightScore: number } } {
     try {
       const index = this.map1.get(socketId);
+      if (this.gameStates[index].socketLeft === 0 || this.gameStates[index].socketRight === 0) {
+        return { success: false };
+      }
       if (index !== undefined) {
         this.gameLogicClassic(index);
         return { success: true, gameState: { x: this.gameStates[index].x, y: this.gameStates[index].y, dx: this.gameStates[index].dx, dy: this.gameStates[index].dy, paddleLeft: this.gameStates[index].paddleLeft, paddleRight: this.gameStates[index].paddleRight, leftScore: this.gameStates[index].leftScore, rightScore: this.gameStates[index].rightScore } };

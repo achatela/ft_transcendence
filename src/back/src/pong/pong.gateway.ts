@@ -5,6 +5,8 @@ import { UpdatePongDto } from './dto/update-pong.dto';
 import { Socket } from 'dgram';
 import { PrismaService } from 'src/prisma/prisma.service';
 
+let roomCounter = 1;
+
 @WebSocketGateway(3130, { cors: true })
 export class PongGateway {
   constructor(private pongService: PongService, private prismaService: PrismaService) {
@@ -16,6 +18,7 @@ export class PongGateway {
     );
     // this.pongService.gameStates.push({ id1: 0, id2: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0 });
     io.on('connection', (socket) => {
+      let interval;
       socket.emit('gameState', {});
       socket.on('connectGameClassic', (data) => {
         this.pongService.changeSocketClassic(data.socketId, data.login);
@@ -30,7 +33,8 @@ export class PongGateway {
         console.log("player moved down", data.socketId);
       });
       socket.on('update', (data) => {
-        let interval = setInterval(() => {
+        // need to move the setInterval, so we check before if the player is already in a game
+        interval = setInterval(() => {
           const ret = this.pongService.getGameState(data.socketId);
           socket.emit('update', ret);
           if (ret.success === false) {
@@ -39,7 +43,9 @@ export class PongGateway {
         }, 33); // 30 fps je crois
         console.log("update", data);
       });
-      socket.on('disconnect', () => {
+      socket.on('disconnect', (data) => {
+        this.pongService.disconnectSocket(data.socketId);
+        clearInterval(interval);
         console.log("disconnect");
       });
     });
