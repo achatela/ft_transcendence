@@ -22,15 +22,12 @@ export class PongGateway {
       socket.emit('gameState', {});
       socket.on('connectGameClassic', (data) => {
         this.pongService.changeSocketClassic(data.socketId, data.login);
-        console.log("connected to game", data);
       });
       socket.on('moveUp', (data) => {
         this.pongService.moveUp(data.socketId);
-        console.log("player moved up", data.socketId);
       });
       socket.on('moveDown', (data) => {
         this.pongService.moveDown(data.socketId);
-        console.log("player moved down", data.socketId);
       });
       socket.on('update', (data) => {
         // need to move the setInterval, so we check before if the player is already in a game
@@ -40,7 +37,7 @@ export class PongGateway {
           // if (ret.success === false) {
           //   clearInterval(interval);
           // }
-        }, 33); // 30 fps je crois
+        }, 16); // 30 fps je crois
         console.log("update", data);
       });
       socket.on('disconnect', (data) => {

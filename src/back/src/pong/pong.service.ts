@@ -10,7 +10,7 @@ const widthGameboard: number = 1000;
 const heightGameboard: number = 600;
 const widthGameboardMid: number = widthGameboard / 2;
 const heightGameboardMid: number = heightGameboard / 2;
-const speedMultiplier: number = 8;
+const speedMultiplier: number = 4;
 const paddleStep: number = 25;
 const paddleHeight: number = 100;
 const paddleMid: number = paddleHeight / 2;
@@ -63,14 +63,12 @@ export class PongService {
             this.gameStates[index].paddleLeft = 0;
           else
             this.gameStates[index].paddleLeft -= paddleStep;
-          // this.gameStates[index].paddleLeft -= paddleStep;
         }
         else {
           if (this.gameStates[index].paddleRight - paddleStep < 0)
             this.gameStates[index].paddleRight = 0;
           else
             this.gameStates[index].paddleRight -= paddleStep;
-          // this.gameStates[index].paddleLeft -= paddleStep;
         }
       }
     } catch (e) {
