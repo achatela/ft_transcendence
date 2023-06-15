@@ -21,7 +21,7 @@ export class PongGateway {
       let interval: NodeJS.Timer;
       socket.emit('gameState', {});
       socket.on('connectGameClassic', (data) => {
-        this.pongService.changeSocketClassic(data.socketId, data.login);
+        this.pongService.changeSocketClassic(data.socketId, data.login, io);
       });
       socket.on('moveUp', (data) => {
         this.pongService.moveUp(data.socketId);

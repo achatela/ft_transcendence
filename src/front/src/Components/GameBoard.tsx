@@ -33,6 +33,8 @@ class GameBoard extends Component<IProps, IState> {
     canvasRef: React.RefObject<HTMLCanvasElement>;
     magicHeightRatio: number;
     magicWidthRatio: number;
+    leftUser: string;
+    rightUser: string;
     constructor(props: IProps) {
         super(props);
         const dirX = Math.random() < 0.5 ? -1 : 1;
@@ -109,8 +111,13 @@ class GameBoard extends Component<IProps, IState> {
             });
             this.state.socket.on('update', (data: any) => {
                 this.displayGame(data);
-                console.log(data);
+                // console.log(data);
             });
+            this.state.socket.on('usernames', (data: any) => {
+                console.log(data)
+                this.leftUser = data.leftUser;
+                this.rightUser = data.rightUser;
+            })
             this.state.socket.emit("events", { socketId: this.state.socket.id, login: sessionStorage.getItem("login") });
             this.state.socket.emit("update", { socketId: this.state.socket.id });
             console.log("socketId", this.state.socket.id)

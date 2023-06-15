@@ -19,7 +19,6 @@ const paddleWidth: number = 20;
 const squareSize: number = 20;
 const midSquare: number = squareSize / 2;
 
-
 @Injectable()
 export class PongService {
   private queueClassic: number[] = [];
@@ -198,7 +197,7 @@ export class PongService {
     gameState.paddleRight = heightGameboardMid - paddleMid;
   }
 
-  async changeSocketClassic(socketId: number, login: string): Promise<{ success: boolean }> {
+  async changeSocketClassic(socketId: number, login: string, io: any): Promise<{ success: boolean }> {
     try {
       const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
       const index = this.gameStates.findIndex((gameState) => gameState.id1 === user.id || gameState.id2 === user.id);
@@ -206,14 +205,25 @@ export class PongService {
         if (this.gameStates[index].id1 === user.id && this.gameStates[index].socketLeft === 0) {
           this.gameStates[index].socketLeft = socketId;
           this.map1.set(socketId, index);
-          if (this.gameStates[index].socketRight !== 0 && this.gameStates[index].socketLeft !== 0)
+          if (this.gameStates[index].socketRight !== 0 && this.gameStates[index].socketLeft !== 0) {
+            // const username1 = await this.prismaService.user.findUnique({ where: { id: this.gameStates[index].id1 } });
+            // const username2 = await this.prismaService.user.findUnique({ where: { id: this.gameStates[index].id2 } });
+            // // io.to('').emit('usernames', { leftUser: username1.username, rightUser: username2.username });
+            // io.to(this.gameStates[index].socketLeft).emit('usernames', { leftUser: username1.username, rightUser: username2.username });
+            // io.to(this.gameStates[index].socketRight).emit('usernames', { leftUser: username1.username, rightUser: username2.username });
             this.gameStartClassic(index);
+          }
         }
         else {
           this.gameStates[index].socketRight = socketId;
           this.map1.set(socketId, index);
-          if (this.gameStates[index].socketRight !== 0 && this.gameStates[index].socketLeft !== 0)
+          if (this.gameStates[index].socketRight !== 0 && this.gameStates[index].socketLeft !== 0) {
+            // const username1 = await this.prismaService.user.findUnique({ where: { id: this.gameStates[index].id1 } });
+            // const username2 = await this.prismaService.user.findUnique({ where: { id: this.gameStates[index].id2 } });
+            // io.to(this.gameStates[index].socketLeft).emit('usernames', { leftUser: username1.username, rightUser: username2.username });
+            // io.to(this.gameStates[index].socketRight).emit('usernames', { leftUser: username1.username, rightUser: username2.username });
             this.gameStartClassic(index);
+          }
         }
         console.log('gameStates in classic', this.gameStates);
         return { success: true };
