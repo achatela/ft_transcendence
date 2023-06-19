@@ -6,39 +6,45 @@ export class SocialController {
     constructor(private socialService: SocialService) { }
 
     @Post('friend_request')
-    async getSocial(@Body() userInput: { login: string, accessToken: string, refreshToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, listRequest?: string[] }> {
-        return await this.socialService.getFriendRequest(userInput.login, userInput.accessToken, userInput.refreshToken);
+    async getSocial(@Body() userInput: { username: string, accessToken: string, refreshToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, listRequest?: string[] }> {
+        return await this.socialService.getFriendRequests(userInput.username, userInput.accessToken, userInput.refreshToken);
     }
 
     @Post('accept_friend_request')
-    async acceptFriendRequest(@Body() userInput: { usernameToAccept: string, loginUser: string, accessToken: string, refreshToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string }> {
-        return await this.socialService.acceptFriendRequest(userInput.usernameToAccept, userInput.loginUser, userInput.accessToken, userInput.refreshToken);
+    async acceptFriendRequest(@Body() userInput: { accepterUsername: string, acceptedUsername: string, accessToken: string, refreshToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string }> {
+        console.log("acceptedUsername:", userInput.acceptedUsername);
+        return await this.socialService.acceptFriendRequest(userInput.accepterUsername, userInput.acceptedUsername, userInput.accessToken, userInput.refreshToken);
     }
 
     @Post('decline_friend_request')
-    async declineFriendRequest(@Body() userInput: { usernameToDecline: string, loginUser: string, accessToken: string, refreshToken: string, }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string }> {
-        return await this.socialService.declineFriendRequest(userInput.usernameToDecline, userInput.loginUser, userInput.accessToken, userInput.refreshToken);
+    async declineFriendRequest(@Body() userInput: { declinerUsername: string, declinedUsername: string, accessToken: string, refreshToken: string, }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string }> {
+        return await this.socialService.declineFriendRequest(userInput.declinerUsername, userInput.declinedUsername, userInput.accessToken, userInput.refreshToken);
     }
 
-    @Post('friend_list')
-    async getFriendList(@Body() userInput: { login: string, accessToken: string, refreshToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, listFriend?: string[] }> {
-        return await this.socialService.getFriendList(userInput.login, userInput.accessToken, userInput.refreshToken);
+    @Post('friends')
+    async getFriends(@Body() userInput: { username: string, accessToken: string, refreshToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, friends?: string[] }> {
+        return await this.socialService.getFriends(userInput.username, userInput.accessToken, userInput.refreshToken);
     }
 
     @Post('send_friend_request')
-    async sendFriendRequest(@Body() userInput: { loginUser: string, accessToken: string, refreshToken: string, usernameToSend: string }): Promise<{ error?: string, success: boolean, accessToken?: string, refreshToken?: string }> {
-        if (userInput.usernameToSend === '')
+    async sendFriendRequest(@Body() userInput: { requesterUsername: string, requestedUsername: string, accessToken: string, refreshToken: string }): Promise<{ error?: string, success: boolean, accessToken?: string, refreshToken?: string }> {
+        if (userInput.requestedUsername === '')
             return ({ success: false });
-        return await this.socialService.sendFriendRequest(userInput.loginUser, userInput.accessToken, userInput.refreshToken, userInput.usernameToSend);
+        return await this.socialService.sendFriendRequest(userInput.requesterUsername, userInput.requestedUsername, userInput.accessToken, userInput.refreshToken);
     }
 
     @Post('remove_friend')
-    async removeFriend(@Body() userInput: { usernameToRemove: string, loginUser: string, refreshToken: string, accessToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string }> {
-        return await this.socialService.removeFriend(userInput.usernameToRemove, userInput.loginUser, userInput.refreshToken, userInput.accessToken);
+    async removeFriend(@Body() userInput: { removerUsername: string, removedUsername: string, refreshToken: string, accessToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string }> {
+        return await this.socialService.removeFriend(userInput.removerUsername, userInput.removedUsername, userInput.refreshToken, userInput.accessToken);
     }
 
-    @Post('get_friend_id')
-    async getFriendId(@Body() userInput: { username: string, login: string, accessToken: string, refreshToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, id?: number }> {
-        return await this.socialService.getFriendId(userInput.username, userInput.login, userInput.refreshToken, userInput.accessToken);
+    @Post('friend_chat')
+    async getFriendChat(@Body() userInput: { username: string, friendUsername: string, accessToken: string, refreshToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, chat?: {room: string, messages: string[]} }> {
+        return await this.socialService.getFriendChat(userInput.username, userInput.friendUsername, userInput.accessToken, userInput.refreshToken);
     }
+
+    // @Post('get_friend_id')
+    // async getFriendId(@Body() userInput: { username: string, login: string, accessToken: string, refreshToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, id?: number }> {
+    //     return await this.socialService.getFriendId(userInput.username, userInput.login, userInput.refreshToken, userInput.accessToken);
+    // }
 }

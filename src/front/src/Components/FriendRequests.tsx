@@ -2,12 +2,11 @@ import React from 'react';
 import axios from 'axios'
 
 async function acceptFunction(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
-  let name = event.currentTarget.dataset.name;
   const request = await axios.post(
     "http://localhost:3333/social/accept_friend_request/",
     JSON.stringify({
-      usernameToAccept: name,
-      loginUser: sessionStorage.getItem("login"),
+      accepterUsername: sessionStorage.getItem("username"),
+      acceptedUsername: event.currentTarget.dataset.name,
       refreshToken: sessionStorage.getItem("refreshToken"),
       accessToken: sessionStorage.getItem("accessToken"),
     }),
@@ -26,12 +25,11 @@ async function acceptFunction(event: React.MouseEvent<HTMLButtonElement>): Promi
 
 
 async function declineFunction(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
-  const name = event.currentTarget.dataset.name;
   const request = await axios.post(
     "http://localhost:3333/social/decline_friend_request/",
     JSON.stringify({
-      usernameToDecline: name,
-      loginUser: sessionStorage.getItem("login"),
+      declinerUsername: sessionStorage.getItem("username"),
+      declinedUsername: event.currentTarget.dataset.name,
       refreshToken: sessionStorage.getItem("refreshToken"),
       accessToken: sessionStorage.getItem("accessToken"),
     }),

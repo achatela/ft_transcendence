@@ -37,13 +37,13 @@ export class AuthController {
     }
 
     @Post('get_code')
-    async getCode(@Body() userInput: { code: string, username: string }): Promise<{ success: boolean, error?: string, refreshToken?: string, accessToken?: string, login?: string }> {
+    async getCode(@Body() userInput: { code: string, username: string }): Promise<{ success: boolean, error?: string, refreshToken?: string, accessToken?: string, username?: string }> {
         const personnal42Token = await this.authService.getUserToken(userInput.code);
         if (personnal42Token.success === false)
             return { success: false, error: "getUserToken failure" };
         await this.prismaService.user.update({ where: { username: userInput.username }, data: { personnal42Token: personnal42Token.access_token } });
         const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: userInput.username } });
-        const payload = { username: userInput.username, id: user.id };
+        const payload = { id: user.id };
         const refreshToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
         const accessToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '5m' });
         await this.prismaService.user.update({ where: { username: userInput.username }, data: { refreshToken: refreshToken, accessToken: accessToken } });
@@ -54,14 +54,14 @@ export class AuthController {
         catch {
             await this.prismaService.user.update({ where: { username: userInput.username }, data: { avatar: request.data.image.versions.small } });
             await this.prismaService.user.update({ where: { username: userInput.username }, data: { login: request.data.login } });
-            return { success: true, refreshToken: refreshToken, accessToken: accessToken, login: request.data.login };
+            return { success: true, refreshToken: refreshToken, accessToken: accessToken, username: userInput.username };
         }
         await this.prismaService.user.delete({ where: { username: userInput.username } })
         return ({ success: false, error: "Login already created a user" })
     }
 
     @Post('verify_sign_in')
-    async verifySignUp(@Body() userInput: { code: string }): Promise<{ success: boolean, login?: string, error?: string, refreshToken?: string, accessToken?: string, twoFa?: boolean }> {
+    async verifySignIn(@Body() userInput: { code: string }): Promise<{ success: boolean, username?: string, error?: string, refreshToken?: string, accessToken?: string, twoFa?: boolean }> {
         const personnal42Token = await this.authService.getUserToken(userInput.code);
         if (personnal42Token.success === false)
             return { success: false, error: "getUserToken failure" };
@@ -74,7 +74,7 @@ export class AuthController {
         }
         await this.prismaService.user.update({ where: { login: request.data.login }, data: { personnal42Token: personnal42Token.access_token } });
         const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: request.data.login } });
-        const payload = { username: user.username, id: user.id };
+        const payload = { id: user.id };
         const refreshToken: string = this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
         const accessToken: string = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '5m' });
         await this.prismaService.user.update({ where: { username: user.username }, data: { refreshToken: refreshToken, accessToken: accessToken } });
@@ -82,7 +82,7 @@ export class AuthController {
             success: true,
             refreshToken: refreshToken,
             accessToken: accessToken,
-            login: request.data.login,
+            username: user.username,
             twoFa: user.enabled2FA,
         };
     }

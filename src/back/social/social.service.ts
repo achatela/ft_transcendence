@@ -1,138 +1,157 @@
 import { Injectable } from '@nestjs/common';
+import { connect } from 'http2';
 import { AuthService } from 'src/auth/auth.service';
 import { PrismaService } from 'src/prisma/prisma.service';
+
 
 @Injectable()
 export class SocialService {
     constructor(private prismaService: PrismaService, private authService: AuthService) { }
 
-    async getFriendRequest(login: string, accessToken: string, refreshToken: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, listRequest?: string[] }> {
-        const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
-        const ret = await this.authService.checkToken(user, refreshToken, accessToken);
-        if (ret.success == true) {
-            const idList = user.idFriendsRequests;
-            const listRequest = [];
-            for (const id of idList) {
-                const user = await this.prismaService.user.findUniqueOrThrow({ where: { id: id } });
-                listRequest.push(user.username);
+    async removeFriend(removerUsername: string, removedUsername: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string }> {
+        const remover = await this.prismaService.user.findUnique({ where: { username: removerUsername }, include: {friends: true} });
+        const auth = await this.authService.checkToken(remover, refreshToken, accessToken);
+        if (auth.success == false)
+            return { success: false };
+        const removed = await this.prismaService.user.findUnique({ where: { username: removedUsername }, include: {friends: true} });
+        await this.prismaService.user.update({
+            where: { username: removerUsername },
+            data: {
+                friends: {
+                    delete: { id: removed.id }
+                },
+            },
+        });
+        await this.prismaService.user.update({
+            where: { username: removedUsername },
+            data: {
+                friends: {
+                    delete: { id: remover.id }
+                },
+            },
+        });
+          
+        return { success: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken };
+    }
+
+    async acceptFriendRequest(accepterUsername: string, acceptedUsername: string, accessToken: string, refreshToken: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string }> {
+        const accepter = await this.prismaService.user.findUnique({ where: { username: accepterUsername }, include: {friends: true} });
+        const auth = await this.authService.checkToken(accepter, refreshToken, accessToken);
+        if (auth.success == false)
+            return { success: false };
+        const accepted = await this.prismaService.user.findUnique({ where: { username: acceptedUsername }, include: {friends: true} });
+        const room = "friendChat(" + String(accepter.id) + "," + String(accepted.id) + ")";
+        const chat = await this.prismaService.friendChat.create({
+            data: {
+                room: room
             }
-            console.log("list request", listRequest);
-            return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken, listRequest: listRequest };
-        }
-        return { success: false };
-    }
-
-    async acceptFriendRequest(usernameToAccept: string, loginUser: string, accessToken: string, refreshToken: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string }> {
-        const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { login: loginUser } });
-        const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { username: usernameToAccept } });
-        const ret = await this.authService.checkToken(user1, refreshToken, accessToken);
-        if (ret.success == true) {
-            const idList = user1.idFriendsList;
-            idList.push(user2.id);
-            await this.prismaService.user.update({ where: { login: loginUser }, data: { idFriendsList: idList } });
-            const idList2 = user2.idFriendsList;
-            idList2.push(user1.id);
-            await this.prismaService.user.update({ where: { username: usernameToAccept }, data: { idFriendsList: idList2 } });
-            const idList3 = user1.idFriendsRequests;
-            const index = idList3.indexOf(user2.id);
-            idList3.splice(index, 1);
-            await this.prismaService.user.update({ where: { login: loginUser }, data: { idFriendsRequests: idList3 } });
-            return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
-        }
-        return { success: false };
-    }
-
-    async declineFriendRequest(usernameToDecline: string, loginUser: string, accessToken: string, refreshToken: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string }> {
-        const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { login: loginUser } });
-        const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { username: usernameToDecline } });
-        const ret = await this.authService.checkToken(user1, refreshToken, accessToken);
-        if (ret.success == true) {
-            const idList = user1.idFriendsRequests;
-            const index = idList.indexOf(user2.id);
-            idList.splice(index, 1);
-            await this.prismaService.user.update({ where: { login: loginUser }, data: { idFriendsRequests: idList } });
-            return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
-        }
-        return { success: false };
-    }
-
-    async getFriendList(login: string, accessToken: string, refreshToken: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, listFriend?: string[] }> {
-        const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
-        const ret = await this.authService.checkToken(user, refreshToken, accessToken);
-        if (ret.success == true) {
-            const idList = user.idFriendsList;
-            const listFriend = [];
-            for (const id of idList) {
-                const userTmp = await this.prismaService.user.findUniqueOrThrow({ where: { id: id } });
-                listFriend.push(userTmp.username);
-            }
-            console.log("list friend", listFriend);
-            return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken, listFriend: listFriend };
-        }
-        return { success: false };
-    }
-
-    async sendFriendRequest(login: string, accessToken: string, refreshToken: string, usernameToRequest: string): Promise<{ error?: string, success: boolean, accessToken?: string, refreshToken?: string }> {
-        //Change error to be: "User not found" or "User already in friend list"
-        try {
-            const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
-            const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { username: usernameToRequest } });
-            const ret = await this.authService.checkToken(user1, refreshToken, accessToken);
-
-            if (ret.success == true) {
-                // check if user2 is already in friend list
-                const idCheck = user1.idFriendsList;
-                for (const id of idCheck) {
-                    if (id == user2.id) {
-                        return { error: "User already in friend list.", success: false, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
-                    }
+        })
+        await this.prismaService.user.update({
+            where: { username: accepterUsername },
+            data: {
+              friends: {
+                create: {
+                    friendId: accepted.id,
+                    chatId: chat.id
                 }
-                const idList = user2.idFriendsRequests;
-                idList.push(user1.id);
-                await this.prismaService.user.update({ where: { username: usernameToRequest }, data: { idFriendsRequests: idList } });
-                return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
-            }
-        } catch (error) {
-            console.error('Error in sendFriendRequest:', error);
-        }
-        return { error: "User not found.", success: false };
+              },
+              friendRequests: {set: accepter.friendRequests.filter((requesterId) => requesterId !== accepted.id)}
+            },
+        });
+        await this.prismaService.user.update({
+            where: { username: acceptedUsername },
+            data: {
+                friends: {
+                    create: {
+                        friendId: accepter.id,
+                        chatId: chat.id
+                    }
+                },
+            },
+        });
+        return { success: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken };
     }
 
-    async removeFriend(usernameToRemove: string, loginUser: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string }> {
-        try {
-            const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { login: loginUser } });
-            const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { username: usernameToRemove } });
-            const ret = await this.authService.checkToken(user1, refreshToken, accessToken);
-            if (ret.success == true) {
-                const idList = user1.idFriendsList;
-                const index = idList.indexOf(user2.id);
-                idList.splice(index, 1);
-                await this.prismaService.user.update({ where: { login: loginUser }, data: { idFriendsList: idList } });
-                const idList2 = user2.idFriendsList;
-                const index2 = idList2.indexOf(user1.id);
-                idList2.splice(index2, 1);
-                await this.prismaService.user.update({ where: { username: usernameToRemove }, data: { idFriendsList: idList2 } });
-                return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
-            }
-        }
-        catch (error) {
-            console.error('Error in removeFriend:', error);
-        }
-        return { success: false };
+    async declineFriendRequest(declinerUsername: string, declinedUsername: string, accessToken: string, refreshToken: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string }> {
+        const decliner = await this.prismaService.user.findUnique({ where: { username: declinerUsername } });
+        const auth = await this.authService.checkToken(decliner, refreshToken, accessToken);
+        if (auth.success == false)
+            return { success: false };
+        const declined = await this.prismaService.user.findUnique({ where: { username: declinedUsername }, select: { id: true } });
+        await this.prismaService.user.update({ where: { id: decliner.id }, data: { friendRequests: {set: decliner.friendRequests.filter((requesterId) => requesterId !== declined.id)} } });
+        return { success: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken };
     }
 
-    async getFriendId(username: string, login: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, id?: number }> {
-        try {
-            const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: login } });
-            const ret = await this.authService.checkToken(user, refreshToken, accessToken);
-            if (ret.success == true) {
-                const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { username: username } });
-                return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken, id: user2.id };
+    async sendFriendRequest(requesterUsername: string, requestedUsername: string, accessToken: string, refreshToken: string): Promise<{ error?: string, success: boolean, accessToken?: string, refreshToken?: string }> {
+        const requester = await this.prismaService.user.findUnique({ where: { username: requesterUsername }, include: {friends: true} });
+        const auth = await this.authService.checkToken(requester, refreshToken, accessToken);
+        if (auth.success == false)
+            return { error: "User not found.", success: false };
+        const requested = await this.prismaService.user.findUnique({ where: { username: requestedUsername } });
+        for (const request of requester.friendRequests) {
+            if (request == requested.id)
+                return { error: "Friend request already sent to this user.", success: false, accessToken: auth.accessToken, refreshToken: auth.refreshToken };
+        }
+        for (const friend of requester.friends) {
+            if (friend.friendId == requested.id)
+                return { error: "User already in friend list.", success: false, accessToken: auth.accessToken, refreshToken: auth.refreshToken };
+        }
+        await this.prismaService.user.update({ where: { username: requestedUsername }, data: { friendRequests: { push: requester.id } } });
+        return { success: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken };
+    }
+
+    async getFriendRequests(username: string, accessToken: string, refreshToken: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, friendRequests?: string[] }> {
+        const user = await this.prismaService.user.findUnique({ where: { username: username } });
+        const auth = await this.authService.checkToken(user, refreshToken, accessToken);
+        if (auth.success == false)
+            return { success: false };
+        const friendRequests = [];
+        for (const requestId of user.friendRequests)
+            friendRequests.push((await this.prismaService.user.findUnique({ where: { id: requestId }, select: {username: true} })).username);
+        console.log("friend requests", friendRequests);
+        return { success: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken, friendRequests: friendRequests };
+    }
+
+    async getFriends(username: string, accessToken: string, refreshToken: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, friends?: string[] }> {
+        const user = await this.prismaService.user.findUnique({ where: { username: username } , include: { friends: true }});
+        const auth = await this.authService.checkToken(user, refreshToken, accessToken);
+        if (auth.success == false)
+            return { success: false };
+        const friends = [];
+        for (const friend of user.friends)
+            friends.push((await this.prismaService.user.findUnique({ where: { id: friend.friendId } })).username);
+        return { success: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken, friends: friends };
+    }
+
+    async getFriendChat(username: string, friendUsername: string, accessToken: string, refreshToken: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, chat?: {room: string, messages: string[]} }> {
+        const user = await this.prismaService.user.findUnique({ where: { username: username }, include: { friends: true }});
+        const auth = await this.authService.checkToken(user, refreshToken, accessToken);
+        if (auth.success == false)
+            return { success: false };
+        const friendId = (await this.prismaService.user.findUnique({ where: { username: friendUsername }, select: { id: true }})).id;
+        const messages = [];
+        for (const friend of user.friends) {
+            if (friend.friendId == friendId) {
+                const chat = await this.prismaService.friendChat.findUnique({ where: { id: friend.chatId }, include: { messages: true } })
+                for (const message of chat.messages)
+                    messages.push(message.text)
+                console.log("messages", messages);
+                return { success: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken, chat: {room: chat.room, messages: messages} };
             }
         }
-        catch (error) {
-            console.error('Error in getFriendId:', error);
-        }
-        return { success: false };
     }
+
+
+    // async getFriendId(username: string, friendId: number, refreshToken: string, accessToken: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, id?: number }> {
+    //     try {
+    //         const user = await this.prismaService.user.findUnique({ where: { id: userId } });
+    //         const auth = await this.authService.checkToken(user, refreshToken, accessToken);
+    //         if (auth.success == false)
+    //             return { success: false };
+    //         const user2 = await this.prismaService.user.findUnique({ where: { id: friendId } });
+    //         return { success: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken, id: user2.id };
+    //     } catch (error) {
+    //         console.error('Error in getFriendId:', error);
+    //     }
+    // }
 }

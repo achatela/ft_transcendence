@@ -1,4 +1,4 @@
-.friend-list {
+.friends {
   position: absolute;
   border: 3px solid white;
   right: calc(0.8rem + 0.65vw);
@@ -10,7 +10,7 @@
   scrollbar-width: none;
 }
 
-.friend-list::-webkit-scrollbar {
+.friends::-webkit-scrollbar {
   display: none;
 }
 
@@ -48,13 +48,21 @@
   font-size: 2rem;
 }
 
-.friend-list-p {
+.friends-p {
   width: calc(100% - 6px);
   text-align: center;
   border: 3px solid white;
   padding-top: 1rem;
   padding-bottom: 1vh;
   font-size: 2rem;
+}
+
+.friend-chat-button {
+  color: black;
+}
+
+.friend-delete-button {
+  color: black;
 }
 
 .chat-text {
@@ -172,7 +180,7 @@
 
 /* Rules for items in FriendList.tsx */
 
-.friend-list-item {
+.friend {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -183,7 +191,7 @@
   cursor: pointer;
 }
 
-.friend-list-delete {
+.friend-delete {
   color: white;
   border: none;
   border-radius: 3px;
@@ -195,7 +203,7 @@
 }
 
 
-.friend-list-name {
+.friend-name {
   margin-top: 0.7rem;
   height: 2rem;
   width: 70%;

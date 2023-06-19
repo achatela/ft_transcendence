@@ -87,7 +87,7 @@ export class AuthService {
     }
 
     // async checkToken(user: User, refreshToken: string, accessToken: string): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
-    //     if (user.accessToken === accessToken) {
+    //     if (userAccessToken === accessToken) {
     //         const accessTokenExp = jwt.decode(accessToken).exp * 1000;
     //         const currentTime = new Date().getTime();
     //         if (accessTokenExp < currentTime) {
@@ -108,15 +108,15 @@ export class AuthService {
             }
             catch {
                 if (user.refreshToken === refreshToken) {
-                    const payload = { username: user.username, id: user.id };
+                    const payload = { id: user.id };
                     accessToken = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '5m' });
-                    await this.prismaService.user.update({ where: { username: user.username }, data: { accessToken: accessToken } });
+                    await this.prismaService.user.update({ where: { id: user.id }, data: { accessToken: accessToken } });
                     try {
                         await this.jwtService.verify(refreshToken, { secret: process.env.JWT_REFRESH_SECRET });
                     }
                     catch {
                         refreshToken = this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
-                        await this.prismaService.user.update({ where: { username: user.username }, data: { refreshToken: refreshToken } });
+                        await this.prismaService.user.update({ where: { id: user.id }, data: { refreshToken: refreshToken } });
                         return { success: true, refreshToken: refreshToken, accessToken: accessToken };
                     }
                     return { success: true, refreshToken: refreshToken, accessToken: accessToken };

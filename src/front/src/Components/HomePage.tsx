@@ -62,7 +62,7 @@ export default function HomePage(props: any) {
         if (request.data.success == true) {
           sessionStorage.removeItem('accessToken')
           sessionStorage.setItem("accessToken", request.data.accessToken);
-          sessionStorage.setItem("login", request.data.login);
+          sessionStorage.setItem("username", request.data.username);
           sessionStorage.setItem("refreshToken", request.data.refreshToken);
           if (request.data.twoFa === false)
             window.location.href = 'http://localhost:3133/profile';
@@ -85,7 +85,7 @@ export default function HomePage(props: any) {
       const request = await axios.post('http://localhost:3333/auth/get_code', JSON.stringify({ code: code, username: username }), { headers: { 'Content-Type': 'application/json' } });
       if (request.data.success == true) {
         sessionStorage.setItem("accessToken", request.data.accessToken);
-        sessionStorage.setItem("login", request.data.login);
+        sessionStorage.setItem("username", request.data.username);
         sessionStorage.setItem("refreshToken", request.data.refreshToken);
         window.location.href = 'http://localhost:3133/profile';
       }
