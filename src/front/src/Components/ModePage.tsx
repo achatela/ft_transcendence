@@ -9,6 +9,7 @@ interface IState {
 }
 
 class ModePage extends Component<IProps, IState> {
+    interval: NodeJS.Timer;
     constructor(props: IProps) {
         super(props);
         this.state = {
@@ -24,7 +25,7 @@ class ModePage extends Component<IProps, IState> {
 
     async componentDidMount(): Promise<void> {
         if (sessionStorage.getItem("queueing") === "Classic Pong") {
-            setInterval(async () => {
+            this.interval = setInterval(async () => {
                 const response = await axios.post('http://localhost:3333/pong/classic/queue_status/',
                     JSON.stringify({
                         login: sessionStorage.getItem('username'),
@@ -48,7 +49,7 @@ class ModePage extends Component<IProps, IState> {
             }, 1000);
         }
         else if (sessionStorage.getItem("queueing") === "Custom Pong") {
-            setInterval(async () => {
+            this.interval = setInterval(async () => {
                 const response = await axios.post('http://localhost:3333/pong/custom/queue_status/',
                     JSON.stringify({
                         login: sessionStorage.getItem('username'),
@@ -161,6 +162,10 @@ class ModePage extends Component<IProps, IState> {
                 window.location.href = "/mode";
             }
         }
+    }
+
+    componentWillUnmount(): void {
+        clearInterval(this.interval);
     }
 
     render() {

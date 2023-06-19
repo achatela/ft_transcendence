@@ -23,12 +23,12 @@ const midSquare: number = squareSize / 2;
 export class PongService {
   private queueClassic: number[] = [];
   private queueCustom: number[] = [];
-  gameStates: [{ id1: number, id2: number, socketLeft: number, socketRight: number, x: number, y: number, dx: number, dy: number, paddleLeft: number, paddleRight: number, leftScore: number, rightScore: number, prevLpc: boolean, prevRpc: boolean }] = [{ id1: 1, id2: 0, socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false }];
+  gameStates: Array<any> = [];
+  //[{ id1: number, id2: number, socketLeft: number, socketRight: number, x: number, y: number, dx: number, dy: number, paddleLeft: number, paddleRight: number, leftScore: number, rightScore: number, prevLpc: boolean, prevRpc: boolean }]
   map1 = new Map();
 
   constructor(private prismaService: PrismaService, private authService: AuthService) {
     setInterval(() => {
-      console.log(this.queueClassic);
       this.checkQueueClassic();
     }, 1000);
     setInterval(() => {
@@ -36,8 +36,18 @@ export class PongService {
     }, 1000);
   }
 
-  disconnectSocket(socketId: number) {
+  async disconnectSocket(socketId: number, username: string) {
     try {
+      await this.prismaService.user.update({
+        where: {
+          username: username
+        },
+        data: {
+          status: "online"
+        }
+      });
+
+
       const index = this.map1.get(socketId);
       if (index !== undefined) {
         if (this.gameStates[index].socketLeft === socketId) {
@@ -319,7 +329,7 @@ export class PongService {
   }
 
   async checkQueueClassic(): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
-    // console.log('classic', this.queueClassic)
+    console.log('classic', this.queueClassic)
     try {
       if (this.queueClassic.length >= 2) {
         const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueClassic[0] } });

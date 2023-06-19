@@ -157,7 +157,7 @@ class GameBoard extends Component<IProps, IState> {
 
     componentWillUnmount() {
         clearInterval(this.interval);
-        this.state.socket.emit("disconnect", { socketId: this.state.socket.id });
+        this.state.socket.emit("disconnect", { socketId: this.state.socket.id, username: sessionStorage.getItem("username") });
         this.state.socket.on('disconnect', () => {
             console.log('disconnected');
         });
