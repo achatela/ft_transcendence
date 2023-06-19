@@ -49,10 +49,19 @@ export class SocialService {
         if (auth.success == false)
             return { success: false };
         const accepted = await this.prismaService.user.findUnique({ where: { username: acceptedUsername }, include: { friends: true } });
-        const room = "friendChat(" + String(accepter.id) + "," + String(accepted.id) + ")";
+        const roomName = "friendChat(" + String(accepter.id) + "," + String(accepted.id) + ")";
+        let room = await this.prismaService.friendChat.findUnique({ where: { room: roomName } });
+        if (room != null) {
+            // Delete related FriendMessage records
+            await this.prismaService.friendMessage.deleteMany({ where: { chatId: room.id } });
+
+            // Delete the friendChat record
+            await this.prismaService.friendChat.deleteMany({ where: { room: roomName } });
+        }
+
         const chat = await this.prismaService.friendChat.create({
             data: {
-                room: room
+                room: roomName
             }
         })
         await this.prismaService.user.update({
