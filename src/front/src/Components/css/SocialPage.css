@@ -113,7 +113,6 @@
 .add-friend-input {
   display: block;
   background: black;
-  /* margin-left: 11%; */
   margin-left: calc(15% - 0.6rem);
   width: 70%;
   border: 3px solid white;
