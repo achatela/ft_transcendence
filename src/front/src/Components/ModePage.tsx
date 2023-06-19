@@ -27,7 +27,7 @@ class ModePage extends Component<IProps, IState> {
             setInterval(async () => {
                 const response = await axios.post('http://localhost:3333/pong/classic/queue_status/',
                     JSON.stringify({
-                        login: sessionStorage.getItem('login'),
+                        login: sessionStorage.getItem('username'),
                         refreshToken: sessionStorage.getItem('refreshToken'),
                         accessToken: sessionStorage.getItem('accessToken'),
                     }),
@@ -51,7 +51,7 @@ class ModePage extends Component<IProps, IState> {
             setInterval(async () => {
                 const response = await axios.post('http://localhost:3333/pong/custom/queue_status/',
                     JSON.stringify({
-                        login: sessionStorage.getItem('login'),
+                        login: sessionStorage.getItem('username'),
                         refreshToken: sessionStorage.getItem('refreshToken'),
                         accessToken: sessionStorage.getItem('accessToken'),
                     }),
@@ -83,7 +83,7 @@ class ModePage extends Component<IProps, IState> {
     queueClassic = async () => {
         const response = await axios.post('http://localhost:3333/pong/classic/queue_up/',
             JSON.stringify({
-                login: sessionStorage.getItem('login'),
+                login: sessionStorage.getItem('username'),
                 refreshToken: sessionStorage.getItem('refreshToken'),
                 accessToken: sessionStorage.getItem('accessToken'),
             }),
@@ -103,7 +103,7 @@ class ModePage extends Component<IProps, IState> {
     queueCustom = async () => {
         const response = await axios.post('http://localhost:3333/pong/custom/queue_up/',
             JSON.stringify({
-                login: sessionStorage.getItem('login'),
+                login: sessionStorage.getItem('username'),
                 refreshToken: sessionStorage.getItem('refreshToken'),
                 accessToken: sessionStorage.getItem('accessToken'),
             }),
@@ -124,7 +124,7 @@ class ModePage extends Component<IProps, IState> {
         if (sessionStorage.getItem("queueing") === "Classic Pong") {
             const response = await axios.post('http://localhost:3333/pong/classic/queue_down/',
                 JSON.stringify({
-                    login: sessionStorage.getItem('login'),
+                    login: sessionStorage.getItem('username'),
                     refreshToken: sessionStorage.getItem('refreshToken'),
                     accessToken: sessionStorage.getItem('accessToken'),
                 }),
@@ -144,7 +144,7 @@ class ModePage extends Component<IProps, IState> {
         else if (sessionStorage.getItem("queueing") === "Custom Pong") {
             const response = await axios.post('http://localhost:3333/pong/custom/queue_down/',
                 JSON.stringify({
-                    login: sessionStorage.getItem('login'),
+                    login: sessionStorage.getItem('username'),
                     refreshToken: sessionStorage.getItem('refreshToken'),
                     accessToken: sessionStorage.getItem('accessToken'),
                 }),

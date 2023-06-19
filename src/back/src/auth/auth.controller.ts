@@ -49,7 +49,7 @@ export class AuthController {
         await this.prismaService.user.update({ where: { username: userInput.username }, data: { refreshToken: refreshToken, accessToken: accessToken } });
         const request = await axios.get("https://api.intra.42.fr/v2/me", { headers: { Authorization: `Bearer ${personnal42Token.access_token}` } });
         try {
-            await this.prismaService.user.findUniqueOrThrow({ where: { login: request.data.login } })
+            await this.prismaService.user.findUniqueOrThrow({ where: { username: request.data.login } })
         }
         catch {
             await this.prismaService.user.update({ where: { username: userInput.username }, data: { avatar: request.data.image.versions.small } });
@@ -67,13 +67,13 @@ export class AuthController {
             return { success: false, error: "getUserToken failure" };
         const request = await axios.get("https://api.intra.42.fr/v2/me", { headers: { Authorization: `Bearer ${personnal42Token.access_token}` } });
         try {
-            await this.prismaService.user.findUniqueOrThrow({ where: { login: request.data.login } })
+            await this.prismaService.user.findUniqueOrThrow({ where: { username: request.data.login } })
         }
         catch {
             return { success: false, error: "Login doesn't exists" };
         }
-        await this.prismaService.user.update({ where: { login: request.data.login }, data: { personnal42Token: personnal42Token.access_token } });
-        const user = await this.prismaService.user.findUniqueOrThrow({ where: { login: request.data.login } });
+        await this.prismaService.user.update({ where: { username: request.data.login }, data: { personnal42Token: personnal42Token.access_token } });
+        const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: request.data.login } });
         const payload = { id: user.id };
         const refreshToken: string = this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
         const accessToken: string = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '5m' });

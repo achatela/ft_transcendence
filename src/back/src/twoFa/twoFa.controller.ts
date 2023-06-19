@@ -6,8 +6,8 @@ export class twoFaController {
     constructor(private twoFaService: twoFaService) { }
 
     @Post('create')
-    async create2Fa(@Body() userInput: { login: string, refreshToken: string, accessToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string }> {
-        return await this.twoFaService.create2Fa(userInput.login, userInput.accessToken, userInput.refreshToken);
+    async create2Fa(@Body() userInput: { username: string, refreshToken: string, accessToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string }> {
+        return await this.twoFaService.create2Fa(userInput.username, userInput.accessToken, userInput.refreshToken);
     }
 
     @Post('verify')
@@ -16,17 +16,17 @@ export class twoFaController {
     }
 
     @Post('check_2fa')
-    async check2Fa(@Body() userInput: { login: string, refreshToken: string, accessToken: string }): Promise<{ success: boolean, refreshToken?: string, accessToken?: string, qrCode?: string }> {
-        return await this.twoFaService.check2Fa(userInput.login, userInput.refreshToken, userInput.accessToken);
+    async check2Fa(@Body() userInput: { username: string, refreshToken: string, accessToken: string }): Promise<{ success: boolean, refreshToken?: string, accessToken?: string, qrCode?: string }> {
+        return await this.twoFaService.check2Fa(userInput.username, userInput.refreshToken, userInput.accessToken);
     }
 
     @Post('disable_2fa')
-    async disable2Fa(@Body() userInput: { login: string, refreshToken: string, accessToken: string }): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
-        return await this.twoFaService.disable2Fa(userInput.login, userInput.refreshToken, userInput.accessToken);
+    async disable2Fa(@Body() userInput: { username: string, refreshToken: string, accessToken: string }): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
+        return await this.twoFaService.disable2Fa(userInput.username, userInput.refreshToken, userInput.accessToken);
     }
 
     @Post('get_qr')
-    async getQr(@Body() userInput: { login: string, refreshToken: string, accessToken: string }): Promise<{ success: boolean, refreshToken?: string, accessToken?: string, qrCode?: string }> {
-        return await this.twoFaService.getQr(userInput.login, userInput.refreshToken, userInput.accessToken);
+    async getQr(@Body() userInput: { username: string, refreshToken: string, accessToken: string }): Promise<{ success: boolean, refreshToken?: string, accessToken?: string, qrCode?: string }> {
+        return await this.twoFaService.getQr(userInput.username, userInput.refreshToken, userInput.accessToken);
     }
 }

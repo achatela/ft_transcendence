@@ -104,7 +104,7 @@ class GameBoard extends Component<IProps, IState> {
         this.sleep(175).then(() => {
             this.state.socket.emit("connectGameClassic", {
                 socketId: this.state.socket.id,
-                login: sessionStorage.getItem("login"),
+                login: sessionStorage.getItem("username"),
             });
             this.state.socket.on("gameState", (data: any) => {
                 console.log("server response")
@@ -118,7 +118,7 @@ class GameBoard extends Component<IProps, IState> {
                 this.leftUser = data.leftUser;
                 this.rightUser = data.rightUser;
             })
-            this.state.socket.emit("events", { socketId: this.state.socket.id, login: sessionStorage.getItem("login") });
+            this.state.socket.emit("events", { socketId: this.state.socket.id, login: sessionStorage.getItem("username") });
             this.state.socket.emit("update", { socketId: this.state.socket.id });
             console.log("socketId", this.state.socket.id)
         });
