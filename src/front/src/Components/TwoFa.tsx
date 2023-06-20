@@ -27,7 +27,7 @@ class TwoFa extends Component<IProps, IState> {
 		const request = await axios.post("http://localhost:3333/2fa/verify",
 			JSON.stringify({
 				token: token,
-				login: sessionStorage.getItem('username'),
+				username: sessionStorage.getItem('username'),
 				refreshToken: sessionStorage.getItem('refreshToken'),
 				accessToken: sessionStorage.getItem('accessToken'),
 			}),

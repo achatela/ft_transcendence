@@ -208,9 +208,9 @@ export class PongService {
     gameState.paddleRight = heightGameboardMid - paddleMid;
   }
 
-  async changeSocketClassic(socketId: number, login: string, io: any): Promise<{ success: boolean }> {
+  async changeSocketClassic(socketId: number, username: string, io: any): Promise<{ success: boolean }> {
     try {
-      const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: login } });
+      const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: username } });
       const index = this.gameStates.findIndex((gameState) => gameState.id1 === user.id || gameState.id2 === user.id);
       if (index !== -1) {
         if (this.gameStates[index].id1 === user.id && this.gameStates[index].socketLeft === 0) {
@@ -245,9 +245,9 @@ export class PongService {
     return { success: false };
   }
 
-  async queueStatusCustomPong(login: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, refreshToken?: string, accessToken?: string, queueStatus?: string }> {
+  async queueStatusCustomPong(username: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, refreshToken?: string, accessToken?: string, queueStatus?: string }> {
     try {
-      const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: login } });
+      const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: username } });
       const ret = await this.authService.checkToken(user, refreshToken, accessToken);
       if (ret.success) {
         if (user.status === "playing custom")
@@ -281,9 +281,9 @@ export class PongService {
     return { success: false };
   }
 
-  async queueDownCustomPong(login: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
+  async queueDownCustomPong(username: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
     try {
-      const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: login } });
+      const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: username } });
       const ret = await this.authService.checkToken(user, refreshToken, accessToken);
       if (ret.success) {
         const index = this.queueCustom.indexOf(user.id);
@@ -298,9 +298,9 @@ export class PongService {
     return { success: false };
   }
 
-  async queueUpCustomPong(login: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
+  async queueUpCustomPong(username: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
     try {
-      const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: login } });
+      const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: username } });
       const ret = await this.authService.checkToken(user, refreshToken, accessToken);
       if (ret.success) {
         this.queueCustom.push(user.id);
@@ -312,9 +312,9 @@ export class PongService {
     return { success: false };
   }
 
-  async queueStatusClassicPong(login: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, refreshToken?: string, accessToken?: string, queueStatus?: string }> {
+  async queueStatusClassicPong(username: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, refreshToken?: string, accessToken?: string, queueStatus?: string }> {
     try {
-      const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: login } });
+      const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: username } });
       const ret = await this.authService.checkToken(user, refreshToken, accessToken);
       if (ret.success) {
         if (user.status === "playing classic")
@@ -349,9 +349,9 @@ export class PongService {
   }
 
 
-  async queueDownClassicPong(login: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
+  async queueDownClassicPong(username: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
     try {
-      const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: login } });
+      const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: username } });
       const ret = await this.authService.checkToken(user, refreshToken, accessToken);
       if (ret.success) {
         const index = this.queueClassic.indexOf(user.id);
@@ -366,9 +366,9 @@ export class PongService {
     return { success: false };
   }
 
-  async queueUpClassicPong(login: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
+  async queueUpClassicPong(username: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
     try {
-      const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: login } });
+      const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: username } });
       const ret = await this.authService.checkToken(user, refreshToken, accessToken);
       if (ret.success) {
         this.queueClassic.push(user.id);

@@ -11,8 +11,8 @@ export class twoFaController {
     }
 
     @Post('verify')
-    async verify2Fa(@Body() userInput: { token: string, login: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string }> {
-        return await this.twoFaService.verify2Fa(userInput.token, userInput.login);
+    async verify2Fa(@Body() userInput: { token: string, username: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string }> {
+        return await this.twoFaService.verify2Fa(userInput.token, userInput.username);
     }
 
     @Post('check_2fa')
