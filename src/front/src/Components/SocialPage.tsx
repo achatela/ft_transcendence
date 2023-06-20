@@ -16,7 +16,6 @@ interface IState {
 export default class SocialPage extends Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
-    this.openFriendChat = this.openFriendChat.bind(this);
     this.state = {
       friendRequests: null,
       friends: null,
@@ -123,12 +122,12 @@ export default class SocialPage extends Component<IProps, IState> {
     return;
   }
 
-  private async openFriendChat(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
+  async getFriendChat(username: string): Promise<{room: string, messages: string[]}> {
     const response = await axios.post(
       "http://localhost:3333/social/friend_chat/",
       JSON.stringify({
         username: sessionStorage.getItem("username"),
-        friendUsername: event.currentTarget.dataset.name,
+        friendUsername: username,
         refreshToken: sessionStorage.getItem("refreshToken"),
         accessToken: sessionStorage.getItem("accessToken"),
       }),
@@ -138,9 +137,7 @@ export default class SocialPage extends Component<IProps, IState> {
       return
     sessionStorage.setItem("refreshToken", response.data.refreshToken);
     sessionStorage.setItem("accessToken", response.data.accessToken);
-    console.log("chat", response.data.chat)
-    this.setState({ chat: response.data.chat });
-    console.log("after setState");
+    return response.data.chat
   }
 
 
@@ -149,16 +146,18 @@ export default class SocialPage extends Component<IProps, IState> {
       <div>
         {this.state.friends ? (
           <div className="friends">
-            <p className='friends-p'>Friends</p>
-            {this.state.friends.map((username) => (
-              <div key={username} className="friend">
-                <div className="friend-name" data-name={username}>{username}</div>
-                <button className="friend-chat-button" onClick={this.openFriendChat} data-name={username}>Chat</button>
-                <button className="friend-delete-button" onClick={this.removeFriend} data-name={username}>Delete</button>
-                {/* <div className="friend-status" data-name={username}>{status}</div> */}
-              </div>
-            ))}
-          </div>
+          <p className='friends-p'>Friends</p>
+          {this.state.friends.map( (username) => (
+            <div key={username} className="friend">
+              <div className="friend-name" data-name={username}>{username}</div>
+              <button className="friend-chat-button" onClick={async () => {
+                this.setState({ chat: await this.getFriendChat(username)});
+              }} data-name={username}>Chat</button>
+              <button className="friend-delete-button" onClick={this.removeFriend} data-name={username}>Delete</button>
+              {/* <div className="friend-status" data-name={username}>{status}</div> */}
+            </div>
+          ))}
+        </div>
         ) : (
           <div className="friends">Loading...</div>
         )}
