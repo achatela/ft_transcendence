@@ -38,15 +38,7 @@ export class PongService {
 
   async disconnectSocket(socketId: number, username: string) {
     try {
-      await this.prismaService.user.update({
-        where: {
-          username: username
-        },
-        data: {
-          status: "online"
-        }
-      });
-
+      await this.prismaService.user.update({ where: { username: username }, data: { status: "online" } });
 
       const index = this.map1.get(socketId);
       if (index !== undefined) {
