@@ -43,8 +43,8 @@ export class SocialController {
         return await this.socialService.getFriendChat(userInput.username, userInput.friendUsername, userInput.accessToken, userInput.refreshToken);
     }
 
-    // @Post('get_friend_id')
-    // async getFriendId(@Body() userInput: { username: string, login: string, accessToken: string, refreshToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, id?: number }> {
-    //     return await this.socialService.getFriendId(userInput.username, userInput.login, userInput.refreshToken, userInput.accessToken);
-    // }
+    @Post('get_friend_id')
+    async getFriendId(@Body() userInput: { username: string, friendUsername: string, accessToken: string, refreshToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, id?: number }> {
+        return await this.socialService.getFriendId(userInput.username, userInput.friendUsername, userInput.refreshToken, userInput.accessToken);
+    }
 }

@@ -160,16 +160,16 @@ export class SocialService {
     }
 
 
-    // async getFriendId(username: string, friendId: number, refreshToken: string, accessToken: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, id?: number }> {
-    //     try {
-    //         const user = await this.prismaService.user.findUnique({ where: { id: userId } });
-    //         const auth = await this.authService.checkToken(user, refreshToken, accessToken);
-    //         if (auth.success == false)
-    //             return { success: false };
-    //         const user2 = await this.prismaService.user.findUnique({ where: { id: friendId } });
-    //         return { success: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken, id: user2.id };
-    //     } catch (error) {
-    //         console.error('Error in getFriendId:', error);
-    //     }
-    // }
+    async getFriendId(username: string, friendUsername: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, id?: number }> {
+        try {
+            const user = await this.prismaService.user.findUnique({ where: { username: friendUsername } });
+            const auth = await this.authService.checkToken(user, refreshToken, accessToken);
+            if (auth.success == false)
+                return { success: false };
+            const friendId = (await this.prismaService.user.findUnique({ where: { username: friendUsername }, select: { id: true } })).id;
+            return { success: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken, id: friendId };
+        } catch (error) {
+            console.error('Error in getFriendId:', error);
+        }
+    }
 }
