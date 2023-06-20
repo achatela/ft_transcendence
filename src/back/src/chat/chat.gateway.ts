@@ -6,7 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthService } from 'src/auth/auth.service';
 
 
-@WebSocketGateway({cors: "*"})
+@WebSocketGateway({ cors: "*" })
 export class ChatGateway {
   constructor(private prismaService: PrismaService, private authService: AuthService) { }
   @WebSocketServer()
@@ -18,7 +18,7 @@ export class ChatGateway {
   // }
 
   @SubscribeMessage('joinRoom')
-  handleJoinRoom(@ConnectedSocket() socket : Socket, @MessageBody() body: {room: string}): void {
+  handleJoinRoom(@ConnectedSocket() socket: Socket, @MessageBody() body: { room: string }): void {
     socket.join(body.room);
     console.log()
     this.server.emit('joinRoom', body.room);
@@ -26,10 +26,10 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('message')
-  async handleMessage(@ConnectedSocket() socket : Socket, @MessageBody() body: {room: string, senderUsername: string, message: string}, ): Promise<void> {
+  async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() body: { room: string, senderUsername: string, message: string },): Promise<void> {
     console.log("in handleMessage")
-    const chat = await this.prismaService.friendChat.findUnique({where: {room: body.room}, include: {messages: true}});
-    const sender = await this.prismaService.user.findUnique({where: {username: body.senderUsername}, select: {id: true}});
+    const chat = await this.prismaService.friendChat.findUnique({ where: { room: body.room }, include: { messages: true } });
+    const sender = await this.prismaService.user.findUnique({ where: { username: body.senderUsername }, select: { id: true } });
     await this.prismaService.friendChat.update({
       where: {
         room: body.room

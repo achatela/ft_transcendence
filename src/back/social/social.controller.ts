@@ -39,7 +39,7 @@ export class SocialController {
     }
 
     @Post('friend_chat')
-    async getFriendChat(@Body() userInput: { username: string, friendUsername: string, accessToken: string, refreshToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, chat?: { room: string, messages: string[] } }> {
+    async getFriendChat(@Body() userInput: { username: string, friendUsername: string, accessToken: string, refreshToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, chat?: { room: string, messages: any[] } }> {
         return await this.socialService.getFriendChat(userInput.username, userInput.friendUsername, userInput.accessToken, userInput.refreshToken);
     }
 

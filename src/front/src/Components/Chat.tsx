@@ -3,7 +3,7 @@ import io, { Socket } from 'socket.io-client';
 import "./css/Chat.css"
 
 interface FriendsProps {
-  chat: { room: string, messages: string[] }
+  chat: { room: string, messages: [{ senderId: string, text: string, time: string }] }
 }
 
 function useChatScroll<T>(dep: T): React.MutableRefObject<HTMLDivElement> {
@@ -20,12 +20,13 @@ function useChatScroll<T>(dep: T): React.MutableRefObject<HTMLDivElement> {
 
 const Chat: React.FC<FriendsProps> = ({ chat }) => {
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<string[]>(chat.messages);
+  const [messages, setMessages] = useState<string[]>(chat.messages.map((msg) => msg.text));
   const messagesRef = useChatScroll(messages);
   const socket = io('http://localhost:3333');
   const ref = useRef(null);
 
   useEffect(() => {
+    console.log(messages)
 
     const element = ref.current;
     element.addEventListener('keypress', handleSendMessage);
@@ -37,12 +38,10 @@ const Chat: React.FC<FriendsProps> = ({ chat }) => {
     socket.on('joinRoom', (name) => {
       console.log(name, 'joined', chat.room);
     });
-    // socket.on('disconnect', () => {
-    //   console.log('Disconnected from WebSocket server');
-    // });
-    socket.on('message', (message: string) => {
-      setMessages(messages => [...messages, message]);
+    socket.on('message', (message: { senderId: string, text: string, time: string }) => {
+      setMessages(messages => [...messages, message.text]);
     });
+
     return () => {
       element.removeEventListener('keypress', handleSendMessage);
     };
@@ -53,7 +52,6 @@ const Chat: React.FC<FriendsProps> = ({ chat }) => {
       if (event.target.value === "")
         return;
       socket.emit('message', { room: chat.room, senderUsername: sessionStorage.getItem("username"), message: event.target.value });
-      // console.log(socket.id);
       setMessage('');
     }
   };
@@ -65,9 +63,9 @@ const Chat: React.FC<FriendsProps> = ({ chat }) => {
         {messages.map((msg, index) => (
           <div className="chat-message" key={index}>{msg}</div>
         ))}
+
       </div>
       <input ref={ref} className="chat-input" type="text" value={message} onChange={(e) => setMessage(e.target.value)} />
-      {/* <button className="chat-button" onClick={handleSendMessage}>Send</button> */}
     </div>
   );
 }

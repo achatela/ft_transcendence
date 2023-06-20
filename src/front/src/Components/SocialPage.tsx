@@ -10,7 +10,7 @@ interface IProps { }
 interface IState {
   friendRequests: string[] | null;
   friends: string[] | null;
-  chat: { room: string, messages: string[] } | null;
+  chat: { room: string, messages: [{ senderId: string, text: string, time: string }] }
 }
 
 export default class SocialPage extends Component<IProps, IState> {
@@ -122,7 +122,7 @@ export default class SocialPage extends Component<IProps, IState> {
     return;
   }
 
-  async getFriendChat(username: string): Promise<{ room: string, messages: string[] }> {
+  async getFriendChat(username: string): Promise<{ room: string, messages: [{ senderId: string, text: string, time: string }] }> {
     const response = await axios.post(
       "http://localhost:3333/social/friend_chat/",
       JSON.stringify({
@@ -137,6 +137,12 @@ export default class SocialPage extends Component<IProps, IState> {
       return
     sessionStorage.setItem("refreshToken", response.data.refreshToken);
     sessionStorage.setItem("accessToken", response.data.accessToken);
+    // let ret = [];
+    // for (let i = 0; i < response.data.chat.messages.length; i++) {
+    //   ret.push(response.data.chat.messages[i]);
+    // // }
+    // return { room: response.data.chat.room, messages: ret }
+    console.log(response.data.chat)
     return response.data.chat
   }
 
@@ -170,7 +176,7 @@ export default class SocialPage extends Component<IProps, IState> {
               <div key={username} className="friend">
                 <div onClick={this.seeProfile} className="friend-name" data-name={username}>{username}</div>
                 <button className="friend-chat-button" onClick={async () => {
-                  this.setState({ chat: await this.getFriendChat(username) });
+                  this.setState({ chat: (await this.getFriendChat(username)) });
                 }} data-name={username}>Chat</button>
                 <button className="friend-delete-button" onClick={this.removeFriend} data-name={username}>Delete</button>
                 {/* <div className="friend-status" data-name={username}>{status}</div> */}
