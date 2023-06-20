@@ -162,10 +162,11 @@ export class SocialService {
 
     async getFriendId(username: string, friendUsername: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, id?: number }> {
         try {
-            const user = await this.prismaService.user.findUnique({ where: { username: friendUsername } });
+            const user = await this.prismaService.user.findUnique({ where: { username: username } });
             const auth = await this.authService.checkToken(user, refreshToken, accessToken);
-            if (auth.success == false)
+            if (auth.success == false) {
                 return { success: false };
+            }
             const friendId = (await this.prismaService.user.findUnique({ where: { username: friendUsername }, select: { id: true } })).id;
             return { success: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken, id: friendId };
         } catch (error) {
