@@ -1,3 +1,5 @@
+/* {z-index: 1, top: this.state.contextMenu.position.y, left: this.state.contextMenu.position.x} */
+
 .friends {
   position: absolute;
   border: 3px solid white;

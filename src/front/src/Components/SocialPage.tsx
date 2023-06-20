@@ -11,6 +11,7 @@ interface IState {
   friendRequests: string[] | null;
   friends: string[] | null;
   chat: { room: string, messages: string[] } | null;
+  contextMenu: {visible: boolean, position: { x: number, y: number }}
 }
 
 export default class SocialPage extends Component<IProps, IState> {
@@ -19,7 +20,8 @@ export default class SocialPage extends Component<IProps, IState> {
     this.state = {
       friendRequests: null,
       friends: null,
-      chat: null
+      chat: null,
+      contextMenu: {visible: false, position: { x: 0, y: 0 }}
     };
   }
 
@@ -140,7 +142,8 @@ export default class SocialPage extends Component<IProps, IState> {
     return response.data.chat
   }
 
-  async seeProfile(event: React.MouseEvent<HTMLParagraphElement>): Promise<void> {
+  async seeProfile(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
+    console.log("in see profile");
     const request = await axios.post(
       "http://localhost:3333/social/get_friend_id/",
       JSON.stringify({
@@ -159,20 +162,45 @@ export default class SocialPage extends Component<IProps, IState> {
     }
   }
 
+  // let element = document.querySelector("#elementId");
+  // let window = document.querySelector("#windowId");
+
+  // element.addEventListener("contextmenu", function(event) {
+  //   event.preventDefault();
+  //   toggleWindow();
+  // });
+
+  // function toggleWindow() {
+  // if (window.style.display === "none") {
+  //   window.style.display = "block";
+  // } else {
+  //   window.style.display = "none";
+  // }
+  // }
 
   render(): JSX.Element {
     return (
-      <div>
+      // <div onClick={() => {
+      //   if (this.state.contextMenu.visible)
+      //    this.setState({contextMenu: {visible: false, position: { x: 0, y: 0 }}});
+      // }}>
+      <div className="social">
+        {this.state.contextMenu.visible && (
+        <div className="context-menu">
+          <button onClick={() => {console.log("see profile")}} style={{color:'black'}}>see profile</button>
+          <button onClick={() => {console.log("remove friend")}} style={{color:'black'}}>remove friend</button>
+        </div>
+        )}
         {this.state.friends ? (
           <div className="friends">
             <p className='friends-p'>Friends</p>
             {this.state.friends.map((username) => (
-              <div key={username} className="friend">
-                <div onClick={this.seeProfile} className="friend-name" data-name={username}>{username}</div>
-                <button className="friend-chat-button" onClick={async () => {
-                  this.setState({ chat: await this.getFriendChat(username) });
-                }} data-name={username}>Chat</button>
-                <button className="friend-delete-button" onClick={this.removeFriend} data-name={username}>Delete</button>
+              <div key={username} className="friend" onContextMenu={
+                (e) => {
+                  e.preventDefault();
+                  this.setState({contextMenu: {visible: true, position: {x: e.pageX, y: e.pageY}}});
+                }}>
+                <div className="friend-name" data-name={username}>{username}</div>
                 {/* <div className="friend-status" data-name={username}>{status}</div> */}
               </div>
             ))}
