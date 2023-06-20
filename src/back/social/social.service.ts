@@ -141,7 +141,7 @@ export class SocialService {
         return { success: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken, friends: friends };
     }
 
-    async getFriendChat(username: string, friendUsername: string, accessToken: string, refreshToken: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, chat?: { room: string, messages: string[] } }> {
+    async getFriendChat(username: string, friendUsername: string, accessToken: string, refreshToken: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, chat?: { room: string, messages: any[] } }> {
         const user = await this.prismaService.user.findUnique({ where: { username: username }, include: { friends: true } });
         const auth = await this.authService.checkToken(user, refreshToken, accessToken);
         if (auth.success == false)
@@ -152,7 +152,7 @@ export class SocialService {
             if (friend.friendId == friendId) {
                 const chat = await this.prismaService.friendChat.findUnique({ where: { id: friend.chatId }, include: { messages: true } })
                 for (const message of chat.messages)
-                    messages.push(message.text)
+                    messages.push({ senderId: message.senderId, text: message.text, time: message.createdAt })
                 console.log("messages", messages);
                 return { success: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken, chat: { room: chat.room, messages: messages } };
             }
