@@ -329,7 +329,7 @@ export class PongService {
   }
 
   async checkQueueClassic(): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
-    console.log('classic', this.queueClassic)
+    // console.log('classic', this.queueClassic)
     try {
       if (this.queueClassic.length >= 2) {
         const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueClassic[0] } });

@@ -48,7 +48,7 @@ export class twoFaService {
     async check2Fa(login: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, refreshToken?: string, accessToken?: string, qrCode?: string }> {
         // Check if the user has 2FA enabled
         try {
-            console.log("username = ", login);
+            // console.log("username = ", login);
             const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: login } });
             if (user.enabled2FA === true) {
                 const ret = await this.authService.checkToken(user, refreshToken, accessToken);

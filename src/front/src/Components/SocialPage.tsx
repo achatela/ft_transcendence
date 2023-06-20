@@ -10,7 +10,7 @@ interface IProps { }
 interface IState {
   friendRequests: string[] | null;
   friends: string[] | null;
-  chat: {room: string, messages: string[]} | null;
+  chat: { room: string, messages: string[] } | null;
 }
 
 export default class SocialPage extends Component<IProps, IState> {
@@ -122,7 +122,7 @@ export default class SocialPage extends Component<IProps, IState> {
     window.location.href = "http://localhost:3133/social/";
     return;
   }
-  
+
   private async openFriendChat(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
     const response = await axios.post(
       "http://localhost:3333/social/friend_chat/",
@@ -139,7 +139,7 @@ export default class SocialPage extends Component<IProps, IState> {
     sessionStorage.setItem("refreshToken", response.data.refreshToken);
     sessionStorage.setItem("accessToken", response.data.accessToken);
     console.log("chat", response.data.chat)
-    this.setState({chat: response.data.chat});
+    this.setState({ chat: response.data.chat });
     console.log("after setState");
   }
 
@@ -149,16 +149,16 @@ export default class SocialPage extends Component<IProps, IState> {
       <div>
         {this.state.friends ? (
           <div className="friends">
-          <p className='friends-p'>Friends</p>
-          {this.state.friends.map( (username) => (
-            <div key={username} className="friend">
-              <div className="friend-name" data-name={username}>{username}</div>
-              <button className="friend-chat-button" onClick={this.openFriendChat} data-name={username}>Chat</button>
-              <button className="friend-delete-button" onClick={this.removeFriend} data-name={username}>Delete</button>
-              {/* <div className="friend-status" data-name={username}>{status}</div> */}
-            </div>
-          ))}
-        </div>
+            <p className='friends-p'>Friends</p>
+            {this.state.friends.map((username) => (
+              <div key={username} className="friend">
+                <div className="friend-name" data-name={username}>{username}</div>
+                <button className="friend-chat-button" onClick={this.openFriendChat} data-name={username}>Chat</button>
+                <button className="friend-delete-button" onClick={this.removeFriend} data-name={username}>Delete</button>
+                {/* <div className="friend-status" data-name={username}>{status}</div> */}
+              </div>
+            ))}
+          </div>
         ) : (
           <div className="friends">Loading...</div>
         )}
