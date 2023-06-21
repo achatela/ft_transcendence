@@ -62,7 +62,11 @@ const Chat: React.FC<FriendsProps> = ({ chat }) => {
       <h1 className="chat-title">Chat Application</h1>
       <div ref={messagesRef} className="chat-messages">
         {messages.map((msg, index) => (
-          <div className="chat-message" key={index}>{msg}</div>
+          <div className="chat-message" key={index}>
+            <div className="chat-avatar"></div>
+            <p className="chat-username">Username<span> - 02/02/23, 23h23</span></p>
+            <p className="chat-message-content">{msg}</p>
+          </div>
         ))}
 
       </div>
