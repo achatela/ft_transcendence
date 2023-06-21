@@ -70,6 +70,8 @@
     background-color: blue;
     margin-right: 1vw;
     margin-left: 1vw;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
 .chat-username {

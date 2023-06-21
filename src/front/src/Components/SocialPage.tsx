@@ -10,7 +10,7 @@ interface IProps { }
 interface IState {
   friendRequests: string[] | null;
   friends: string[] | null;
-  chat: { room: string; messages: [{ senderId: string, text: string, time: string }] } | null;
+  chat: { room: string; messages: [{ senderId: string, text: string, time: string, username: string, avatar: string }] } | null;
   contextMenu: { username: string, position: { x: number, y: number } } | null
 }
 
@@ -124,7 +124,7 @@ export default class SocialPage extends Component<IProps, IState> {
     return;
   }
 
-  async getFriendChat(username: string): Promise<{ room: string, messages: [{ senderId: string, text: string, time: string }] }> {
+  async getFriendChat(username: string): Promise<{ room: string, messages: [{ senderId: string, text: string, time: string, username: string, avatar: string }] }> {
     const response = await axios.post(
       "http://localhost:3333/social/friend_chat/",
       JSON.stringify({

@@ -56,7 +56,8 @@ export class ChatGateway {
         }
       }
     });
-    this.server.emit('message', { senderId: sender.id, text: body.message, time: messages[0].createdAt });
+    let user = await this.prismaService.user.findUnique({ where: { id: sender.id }, select: { username: true, avatar: true } });
+    this.server.emit('message', { senderId: sender.id, text: body.message, time: messages[0].createdAt, username: user.username, avatar: user.avatar });
     console.log(socket.id, ":", body.message);
   }
 }

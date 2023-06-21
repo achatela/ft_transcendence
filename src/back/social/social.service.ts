@@ -151,8 +151,10 @@ export class SocialService {
         for (const friend of user.friends) {
             if (friend.friendId == friendId) {
                 const chat = await this.prismaService.friendChat.findUnique({ where: { id: friend.chatId }, include: { messages: true } })
-                for (const message of chat.messages)
-                    messages.push({ senderId: message.senderId, text: message.text, time: message.createdAt })
+                for (const message of chat.messages) {
+                    let user = await this.prismaService.user.findUnique({ where: { id: message.senderId }, select: { username: true, avatar: true } });
+                    messages.push({ senderId: message.senderId, text: message.text, time: message.createdAt, username: user.username, avatar: user.avatar })
+                }
                 console.log("messages", messages);
                 return { success: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken, chat: { room: chat.room, messages: messages } };
             }

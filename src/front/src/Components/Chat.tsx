@@ -3,7 +3,7 @@ import io, { Socket } from 'socket.io-client';
 import "./css/Chat.css"
 
 interface FriendsProps {
-  chat: { room: string, messages: [{ senderId: string, text: string, time: string }] }
+  chat: { room: string, messages: [{ senderId: string, text: string, time: string, username: string, avatar: string }] }
 }
 
 function useChatScroll<T>(dep: T): React.MutableRefObject<HTMLDivElement> {
@@ -20,7 +20,7 @@ function useChatScroll<T>(dep: T): React.MutableRefObject<HTMLDivElement> {
 
 const Chat: React.FC<FriendsProps> = ({ chat }) => {
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<string[]>(chat.messages.map((msg) => msg.text));
+  const [messages, setMessages] = useState<any[]>(chat.messages.map((msg) => { return { senderId: msg.senderId, text: msg.text, time: msg.time, username: msg.username, avatar: msg.avatar } }));
   const messagesRef = useChatScroll(messages);
   const socket = io('http://localhost:3333');
   const ref = useRef(null);
@@ -38,9 +38,9 @@ const Chat: React.FC<FriendsProps> = ({ chat }) => {
     socket.on('joinRoom', (name) => {
       console.log(name, 'joined', chat.room);
     });
-    socket.on('message', (message: { senderId: string, text: string, time: string }) => {
+    socket.on('message', (message: { senderId: string, text: string, time: string, username: string, avatar: string }) => {
       console.log("received a message from socket", message)
-      setMessages(messages => [...messages, message.text]);
+      setMessages(messages => [...messages, { senderId: message.senderId, text: message.text, time: message.time, username: message.username, avatar: message.avatar }]);
     });
 
     return () => {
@@ -57,18 +57,21 @@ const Chat: React.FC<FriendsProps> = ({ chat }) => {
     }
   };
 
+  function reformatTime(time: string): string {
+    return (time.slice(5, 7) + "-" + time.slice(8, 10) + "-" + time.slice(2, 4) + " " + time.slice(11, 19))
+  }
+
   return (
     <div>
       <h1 className="chat-title">Chat Application</h1>
       <div ref={messagesRef} className="chat-messages">
         {messages.map((msg, index) => (
           <div className="chat-message" key={index}>
-            <div className="chat-avatar"></div>
-            <p className="chat-username">Username<span> - 02/02/23, 23h23</span></p>
-            <p className="chat-message-content">{msg}</p>
+            <div className="chat-avatar" style={{ backgroundImage: `url(${msg.avatar})` }}></div>
+            <p className="chat-username">{msg.username}<span>&nbsp; &nbsp; &nbsp; {reformatTime(msg.time)}</span></p>
+            <p className="chat-message-content">{msg.text}</p>
           </div>
         ))}
-
       </div>
       <input ref={ref} className="chat-input" type="text" value={message} onChange={(e) => setMessage(e.target.value)} />
     </div>
