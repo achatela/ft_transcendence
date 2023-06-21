@@ -26,8 +26,6 @@ const Chat: React.FC<FriendsProps> = ({ chat }) => {
   const ref = useRef(null);
 
   useEffect(() => {
-    console.log('chat.messages', chat.messages)
-
     const element = ref.current;
     for (let i = 0; i < chat.messages.length; i++) {
       setMessages(messages => [...messages, { senderId: chat.messages[i].senderId, text: chat.messages[i].text, time: chat.messages[i].time, username: chat.messages[i].username, avatar: chat.messages[i].avatar }]);
@@ -69,7 +67,6 @@ const Chat: React.FC<FriendsProps> = ({ chat }) => {
   }
 
   return (
-    console.log('chat render', messages),
     < div >
       <h1 className="chat-title">Chat Application</h1>
       <div ref={messagesRef} className="chat-messages">

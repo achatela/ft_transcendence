@@ -3,6 +3,7 @@ import axios from "axios";
 import "./css/SocialPage.css";
 import FriendRequests from "./FriendRequests";
 import Chat from "./Chat";
+import { promises } from "dns";
 
 let avatarUrls: Map<string, string> = new Map<string, string>();
 
@@ -14,6 +15,7 @@ interface IState {
   chat: { room: string; messages: [{ senderId: string, text: string, time: string, username: string, avatar: string }] } | null;
   contextMenu: { username: string, position: { x: number, y: number } } | null;
   refresh: boolean;
+  selectedChat: string | null;
 }
 
 export default class SocialPage extends Component<IProps, IState> {
@@ -25,6 +27,7 @@ export default class SocialPage extends Component<IProps, IState> {
       chat: null,
       contextMenu: null,
       refresh: false,
+      selectedChat: null,
     };
   }
 
@@ -234,7 +237,6 @@ export default class SocialPage extends Component<IProps, IState> {
   }
 
   render(): JSX.Element {
-    console.log(this.state.chat)
     return (
       <div onClick={() => {
         if (this.state.contextMenu)
@@ -244,14 +246,17 @@ export default class SocialPage extends Component<IProps, IState> {
           <div className="friends">
             <p className='friends-p'>Friends</p>
             {this.state.friends.map((username) => (
-              <div key={username} className="friends-friend" onClick={async () => {
-                const chat = await this.getFriendChat(username);
-                this.setState({ chat: chat });
-              }} onContextMenu={
-                (e) => {
-                  e.preventDefault();
-                  this.setState({ contextMenu: { username: username, position: { x: e.pageX, y: e.pageY } } });
-                }}>
+              <div key={username} className="friends-friend" style={this.state.selectedChat === username ? { backgroundColor: 'grey' } : {}}
+                onClick={async () => {
+                  const chat = await this.getFriendChat(username);
+                  this.setState({ selectedChat: username })
+                  this.setState({ chat: chat });
+                }
+                } onContextMenu={
+                  (e) => {
+                    e.preventDefault();
+                    this.setState({ contextMenu: { username: username, position: { x: e.pageX, y: e.pageY } } });
+                  }}>
                 <div className="friend-avatar" style={{ backgroundImage: `url(${avatarUrls.get(username)})` }}></div>
                 <div className="friend-name" data-name={username}>{username}</div>
                 {/* <div className="friend-status" data-name={username}>{status}</div> */}
