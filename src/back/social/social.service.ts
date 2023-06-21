@@ -8,6 +8,13 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class SocialService {
     constructor(private prismaService: PrismaService, private authService: AuthService) { }
 
+    async getAvatar(username: string): Promise<{ success: boolean, avatar?: string }> {
+        const user = await this.prismaService.user.findUnique({ where: { username: username }, select: { avatar: true } });
+        if (user == null)
+            return { success: false };
+        return { success: true, avatar: user.avatar };
+    }
+
     async removeFriend(removerUsername: string, removedUsername: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string }> {
         const remover = await this.prismaService.user.findUnique({ where: { username: removerUsername }, include: { friends: true } });
         const auth = await this.authService.checkToken(remover, refreshToken, accessToken);

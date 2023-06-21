@@ -4,6 +4,7 @@ import "./css/SocialPage.css";
 import FriendRequests from "./FriendRequests";
 import Chat from "./Chat";
 
+let avatarUrls: Map<string, string> = new Map<string, string>();
 
 interface IProps { }
 
@@ -11,7 +12,8 @@ interface IState {
   friendRequests: string[] | null;
   friends: string[] | null;
   chat: { room: string; messages: [{ senderId: string, text: string, time: string, username: string, avatar: string }] } | null;
-  contextMenu: { username: string, position: { x: number, y: number } } | null
+  contextMenu: { username: string, position: { x: number, y: number } } | null;
+  refresh: boolean;
 }
 
 export default class SocialPage extends Component<IProps, IState> {
@@ -21,7 +23,8 @@ export default class SocialPage extends Component<IProps, IState> {
       friendRequests: null,
       friends: null,
       chat: null,
-      contextMenu: null
+      contextMenu: null,
+      refresh: false,
     };
   }
 
@@ -59,6 +62,9 @@ export default class SocialPage extends Component<IProps, IState> {
       sessionStorage.setItem("refreshToken", response.data.refreshToken);
       sessionStorage.setItem("accessToken", response.data.accessToken);
       console.log("friends", response.data.friends)
+      for (let friend in response.data.friends) {
+        this.getAvatar(response.data.friends[friend]);
+      }
       return response.data.friends;
     }
     else {
@@ -178,7 +184,29 @@ export default class SocialPage extends Component<IProps, IState> {
   // }
   // }
 
+  async getAvatar(username: string): Promise<void> {
+    console.log(username)
+    const request = await axios.post(
+      "http://localhost:3333/social/get_avatar/",
+      JSON.stringify({
+        username: username,
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (request.data.success === true) {
+      avatarUrls.set(username, request.data.avatar)
+      if (this.state.refresh === false)
+        this.setState({ refresh: true })
+      if (this.state.refresh === true)
+        this.setState({ refresh: false })
+      console.log("got avatar")
+    }
+    else
+      console.error("failed to get avatar");
+  }
+
   render(): JSX.Element {
+    console.log(avatarUrls)
     return (
       <div onClick={() => {
         if (this.state.contextMenu)
@@ -196,6 +224,7 @@ export default class SocialPage extends Component<IProps, IState> {
                   e.preventDefault();
                   this.setState({ contextMenu: { username: username, position: { x: e.pageX, y: e.pageY } } });
                 }}>
+                <div className="friend-avatar" style={{ backgroundImage: `url(${avatarUrls.get(username)})` }}></div>
                 <div className="friend-name" data-name={username}>{username}</div>
                 {/* <div className="friend-status" data-name={username}>{status}</div> */}
               </div>

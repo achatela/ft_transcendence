@@ -47,4 +47,9 @@ export class SocialController {
     async getFriendId(@Body() userInput: { username: string, friendUsername: string, accessToken: string, refreshToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, id?: number }> {
         return await this.socialService.getFriendId(userInput.username, userInput.friendUsername, userInput.refreshToken, userInput.accessToken);
     }
+
+    @Post('get_avatar')
+    async getAvatar(@Body() userInput: { username: string }): Promise<{ success: boolean, avatar?: string }> {
+        return await this.socialService.getAvatar(userInput.username);
+    }
 }

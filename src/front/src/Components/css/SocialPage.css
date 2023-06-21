@@ -192,12 +192,20 @@
 
 /* Rules for items in FriendList.tsx */
 
+.friend-avatar {
+  margin-top: 1vh;
+  margin-bottom: 1vh;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
 .friends-friend {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   padding: 0.5rem 1rem;
-  padding-bottom: 0px;
   border-bottom: 1px solid #ccc;
   font-size: 2rem;
   cursor: pointer;
@@ -217,6 +225,7 @@
 
 .friend-name {
   margin-top: 0.7rem;
+  margin-left: 1vw;
   height: 2rem;
   width: 70%;
   overflow-x: auto;
