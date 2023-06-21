@@ -63,9 +63,9 @@ class TwoFa extends Component<IProps, IState> {
 	render() {
 		return (
 			<div>
-				<div className="qr-div"></div>
+				{/* <div className="qr-div"></div> */}
 				{this.state.success === false ? <p className="error">Invalid 2FA code</p> : <p></p>}
-				<input className="input-2fa" type="text" maxLength={6} />
+				<input onKeyUp={(e) => { if (e.key === 'Enter') { this.sendInput() } }} className="input-2fa" type="text" maxLength={6} />
 				<button className="send-input" onClick={this.sendInput}>Validate 2FA</button>
 			</div>
 		)

@@ -79,6 +79,34 @@ export default class SocialPage extends Component<IProps, IState> {
     this.setState({ friends: friends });
   }
 
+  async sendFriendRequestEnter(): Promise<void> {
+    let inputElement = document.querySelector(".add-friend-input") as HTMLInputElement;
+    const request = await axios.post(
+      "http://localhost:3333/social/send_friend_request/",
+      JSON.stringify({
+        requesterUsername: sessionStorage.getItem("username"),
+        requestedUsername: inputElement.value,
+        refreshToken: sessionStorage.getItem("refreshToken"),
+        accessToken: sessionStorage.getItem("accessToken"),
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (request.data.success === true) {
+      sessionStorage.setItem("refreshToken", request.data.refreshToken);
+      sessionStorage.setItem("accessToken", request.data.accessToken);
+      inputElement.value = "Friend request sent !";
+    }
+    else {
+      if (request.data.error === "User already in friend list.") {
+        sessionStorage.setItem("refreshToken", request.data.refreshToken);
+        sessionStorage.setItem("accessToken", request.data.accessToken);
+        inputElement.value = request.data.error;
+      }
+      console.log("failed to send")
+      inputElement.value = request.data.error;
+    }
+  }
+
   async sendFriendRequest(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
     let inputElement = document.querySelector(".add-friend-input") as HTMLInputElement;
     const request = await axios.post(
@@ -241,7 +269,7 @@ export default class SocialPage extends Component<IProps, IState> {
         )}
         <div className="add-friend">
           <p className="add-friend-text">Add Friend</p>
-          <input className="add-friend-input" type="text" />
+          <input className="add-friend-input" type="text" onKeyUp={(e) => { if (e.key === 'Enter') { this.sendFriendRequestEnter() } }} />
           <button className="add-friend-button" onClick={this.sendFriendRequest}>Send</button>
         </div>
         {this.state.friendRequests ? (
