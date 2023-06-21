@@ -39,6 +39,7 @@ const Chat: React.FC<FriendsProps> = ({ chat }) => {
       console.log(name, 'joined', chat.room);
     });
     socket.on('message', (message: { senderId: string, text: string, time: string }) => {
+      console.log("received a message from socket", message)
       setMessages(messages => [...messages, message.text]);
     });
 

@@ -30,7 +30,8 @@ export class ChatGateway {
     console.log("in handleMessage")
     const chat = await this.prismaService.friendChat.findUnique({ where: { room: body.room }, include: { messages: true } });
     const sender = await this.prismaService.user.findUnique({ where: { username: body.senderUsername }, select: { id: true } });
-    await this.prismaService.friendChat.update({
+
+    const { messages } = await this.prismaService.friendChat.update({
       where: {
         room: body.room
       },
@@ -41,9 +42,21 @@ export class ChatGateway {
             text: body.message
           }
         }
+      },
+      include: {
+        messages: {
+          where: {
+            senderId: sender.id,
+            text: body.message
+          },
+          orderBy: {
+            createdAt: 'desc'
+          },
+          take: 1
+        }
       }
-    })
-    this.server.emit('message', body.message);
+    });
+    this.server.emit('message', { senderId: sender.id, text: body.message, time: messages[0].createdAt });
     console.log(socket.id, ":", body.message);
   }
 }

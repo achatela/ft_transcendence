@@ -16,6 +16,7 @@
     position: absolute;
     margin-top: 10vh;
     background-color: black;
+    color: white;
     margin-left: 2.2vw;
     width: calc(75.5vw);
     height: calc(75vh);
@@ -30,7 +31,9 @@
     font-size: 1.4em;
     color: white;
     background-color: black;
+    overflow-x: auto;
     border-bottom: 0.5px white solid;
+    word-wrap: break-word;
 }
 
 .chat-input {

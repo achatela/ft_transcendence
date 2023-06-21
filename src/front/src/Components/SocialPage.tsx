@@ -11,7 +11,7 @@ interface IState {
   friendRequests: string[] | null;
   friends: string[] | null;
   chat: { room: string; messages: [{ senderId: string, text: string, time: string }] } | null;
-  contextMenu: {username: string, position: { x: number, y: number }} | null
+  contextMenu: { username: string, position: { x: number, y: number } } | null
 }
 
 export default class SocialPage extends Component<IProps, IState> {
@@ -124,7 +124,7 @@ export default class SocialPage extends Component<IProps, IState> {
     return;
   }
 
-  async getFriendChat(username: string): Promise<{ room: string; messages: [{ senderId: string, text: string, time: string }] }> {
+  async getFriendChat(username: string): Promise<{ room: string, messages: [{ senderId: string, text: string, time: string }] }> {
     const response = await axios.post(
       "http://localhost:3333/social/friend_chat/",
       JSON.stringify({
@@ -182,7 +182,7 @@ export default class SocialPage extends Component<IProps, IState> {
     return (
       <div onClick={() => {
         if (this.state.contextMenu)
-         this.setState({contextMenu: null});
+          this.setState({ contextMenu: null });
       }}>
         {this.state.friends ? (
           <div className="friends">
@@ -190,11 +190,11 @@ export default class SocialPage extends Component<IProps, IState> {
             {this.state.friends.map((username) => (
               <div key={username} className="friends-friend" onClick={async () => {
                 const chat = await this.getFriendChat(username);
-                this.setState({chat: chat});
+                this.setState({ chat: chat });
               }} onContextMenu={
                 (e) => {
                   e.preventDefault();
-                  this.setState({contextMenu: {username: username, position: {x: e.pageX, y: e.pageY}}});
+                  this.setState({ contextMenu: { username: username, position: { x: e.pageX, y: e.pageY } } });
                 }}>
                 <div className="friend-name" data-name={username}>{username}</div>
                 {/* <div className="friend-status" data-name={username}>{status}</div> */}
@@ -205,9 +205,9 @@ export default class SocialPage extends Component<IProps, IState> {
           <div className="friends">Loading...</div>
         )}
         {this.state.contextMenu && (
-          <div className="friend-context" style={{top: this.state.contextMenu.position.y, left: this.state.contextMenu.position.x}}>
+          <div className="friend-context" style={{ top: this.state.contextMenu.position.y, left: this.state.contextMenu.position.x }}>
             <button className="friend-profile" onClick={this.seeProfile} data-name={this.state.contextMenu.username}>see profile</button>
-            <button className="friend-remove"onClick={this.removeFriend} data-name={this.state.contextMenu.username}>remove friend</button>
+            <button className="friend-remove" onClick={this.removeFriend} data-name={this.state.contextMenu.username}>remove friend</button>
           </div>
         )}
         <div className="add-friend">
