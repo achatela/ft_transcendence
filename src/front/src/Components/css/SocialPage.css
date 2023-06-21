@@ -6,8 +6,14 @@
   height: calc(100vh - 9.9rem - 8.4rem - 10.8rem);
   margin-top: 19.2rem;
   overflow-y: auto;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+}
+
+.friends-friend:hover {
+  opacity: 0.8;
+}
+
+.friend-requests-item:hover {
+  opacity: 0.8;
 }
 
 .friends::-webkit-scrollbar {

@@ -20,15 +20,18 @@ function useChatScroll<T>(dep: T): React.MutableRefObject<HTMLDivElement> {
 
 const Chat: React.FC<FriendsProps> = ({ chat }) => {
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<any[]>(chat.messages.map((msg) => { return { senderId: msg.senderId, text: msg.text, time: msg.time, username: msg.username, avatar: msg.avatar } }));
+  const [messages, setMessages] = useState<any[]>([]);
   const messagesRef = useChatScroll(messages);
   const socket = io('http://localhost:3333');
   const ref = useRef(null);
 
   useEffect(() => {
-    console.log(messages)
+    console.log('chat.messages', chat.messages)
 
     const element = ref.current;
+    for (let i = 0; i < chat.messages.length; i++) {
+      setMessages(messages => [...messages, { senderId: chat.messages[i].senderId, text: chat.messages[i].text, time: chat.messages[i].time, username: chat.messages[i].username, avatar: chat.messages[i].avatar }]);
+    }
     element.addEventListener('keypress', handleSendMessage);
     // const socket = io('http://localhost:3333');
     socket.on('connect', () => {
@@ -44,9 +47,13 @@ const Chat: React.FC<FriendsProps> = ({ chat }) => {
     });
 
     return () => {
+      // messageRef
+      setMessages([]);
+      setMessage('');
+      socket.disconnect();
       element.removeEventListener('keypress', handleSendMessage);
     };
-  }, []);
+  }, [chat]);
 
   const handleSendMessage = (event: any) => {
     if (event.key === 'Enter') {
@@ -62,7 +69,8 @@ const Chat: React.FC<FriendsProps> = ({ chat }) => {
   }
 
   return (
-    <div>
+    console.log('chat render', messages),
+    < div >
       <h1 className="chat-title">Chat Application</h1>
       <div ref={messagesRef} className="chat-messages">
         {messages.map((msg, index) => (
@@ -74,7 +82,7 @@ const Chat: React.FC<FriendsProps> = ({ chat }) => {
         ))}
       </div>
       <input ref={ref} className="chat-input" type="text" value={message} onChange={(e) => setMessage(e.target.value)} />
-    </div>
+    </div >
   );
 }
 

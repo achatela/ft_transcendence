@@ -170,7 +170,7 @@ export default class SocialPage extends Component<IProps, IState> {
       { headers: { "Content-Type": "application/json" } }
     );
     if (response.data.success === false)
-      return
+      return;
     sessionStorage.setItem("refreshToken", response.data.refreshToken);
     sessionStorage.setItem("accessToken", response.data.accessToken);
     return response.data.chat
@@ -234,7 +234,7 @@ export default class SocialPage extends Component<IProps, IState> {
   }
 
   render(): JSX.Element {
-    console.log(avatarUrls)
+    console.log(this.state.chat)
     return (
       <div onClick={() => {
         if (this.state.contextMenu)
@@ -280,7 +280,7 @@ export default class SocialPage extends Component<IProps, IState> {
         {this.state.chat ? (
           <Chat chat={this.state.chat} />
         ) : (
-          <div className="chat">Loading...</div>
+          <div></div>
         )}
       </div>
     );

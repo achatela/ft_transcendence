@@ -20,6 +20,10 @@ export class ChatGateway {
   @SubscribeMessage('joinRoom')
   handleJoinRoom(@ConnectedSocket() socket: Socket, @MessageBody() body: { room: string }): void {
     socket.join(body.room);
+    socket.on('disconnect', () => {
+      socket.leave(body.room);
+      console.log(socket.id, 'left', body.room);
+    });
     console.log()
     this.server.emit('joinRoom', body.room);
     console.log(socket.id, 'joined', body.room);
