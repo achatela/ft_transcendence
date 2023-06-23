@@ -228,11 +228,55 @@
   margin-right: 10px;
 }
 
-
 .friend-name {
   margin-top: 0.7rem;
   margin-left: 1vw;
   height: 2rem;
   width: 70%;
   overflow-x: auto;
+}
+
+/* Channels */
+
+.close-chat {
+  position: absolute;
+  border: 3px solid white;
+  top: 2em;
+  left: 3em;
+  height: 50px;
+  width: 50px;
+  background-color: black;
+}
+
+.channels {
+  position: absolute;
+  height: 100%;
+  margin-left: calc(8px + 2vw);
+  width: calc(100vw - 16px - 25vw);
+  height: calc(100vh - 8.3rem);
+  margin-top: 5rem;
+}
+
+.create-channel {
+  background-color: black;
+  color: white;
+  border: 3px solid white;
+  position: absolute;
+  height: 100px;
+  width: 150px;
+  top: 40vh;
+  margin-left: calc((100vw - 16px - 25vw) / 2 - 200px);
+}
+
+
+.join-channel {
+  background-color: black;
+  color: white;
+  border: 3px solid white;
+  position: absolute;
+  height: 100px;
+  width: 150px;
+  top: 40vh;
+  right: 0;
+  margin-right: calc((100vw - 16px - 25vw) / 2 - 200px);
 }

@@ -199,22 +199,6 @@ export default class SocialPage extends Component<IProps, IState> {
     }
   }
 
-  // let element = document.querySelector("#elementId");
-  // let window = document.querySelector("#windowId");
-
-  // element.addEventListener("contextmenu", function(event) {
-  //   event.preventDefault();
-  //   toggleWindow();
-  // });
-
-  // function toggleWindow() {
-  // if (window.style.display === "none") {
-  //   window.style.display = "block";
-  // } else {
-  //   window.style.display = "none";
-  // }
-  // }
-
   async getAvatar(username: string): Promise<void> {
     console.log(username)
     const request = await axios.post(
@@ -242,6 +226,7 @@ export default class SocialPage extends Component<IProps, IState> {
         if (this.state.contextMenu)
           this.setState({ contextMenu: null });
       }}>
+        <button className="close-chat" onClick={() => { this.setState({ chat: null }) }}>close-chats</button>
         {this.state.friends ? (
           <div className="friends">
             <p className='friends-p'>Friends</p>
@@ -285,7 +270,10 @@ export default class SocialPage extends Component<IProps, IState> {
         {this.state.chat ? (
           <Chat chat={this.state.chat} />
         ) : (
-          <div></div>
+          <div className="channels">
+            <button className="create-channel">Create a channel</button>
+            <button className="join-channel">Join a channel</button>
+          </div>
         )}
       </div>
     );

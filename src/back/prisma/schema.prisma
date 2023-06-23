@@ -27,7 +27,7 @@ model User {
   losses      Int    @default(0)
   ladderLevel Int    @default(1)
 
-  friends  Friend[]
+  friends        Friend[]
   friendRequests Int[]
 
   createdAt DateTime @default(now())
@@ -38,15 +38,14 @@ model User {
   qrCode2FA  String?
 
   blockedIds Int[]
-
 }
 
 model Friend {
-  id       Int             @id @default(autoincrement())
-  friendId         Int
-  chatId     Int
-  user       User @relation(fields: [userId], references: [id])
-  userId     Int
+  id       Int  @id @default(autoincrement())
+  friendId Int
+  chatId   Int
+  user     User @relation(fields: [userId], references: [id])
+  userId   Int
 }
 
 model FriendChat {
@@ -56,12 +55,12 @@ model FriendChat {
 }
 
 model FriendMessage {
-  id           Int        @id @default(autoincrement())
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  senderId     Int
-  text         String
-  chat   FriendChat @relation(fields: [chatId], references: [id])
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  senderId  Int
+  text      String
+  chat      FriendChat @relation(fields: [chatId], references: [id])
   chatId    Int
 }
 
@@ -70,4 +69,26 @@ model Queue {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   users     Int[]
+}
+
+model Channel {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  users     Int[]
+
+  channelName String
+  channelMode String
+  password    String?
+  messages    ChannelMessage[]
+}
+
+model ChannelMessage {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  senderId  Int
+  text      String
+  channel   Channel  @relation(fields: [channelId], references: [id])
+  channelId Int
 }

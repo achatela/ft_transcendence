@@ -24,7 +24,6 @@ export class ChatGateway {
       socket.leave(body.room);
       console.log(socket.id, 'left', body.room);
     });
-    console.log()
     this.server.emit('joinRoom', body.room);
     console.log(socket.id, 'joined', body.room);
   }
