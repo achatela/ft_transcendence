@@ -77,10 +77,11 @@ model Channel {
   updatedAt DateTime @updatedAt
   users     Int[]
 
-  channelName String
+  channelName String           @unique
   channelMode String
   password    String?
   messages    ChannelMessage[]
+  isPrivate   Boolean          @default(false)
 }
 
 model ChannelMessage {

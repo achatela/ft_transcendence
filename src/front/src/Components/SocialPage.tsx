@@ -4,6 +4,8 @@ import "./css/SocialPage.css";
 import FriendRequests from "./FriendRequests";
 import Chat from "./Chat";
 import { promises } from "dns";
+import CreateChannel from "./CreateChannel";
+import JoinChannel from "./JoinChannel";
 
 let avatarUrls: Map<string, string> = new Map<string, string>();
 
@@ -16,6 +18,8 @@ interface IState {
   contextMenu: { username: string, position: { x: number, y: number } } | null;
   refresh: boolean;
   selectedChat: string | null;
+  createChannel: boolean;
+  joinChannel: boolean;
 }
 
 export default class SocialPage extends Component<IProps, IState> {
@@ -28,6 +32,8 @@ export default class SocialPage extends Component<IProps, IState> {
       contextMenu: null,
       refresh: false,
       selectedChat: null,
+      createChannel: false,
+      joinChannel: false,
     };
   }
 
@@ -221,12 +227,13 @@ export default class SocialPage extends Component<IProps, IState> {
   }
 
   render(): JSX.Element {
+    console.log(this.state.createChannel)
     return (
       <div onClick={() => {
         if (this.state.contextMenu)
           this.setState({ contextMenu: null });
       }}>
-        <button className="close-chat" onClick={() => { this.setState({ chat: null }) }}>close-chats</button>
+        <button className="close-chat" onClick={() => { this.setState({ chat: null }); this.setState({ joinChannel: false, createChannel: false }) }}>close-chats</button>
         {this.state.friends ? (
           <div className="friends">
             <p className='friends-p'>Friends</p>
@@ -271,10 +278,21 @@ export default class SocialPage extends Component<IProps, IState> {
           <Chat chat={this.state.chat} />
         ) : (
           <div className="channels">
-            <button className="create-channel">Create a channel</button>
-            <button className="join-channel">Join a channel</button>
+            {this.state.createChannel === false && this.state.joinChannel === false ? (
+              <>
+                <button className="create-channel" onClick={() => { this.setState({ createChannel: true }) }}>Create a channel</button>
+                <button className="join-channel" onClick={() => { this.setState({ joinChannel: true }) }} >Join a channel</button>
+              </>
+            ) : (
+              this.state.createChannel === true ? (
+                <CreateChannel />
+              ) : (
+                <JoinChannel />
+              )
+            )}
           </div>
         )}
+
       </div>
     );
   }

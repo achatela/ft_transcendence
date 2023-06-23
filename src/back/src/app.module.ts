@@ -18,9 +18,10 @@ import { twoFaModule } from './twoFa/twoFa.module';
 import { PongModule } from './pong/pong.module';
 import { PongController } from './pong/pong.controller';
 import { ChatGateway } from './chat/chat.gateway';
+import { ChannelModule } from './channel/channel.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, ProfileModule, JwtModule, SocialModule, twoFaModule, PongModule],
+  imports: [PrismaModule, AuthModule, ProfileModule, JwtModule, SocialModule, twoFaModule, PongModule, ChannelModule],
   controllers: [AppController, ProfileController, AuthController, SocialController, twoFaController, PongController],
   providers: [AppService, ProfileService, SocialService, ChatGateway],
 })

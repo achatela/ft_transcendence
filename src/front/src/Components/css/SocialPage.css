@@ -140,6 +140,7 @@
   outline: none;
   margin-top: 1rem;
   font-size: 1rem;
+  cursor: pointer;
 }
 
 .add-friend-button {
@@ -266,6 +267,7 @@
   width: 150px;
   top: 40vh;
   margin-left: calc((100vw - 16px - 25vw) / 2 - 200px);
+  font-size: 2rem;
 }
 
 
@@ -279,4 +281,5 @@
   top: 40vh;
   right: 0;
   margin-right: calc((100vw - 16px - 25vw) / 2 - 200px);
+  font-size: 2rem;
 }
