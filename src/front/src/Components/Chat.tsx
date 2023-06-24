@@ -4,6 +4,7 @@ import "./css/Chat.css"
 
 interface FriendsProps {
   chat: { room: string, messages: [{ senderId: string, text: string, time: string, username: string, avatar: string }] }
+  isChannel: boolean;
 }
 
 function useChatScroll<T>(dep: T): React.MutableRefObject<HTMLDivElement> {
@@ -18,7 +19,7 @@ function useChatScroll<T>(dep: T): React.MutableRefObject<HTMLDivElement> {
   return ref;
 }
 
-const Chat: React.FC<FriendsProps> = ({ chat }) => {
+const Chat: React.FC<FriendsProps> = ({ chat, isChannel }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<any[]>([]);
   const messagesRef = useChatScroll(messages);
@@ -26,31 +27,36 @@ const Chat: React.FC<FriendsProps> = ({ chat }) => {
   const ref = useRef(null);
 
   useEffect(() => {
-    const element = ref.current;
-    for (let i = 0; i < chat.messages.length; i++) {
-      setMessages(messages => [...messages, { senderId: chat.messages[i].senderId, text: chat.messages[i].text, time: chat.messages[i].time, username: chat.messages[i].username, avatar: chat.messages[i].avatar }]);
-    }
-    element.addEventListener('keypress', handleSendMessage);
-    // const socket = io('http://localhost:3333');
-    socket.on('connect', () => {
-      console.log(socket.id, 'connected to the server');
-      socket.emit('joinRoom', { room: chat.room });
-    });
-    socket.on('joinRoom', (name) => {
-      console.log(name, 'joined', chat.room);
-    });
-    socket.on('message', (message: { senderId: string, text: string, time: string, username: string, avatar: string }) => {
-      console.log("received a message from socket", message)
-      setMessages(messages => [...messages, { senderId: message.senderId, text: message.text, time: message.time, username: message.username, avatar: message.avatar }]);
-    });
+    if (isChannel == false) {
+      const element = ref.current;
+      for (let i = 0; i < chat.messages.length; i++) {
+        setMessages(messages => [...messages, { senderId: chat.messages[i].senderId, text: chat.messages[i].text, time: chat.messages[i].time, username: chat.messages[i].username, avatar: chat.messages[i].avatar }]);
+      }
+      element.addEventListener('keypress', handleSendMessage);
+      // const socket = io('http://localhost:3333');
+      socket.on('connect', () => {
+        console.log(socket.id, 'connected to the server');
+        socket.emit('joinRoom', { room: chat.room });
+      });
+      socket.on('joinRoom', (name) => {
+        console.log(name, 'joined', chat.room);
+      });
+      socket.on('message', (message: { senderId: string, text: string, time: string, username: string, avatar: string }) => {
+        console.log("received a message from socket", message)
+        setMessages(messages => [...messages, { senderId: message.senderId, text: message.text, time: message.time, username: message.username, avatar: message.avatar }]);
+      });
 
-    return () => {
-      // messageRef
-      setMessages([]);
-      setMessage('');
-      socket.disconnect();
-      element.removeEventListener('keypress', handleSendMessage);
-    };
+      return () => {
+        // messageRef
+        setMessages([]);
+        setMessage('');
+        socket.disconnect();
+        element.removeEventListener('keypress', handleSendMessage);
+      };
+    }
+    else {
+      console.log("is channel")
+    }
   }, [chat]);
 
   const handleSendMessage = (event: any) => {

@@ -20,6 +20,7 @@ interface IState {
   selectedChat: string | null;
   createChannel: boolean;
   joinChannel: boolean;
+  isChannel: boolean;
 }
 
 export default class SocialPage extends Component<IProps, IState> {
@@ -35,11 +36,12 @@ export default class SocialPage extends Component<IProps, IState> {
       selectedChat: null,
       createChannel: false,
       joinChannel: false,
+      isChannel: false,
     };
   }
 
   handleChannelClick(channelName: string) {
-    this.setState({ createChannel: false, joinChannel: false });
+    this.setState({ createChannel: false, joinChannel: false, isChannel: true });
   }
 
   async getFriendRequests(): Promise<string[]> {
@@ -232,13 +234,12 @@ export default class SocialPage extends Component<IProps, IState> {
   }
 
   render(): JSX.Element {
-    console.log(this.state.createChannel)
     return (
       <div onClick={() => {
         if (this.state.contextMenu)
           this.setState({ contextMenu: null });
       }}>
-        <button className="close-chat" onClick={() => { this.setState({ chat: null }); this.setState({ joinChannel: false, createChannel: false, selectedChat: null }) }}>close-chats</button>
+        <button className="close-chat" onClick={() => { this.setState({ chat: null }); this.setState({ isChannel: false, joinChannel: false, createChannel: false, selectedChat: null }) }}>close-chats</button>
         {this.state.friends ? (
           <div className="friends">
             <p className='friends-p'>Friends</p>
@@ -280,7 +281,7 @@ export default class SocialPage extends Component<IProps, IState> {
           <div className="friend-requests">Loading...</div>
         )}
         {this.state.chat ? (
-          <Chat chat={this.state.chat} />
+          <Chat isChannel={this.state.isChannel} chat={this.state.chat} />
         ) : (
           <div className="channels">
             {this.state.createChannel === false && this.state.joinChannel === false ? (

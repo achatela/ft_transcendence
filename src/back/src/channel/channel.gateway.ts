@@ -17,7 +17,7 @@ export class ChannelGateway {
     //   console.log(client.id, 'joined', data.room);
     // }
 
-    @SubscribeMessage('joinRoom')
+    @SubscribeMessage('joinRoomChannel')
     handleJoinRoom(@ConnectedSocket() socket: Socket, @MessageBody() body: { room: string }): void {
         socket.join(body.room);
         socket.on('disconnect', () => {
