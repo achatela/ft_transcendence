@@ -1,0 +1,123 @@
+.channel-list-item-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 8vh;
+}
+
+.channel-list-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 8vh;
+}
+
+.channel-list-item div {
+    width: 25%;
+}
+
+.channel-list-item:hover div {
+    opacity: 0.7;
+}
+
+.channel-list-item-number {
+    align-items: center;
+    justify-content: center;
+}
+
+
+.channel-list-item-owner {
+    align-items: center;
+    justify-content: center;
+}
+
+.channel-list-item p {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    font-size: 2em;
+    overflow-x: auto;
+}
+
+.channel-list-item-private {
+    align-items: center;
+    justify-content: center;
+}
+
+.channel-list-item-name {
+    /*align to left*/
+    max-width: 80%;
+    margin-left: 10%;
+    justify-content: flex-start;
+}
+
+.channel-list-item-header p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    height: 100%;
+    width: 100%;
+    border: 1px solid white;
+}
+
+.join-channel-div {
+    display: flex;
+    flex-direction: row;
+    height: 85vh;
+    border: 3px solid white;
+}
+
+.your-channels-div {
+    width: 30%;
+    border: 3px solid white;
+}
+
+.channels-list-div {
+    border: 3px solid white;
+    width: 70%;
+}
+
+.your-channels-header {
+    font-size: 3rem;
+    height: 10%;
+    border: 3px solid white;
+}
+
+.channels-list-header {
+    font-size: 3rem;
+    height: 10%;
+    border: 3px solid white;
+}
+
+.your-channels-p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.channels-list-p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.channel-list-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 5vh;
+    border: 1px solid white;
+}
+
+.channel-list-item-number {
+    font-size: 3em;
+}
+
+.channel-list {
+    height: 90%;
+    overflow-y: auto;
+}

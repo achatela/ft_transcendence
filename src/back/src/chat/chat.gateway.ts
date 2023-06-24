@@ -30,7 +30,6 @@ export class ChatGateway {
 
   @SubscribeMessage('message')
   async handleMessage(@ConnectedSocket() socket: Socket, @MessageBody() body: { room: string, senderUsername: string, message: string },): Promise<void> {
-    console.log("in handleMessage")
     const chat = await this.prismaService.friendChat.findUnique({ where: { room: body.room }, include: { messages: true } });
     const sender = await this.prismaService.user.findUnique({ where: { username: body.senderUsername }, select: { id: true } });
 
