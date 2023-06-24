@@ -25,6 +25,7 @@ interface IState {
 export default class SocialPage extends Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
+    var handleChannelClick = this.handleChannelClick.bind(this);
     this.state = {
       friendRequests: null,
       friends: null,
@@ -35,6 +36,10 @@ export default class SocialPage extends Component<IProps, IState> {
       createChannel: false,
       joinChannel: false,
     };
+  }
+
+  handleChannelClick(channelName: string) {
+    this.setState({ createChannel: false, joinChannel: false });
   }
 
   async getFriendRequests(): Promise<string[]> {
@@ -233,7 +238,7 @@ export default class SocialPage extends Component<IProps, IState> {
         if (this.state.contextMenu)
           this.setState({ contextMenu: null });
       }}>
-        <button className="close-chat" onClick={() => { this.setState({ chat: null }); this.setState({ joinChannel: false, createChannel: false }) }}>close-chats</button>
+        <button className="close-chat" onClick={() => { this.setState({ chat: null }); this.setState({ joinChannel: false, createChannel: false, selectedChat: null }) }}>close-chats</button>
         {this.state.friends ? (
           <div className="friends">
             <p className='friends-p'>Friends</p>
@@ -287,7 +292,7 @@ export default class SocialPage extends Component<IProps, IState> {
               this.state.createChannel === true ? (
                 <CreateChannel />
               ) : (
-                <JoinChannel />
+                <JoinChannel handleChannelClick={this.handleChannelClick.bind(this)} />
               )
             )}
           </div>

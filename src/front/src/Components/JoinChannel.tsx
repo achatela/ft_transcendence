@@ -4,19 +4,22 @@ import './css/JoinChannel.css';
 import axios from 'axios';
 
 interface IProps {
+    handleChannelClick: (channelName: string) => void;
 }
 
 interface IState {
-    channels: [{ channelName: string, users: number, hasPassword: boolean, owner: string }];
+    channels: [{ channelName: string, users: number, hasPassword: boolean, owner: string }] | null;
+
 }
 
 export default class JoinChannel extends Component<IProps, IState> {
+    handleChannelClick: (channelName: string) => void;
     constructor(props: IProps) {
         super(props);
         this.state = {
             channels: null
         }
-
+        this.handleChannelClick = props.handleChannelClick;
     }
 
     async componentDidMount() {
@@ -62,7 +65,7 @@ export default class JoinChannel extends Component<IProps, IState> {
                         {this.state.channels !== null ? this.state.channels.map((channel, index) => {
                             return (
                                 <div className='channel-list-item' key={index}>
-                                    <div>
+                                    <div onClick={() => this.handleChannelClick(channel.channelName)}>
                                         <p className='channel-list-item-name'>{channel.channelName}</p>
                                     </div>
                                     <div>
