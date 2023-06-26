@@ -36,8 +36,8 @@ export class ChannelService {
         return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken, yourChannels: channelsNames };
     }
 
-    async joinChannel(body: { username: string; accessToken: string; refreshToken: string; channelName: string; channelPassword?: string; }) {
-        const { username, accessToken, refreshToken, channelName, channelPassword } = body;
+    async joinChannel(body: { username: string; accessToken: string; refreshToken: string; channelName: string; password?: string; }) {
+        const { username, accessToken, refreshToken, channelName, password } = body;
         const user = await this.prismaService.user.findUnique({ where: { username: username } });
         if (!user) {
             return { success: false, error: 'User not found' };
@@ -50,18 +50,20 @@ export class ChannelService {
         if (!channel) {
             return { success: false, error: 'Channel not found' };
         }
+        const userInChannel = channel.users.find((id) => id == user.id);
+        if (userInChannel) {
+            return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
+        }
         if (channel.password != '') {
-            if (channel.password != channelPassword) {
+            console.log("channel password: ", channel.password);
+            console.log("password: ", password)
+            if (channel.password != password) {
                 return { success: false, error: 'Invalid password' };
             }
         }
         // else if (channel.isPrivate == true) {
         //     // to do
         // }
-        const userInChannel = channel.users.find((id) => id == user.id);
-        if (userInChannel) {
-            return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
-        }
         await this.prismaService.channel.update({
             where: { id: channel.id },
             data: {
@@ -116,8 +118,8 @@ export class ChannelService {
         return { success: true, channels: retChannels, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
     }
 
-    async createChannel(body: { username: string, accessToken: string, refreshToken: string, channelName: string, channelPassword?: string, isPrivate: boolean }) {
-        const { username, accessToken, refreshToken, channelName, channelPassword, isPrivate } = body;
+    async createChannel(body: { username: string, accessToken: string, refreshToken: string, channelName: string, password?: string, isPrivate: boolean }) {
+        const { username, accessToken, refreshToken, channelName, password, isPrivate } = body;
         const user = await this.prismaService.user.findUnique({ where: { username: username } });
         if (!user) {
             return { success: false, error: 'User not found' };
@@ -132,7 +134,7 @@ export class ChannelService {
         const createdChannel = await this.prismaService.channel.create({
             data: {
                 channelName: channelName,
-                password: channelPassword,
+                password: password,
                 isPrivate: isPrivate,
                 owner: user.id,
                 channelMode: isPrivate ? 'private' : 'public',

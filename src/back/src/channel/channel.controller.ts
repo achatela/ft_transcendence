@@ -7,12 +7,12 @@ export class ChannelController {
     constructor(private channelService: ChannelService) { }
 
     @Post('join')
-    async joinChannel(@Body() body: { username: string, accessToken: string, refreshToken: string, channelName: string, channelPassword?: string }) {
+    async joinChannel(@Body() body: { username: string, accessToken: string, refreshToken: string, channelName: string, password?: string }) {
         return await this.channelService.joinChannel(body);
     }
 
     @Post('create')
-    async createChannel(@Body() body: { username: string, accessToken: string, refreshToken: string, channelName: string, channelPassword?: string, isPrivate: boolean }) {
+    async createChannel(@Body() body: { username: string, accessToken: string, refreshToken: string, channelName: string, password?: string, isPrivate: boolean }) {
         console.log("create channel body:\n", body);
         return await this.channelService.createChannel(body);
     }

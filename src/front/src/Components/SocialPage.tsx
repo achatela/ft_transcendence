@@ -40,7 +40,7 @@ export default class SocialPage extends Component<IProps, IState> {
     };
   }
 
-  async joinChannel(channelName: string) {
+  async joinChannel(channelName: string, password?: string) {
     const request = await axios.post(
       "http://localhost:3333/channel/join/",
       JSON.stringify({
@@ -48,7 +48,7 @@ export default class SocialPage extends Component<IProps, IState> {
         accessToken: sessionStorage.getItem("accessToken"),
         refreshToken: sessionStorage.getItem("refreshToken"),
         channelName: channelName,
-        // password: password, to handle password protected channels
+        password: password,
       }),
       { headers: { "Content-Type": "application/json" } }
     );
@@ -56,14 +56,19 @@ export default class SocialPage extends Component<IProps, IState> {
       console.log("joined channel successfully")
       sessionStorage.setItem("refreshToken", request.data.refreshToken);
       sessionStorage.setItem("accessToken", request.data.accessToken);
+      return true;
     }
     else {
       console.log("failed to join channel");
       console.log(request.data.error);
+      return false;
     }
   }
-  async handleChannelClick(channelName: string) {
-    this.joinChannel(channelName);
+  async handleChannelClick(channelName: string, password?: string) {
+    const check = await this.joinChannel(channelName, password)
+    if (check === false) {
+      return;
+    }
     const request = await axios.post(
       "http://localhost:3333/channel/get_channel_messages/",
       JSON.stringify({

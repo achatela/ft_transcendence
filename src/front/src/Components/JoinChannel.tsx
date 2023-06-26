@@ -13,7 +13,7 @@ interface IState {
 }
 
 export default class JoinChannel extends Component<IProps, IState> {
-    handleChannelClick: (channelName: string) => void;
+    handleChannelClick: (channelName: string, password?: string) => void;
     constructor(props: IProps) {
         super(props);
         this.state = {
@@ -93,8 +93,18 @@ export default class JoinChannel extends Component<IProps, IState> {
                         </div>
                         {this.state.channels !== null ? this.state.channels.map((channel, index) => {
                             return (
-                                <div className='channel-list-item' key={index}>
-                                    <div onClick={() => this.handleChannelClick(channel.channelName)}>
+                                <div onClick={() => {
+                                    if (channel.hasPassword === true) {
+                                        const password = prompt("Enter password for channel " + channel.channelName)
+                                        if (password !== null) {
+                                            this.handleChannelClick(channel.channelName, password)
+                                        }
+                                        return;
+                                    }
+                                    this.handleChannelClick(channel.channelName)
+                                }
+                                } className='channel-list-item' key={index}>
+                                    <div>
                                         <p className='channel-list-item-name'>{channel.channelName}</p>
                                     </div>
                                     <div>
