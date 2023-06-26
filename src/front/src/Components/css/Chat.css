@@ -87,14 +87,12 @@
     font-size: 0.6em;
 }
 
-/* .chat-button {
+.channel-invite {
     position: absolute;
-    padding: 0.3%;
-    margin-left: 0.3%;
-    margin-top: calc(88.5vh);
-    font-size: 150%;
-    background-color: white;
-    color: black;
-    font-weight: bold;
-    border: none;
-} */
+    border: 3px solid white;
+    top: 2em;
+    left: 10em;
+    height: 50px;
+    width: 50px;
+    background-color: black;
+}

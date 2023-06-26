@@ -291,7 +291,7 @@ export default class SocialPage extends Component<IProps, IState> {
         if (this.state.contextMenu)
           this.setState({ contextMenu: null, isError: false });
       }}>
-        <button className="close-chat" onClick={() => { this.setState({ chat: null }); this.setState({ isError: false, isChannel: false, joinChannel: false, createChannel: false, selectedChat: null }) }}>close-chats</button>
+        <button className="close-chat" onClick={() => { this.setState({ chat: null }); this.setState({ isError: false, isChannel: false, joinChannel: false, createChannel: false, selectedChat: null }) }}>home</button>
         {this.state.isError === true ? (
           <p className="error-message">{this.state.errorMessage}</p>
         ) : null}
@@ -336,7 +336,7 @@ export default class SocialPage extends Component<IProps, IState> {
           <div className="friend-requests">Loading...</div>
         )}
         {this.state.chat ? (
-          <Chat isChannel={this.state.isChannel} chat={this.state.chat} />
+          <Chat isChannel={this.state.isChannel} chat={this.state.chat} isSelected={this.state.selectedChat} />
         ) : (
           <div className="channels">
             {this.state.createChannel === false && this.state.joinChannel === false ? (

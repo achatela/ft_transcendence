@@ -5,6 +5,7 @@ import "./css/Chat.css"
 interface FriendsProps {
   chat: { room: string, messages: [{ senderId: string, text: string, time: string, username: string, avatar: string }] }
   isChannel: boolean;
+  isSelected: string;
 }
 
 function useChatScroll<T>(dep: T): React.MutableRefObject<HTMLDivElement> {
@@ -19,16 +20,16 @@ function useChatScroll<T>(dep: T): React.MutableRefObject<HTMLDivElement> {
   return ref;
 }
 
-const Chat: React.FC<FriendsProps> = ({ chat, isChannel }) => {
+const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<any[]>([]);
   const messagesRef = useChatScroll(messages);
   const socket = io('http://localhost:3333');
   const ref = useRef(null);
+  const channelName = isSelected;
 
   useEffect(() => {
     if (isChannel == false) {
-      console.log("chat is a private chat")
       const element = ref.current;
       for (let i = 0; i < chat.messages.length; i++) {
         setMessages(messages => [...messages, { senderId: chat.messages[i].senderId, text: chat.messages[i].text, time: chat.messages[i].time, username: chat.messages[i].username, avatar: chat.messages[i].avatar }]);
@@ -55,7 +56,6 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel }) => {
       };
     }
     else {
-      console.log("chat is a channel")
       const element = ref.current;
       for (let i = 0; i < chat.messages.length; i++) {
         setMessages(messages => [...messages, { senderId: chat.messages[i].senderId, text: chat.messages[i].text, time: chat.messages[i].time, username: chat.messages[i].username, avatar: chat.messages[i].avatar }]);
@@ -100,7 +100,10 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel }) => {
 
   return (
     < div >
-      <h1 className="chat-title">Chat Application</h1>
+      <h1 className="chat-title">{channelName}</h1>
+      {isChannel === true ?
+        <button className='channel-invite'>Invite</button>
+        : null}
       <div ref={messagesRef} className="chat-messages">
         {messages.map((msg, index) => (
           <div className="chat-message" key={index}>
