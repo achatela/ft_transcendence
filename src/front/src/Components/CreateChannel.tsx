@@ -7,13 +7,20 @@ interface IProps {
 }
 
 interface IState {
+    channelCreated: boolean,
+    channelError: boolean,
+    errorMessage: string,
 }
 
 export default class CreateChannel extends Component<IProps, IState> {
     constructor(props: IProps) {
         super(props);
         this.state = {
+            channelCreated: false,
+            channelError: false,
+            errorMessage: "",
         }
+        this.createChannel = this.createChannel.bind(this);
     }
 
     async createChannel() {
@@ -34,10 +41,14 @@ export default class CreateChannel extends Component<IProps, IState> {
             sessionStorage.setItem("refreshToken", request.data.refreshToken);
             sessionStorage.setItem("accessToken", request.data.accessToken);
             console.log("channel created")
+            this.setState({ channelCreated: true, channelError: false })
+            return;
         }
         else {
             console.log("failed to create channel")
             console.log(request.data.error)
+            this.setState({ channelCreated: false, channelError: true, errorMessage: request.data.error })
+            return;
         }
     }
 
@@ -45,6 +56,8 @@ export default class CreateChannel extends Component<IProps, IState> {
         return (
             <div>
                 <div className='create-channel-div'>
+                    {this.state.channelCreated == true ? <p className='channel-created'>Channel created</p> : null}
+                    {this.state.channelError == true ? <p className='channel-error'>{this.state.errorMessage}</p> : null}
                     <p className='channel-name-create'>Channel name</p>
                     <input className='input-name-create' type="text" />
                     <p className='channel-password-create' >Password (optionnal)</p>

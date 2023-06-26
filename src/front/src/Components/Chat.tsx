@@ -28,6 +28,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel }) => {
 
   useEffect(() => {
     if (isChannel == false) {
+      console.log("chat is a private chat")
       const element = ref.current;
       for (let i = 0; i < chat.messages.length; i++) {
         setMessages(messages => [...messages, { senderId: chat.messages[i].senderId, text: chat.messages[i].text, time: chat.messages[i].time, username: chat.messages[i].username, avatar: chat.messages[i].avatar }]);
@@ -47,7 +48,6 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel }) => {
       });
 
       return () => {
-        // messageRef
         setMessages([]);
         setMessage('');
         socket.disconnect();
@@ -55,7 +55,30 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel }) => {
       };
     }
     else {
-      console.log("is channel")
+      console.log("chat is a channel")
+      const element = ref.current;
+      for (let i = 0; i < chat.messages.length; i++) {
+        setMessages(messages => [...messages, { senderId: chat.messages[i].senderId, text: chat.messages[i].text, time: chat.messages[i].time, username: chat.messages[i].username, avatar: chat.messages[i].avatar }]);
+      }
+      element.addEventListener('keypress', handleSendMessage);
+      socket.on('connect', () => {
+        console.log(socket.id, 'connected to the server');
+        socket.emit('joinRoomChannel', { room: chat.room });
+      });
+      socket.on('joinRoomChannel', (name) => {
+        console.log(name, 'joined', chat.room);
+      });
+      socket.on('messageChannel', (message: { senderId: string, text: string, time: string, username: string, avatar: string }) => {
+        console.log("received a message from socket", message)
+        setMessages(messages => [...messages, { senderId: message.senderId, text: message.text, time: message.time, username: message.username, avatar: message.avatar }]);
+      });
+
+      return () => {
+        setMessages([]);
+        setMessage('');
+        socket.disconnect();
+        element.removeEventListener('keypress', handleSendMessage);
+      }
     }
   }, [chat]);
 
@@ -63,7 +86,10 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel }) => {
     if (event.key === 'Enter') {
       if (event.target.value === "")
         return;
-      socket.emit('message', { room: chat.room, senderUsername: sessionStorage.getItem("username"), message: event.target.value });
+      if (isChannel == false)
+        socket.emit('message', { room: chat.room, senderUsername: sessionStorage.getItem("username"), message: event.target.value });
+      else
+        socket.emit('messageChannel', { room: chat.room, senderUsername: sessionStorage.getItem("username"), message: event.target.value });
       setMessage('');
     }
   };

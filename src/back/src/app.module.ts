@@ -19,10 +19,11 @@ import { PongModule } from './pong/pong.module';
 import { PongController } from './pong/pong.controller';
 import { ChatGateway } from './chat/chat.gateway';
 import { ChannelModule } from './channel/channel.module';
+import { ChannelGateway } from './channel/channel.gateway';
 
 @Module({
   imports: [PrismaModule, AuthModule, ProfileModule, JwtModule, SocialModule, twoFaModule, PongModule, ChannelModule],
   controllers: [AppController, ProfileController, AuthController, SocialController, twoFaController, PongController],
-  providers: [AppService, ProfileService, SocialService, ChatGateway],
+  providers: [AppService, ProfileService, SocialService, ChatGateway, ChannelGateway],
 })
 export class AppModule { }

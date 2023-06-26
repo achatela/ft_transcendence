@@ -16,4 +16,10 @@ export class ChannelController {
     async getChannels(@Body() body: { username: string, accessToken: string, refreshToken: string }) {
         return await this.channelService.getChannels(body);
     }
+
+    // Will need to first add the user to the channel, check if it needs a password etc..
+    @Post('get_channel_messages')
+    async getChannelMessages(@Body() body: { username: string, accessToken: string, refreshToken: string, channelName: string }) {
+        return await this.channelService.getChannelMessages(body);
+    }
 }

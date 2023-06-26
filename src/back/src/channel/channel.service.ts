@@ -81,4 +81,39 @@ export class ChannelService {
         });
         return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
     }
+
+    async getChannelMessages(body: { username: string; accessToken: string; refreshToken: string; channelName: string; }) {
+        const { username, accessToken, refreshToken, channelName } = body;
+        const user = await this.prismaService.user.findUnique({ where: { username: username } });
+        if (!user) {
+            return { success: false, error: 'User not found' };
+        }
+        const ret = await this.authService.checkToken(user, refreshToken, accessToken);
+        if (ret.success == false)
+            return { success: false, error: 'Invalid token' };
+        const channel = await this.prismaService.channel.findUnique({
+            where: { channelName: channelName },
+            select: {
+                messages: true,
+            },
+        });
+        if (!channel) {
+            return { success: false, error: 'Channel not found' };
+        }
+        const messages = channel.messages;
+        let retMessage = [];
+        for (let i = 0; i < messages.length; i++) {
+            const message = messages[i];
+            const user = await this.prismaService.user.findUnique({ where: { id: message.senderId } });
+            let info = await this.prismaService.user.findUnique({ where: { id: message.senderId } });
+            retMessage.push({
+                senderId: message.senderId,
+                text: message.text,
+                time: message.createdAt,
+                username: info.username,
+                avatar: info.avatar,
+            });
+        }
+        return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken, chat: { room: channelName, messages: retMessage } };
+    }
 }

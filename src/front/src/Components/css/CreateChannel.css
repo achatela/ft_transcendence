@@ -8,11 +8,40 @@
     width: auto;
 }
 
-.create-channel-div p {
+.channel-error {
+    font-size: 3em;
+    color: red;
+}
+
+.channel-created {
+    font-size: 3em;
+    color: greenyellow;
+}
+
+.channel-name-create {
     font-size: 2rem;
     color: white;
     margin-bottom: 0.8vh;
 }
+
+.channel-password-create {
+    font-size: 2rem;
+    color: white;
+    margin-bottom: 0.8vh;
+}
+
+.channel-private-create {
+    font-size: 2rem;
+    color: white;
+    margin-bottom: 0.8vh;
+}
+
+/* 
+.create-channel-div p {
+    font-size: 2rem;
+    color: white;
+    margin-bottom: 0.8vh;
+} */
 
 .create-channel-div input[type="text"] {
     width: 26%;

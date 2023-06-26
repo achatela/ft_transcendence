@@ -40,7 +40,25 @@ export default class SocialPage extends Component<IProps, IState> {
     };
   }
 
-  handleChannelClick(channelName: string) {
+  async handleChannelClick(channelName: string) {
+    const request = await axios.post(
+      "http://localhost:3333/channel/get_channel_messages/",
+      JSON.stringify({
+        username: sessionStorage.getItem("username"),
+        accessToken: sessionStorage.getItem("accessToken"),
+        refreshToken: sessionStorage.getItem("refreshToken"),
+        channelName: channelName,
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (request.data.success === true) {
+      sessionStorage.setItem("refreshToken", request.data.refreshToken);
+      sessionStorage.setItem("accessToken", request.data.accessToken);
+      this.setState({ chat: request.data.chat, selectedChat: channelName });
+    } else {
+      console.log("failed to get channel messages");
+      console.log(request.data.error);
+    }
     this.setState({ createChannel: false, joinChannel: false, isChannel: true });
   }
 
