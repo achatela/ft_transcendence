@@ -73,8 +73,10 @@
 
 .friend-profile,
 .friend-remove {
+  width: 100%;
   padding: 1px;
-  font-size: medium;
+  font-weight: medium;
+  font-size: 2em;
   color: black;
   border: none;
 }

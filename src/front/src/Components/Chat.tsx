@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import io, { Socket } from 'socket.io-client';
 import "./css/Chat.css"
+import axios from 'axios';
 
 interface FriendsProps {
   chat: { room: string, messages: [{ senderId: string, text: string, time: string, username: string, avatar: string }] }
@@ -98,6 +99,27 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected }) => {
     return (time.slice(5, 7) + "-" + time.slice(8, 10) + "-" + time.slice(2, 4) + " " + time.slice(11, 19))
   }
 
+  async function goToProfile(event: React.MouseEvent<HTMLDivElement>): Promise<void> {
+    const request = await axios.post(
+      "http://localhost:3333/social/get_friend_id/",
+      JSON.stringify({
+        username: sessionStorage.getItem("username"),
+        friendUsername: sessionStorage.getItem('tmpUsername'),
+        accessToken: sessionStorage.getItem("accessToken"),
+        refreshToken: sessionStorage.getItem("refreshToken"),
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (request.data.success === true) {
+      sessionStorage.removeItem('tmpUsername');
+      window.location.href = "http://localhost:3133/profile/" + request.data.id;
+    }
+    else {
+      sessionStorage.removeItem('tmpUsername');
+      console.error("failed to get friend id");
+    }
+  }
+
   return (
     < div >
       <h1 className="chat-title">{channelName}</h1>
@@ -107,7 +129,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected }) => {
       <div ref={messagesRef} className="chat-messages">
         {messages.map((msg, index) => (
           <div className="chat-message" key={index}>
-            <div className="chat-avatar" style={{ backgroundImage: `url(${msg.avatar})` }}></div>
+            <div className="chat-avatar" style={{ backgroundImage: `url(${msg.avatar})` }} onClick={(e) => { sessionStorage.setItem('tmpUsername', msg.username); goToProfile(e) }}></div>
             <p className="chat-username">{msg.username}<span>&nbsp; &nbsp; &nbsp; {reformatTime(msg.time)}</span></p>
             <p className="chat-message-content">{msg.text}</p>
           </div>

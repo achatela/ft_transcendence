@@ -74,6 +74,11 @@
     background-repeat: no-repeat;
 }
 
+.chat-avatar:hover {
+    opacity: 0.8;
+    cursor: pointer;
+}
+
 .chat-username {
     position: absolute;
     margin-left: calc(55px + 2vw);
