@@ -40,7 +40,30 @@ export default class SocialPage extends Component<IProps, IState> {
     };
   }
 
+  async joinChannel(channelName: string) {
+    const request = await axios.post(
+      "http://localhost:3333/channel/join/",
+      JSON.stringify({
+        username: sessionStorage.getItem("username"),
+        accessToken: sessionStorage.getItem("accessToken"),
+        refreshToken: sessionStorage.getItem("refreshToken"),
+        channelName: channelName,
+        // password: password, to handle password protected channels
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (request.data.success === true) {
+      console.log("joined channel successfully")
+      sessionStorage.setItem("refreshToken", request.data.refreshToken);
+      sessionStorage.setItem("accessToken", request.data.accessToken);
+    }
+    else {
+      console.log("failed to join channel");
+      console.log(request.data.error);
+    }
+  }
   async handleChannelClick(channelName: string) {
+    this.joinChannel(channelName);
     const request = await axios.post(
       "http://localhost:3333/channel/get_channel_messages/",
       JSON.stringify({

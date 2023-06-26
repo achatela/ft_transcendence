@@ -9,7 +9,7 @@ interface IProps {
 
 interface IState {
     channels: [{ channelName: string, users: number, hasPassword: boolean, owner: string }] | null;
-
+    yourChannels: [{ channelName: string }] | null;
 }
 
 export default class JoinChannel extends Component<IProps, IState> {
@@ -17,13 +17,14 @@ export default class JoinChannel extends Component<IProps, IState> {
     constructor(props: IProps) {
         super(props);
         this.state = {
-            channels: null
+            channels: null,
+            yourChannels: null,
         }
         this.handleChannelClick = props.handleChannelClick;
     }
 
     async componentDidMount() {
-        const request = await axios.post('http://localhost:3333/channel/getChannels/',
+        const request = await axios.post('http://localhost:3333/channel/get_channels/',
             JSON.stringify({
                 username: sessionStorage.getItem("username"),
                 accessToken: sessionStorage.getItem("accessToken"),
@@ -40,16 +41,44 @@ export default class JoinChannel extends Component<IProps, IState> {
             console.log("failed to get channels")
             console.log(request.data.error)
         }
+        const request2 = await axios.post('http://localhost:3333/channel/get_your_channels/',
+            JSON.stringify({
+                username: sessionStorage.getItem("username"),
+                accessToken: sessionStorage.getItem("accessToken"),
+                refreshToken: sessionStorage.getItem("refreshToken")
+            }),
+            { headers: { "Content-Type": "application/json" } })
+        if (request2.data.success === true) {
+            sessionStorage.setItem("refreshToken", request2.data.refreshToken);
+            sessionStorage.setItem("accessToken", request2.data.accessToken);
+            this.setState({ yourChannels: request2.data.yourChannels })
+            console.log("your channels received")
+        }
+        else {
+            console.log("failed to get your channels")
+            console.log(request2.data.error)
+        }
     }
 
     render() {
+        console.log(this.state.yourChannels)
         return (
             <div className='join-channel-div'>
                 <div className='your-channels-div'>
                     <div className='your-channels-header'>
                         <p className='your-channels-p'>Your channels</p>
                     </div>
-                    <div className='your-channels-list'></div>
+                    <div className='your-channels-list'>
+                        {this.state.yourChannels !== null ? this.state.yourChannels.map((channel, index) => {
+                            return (
+                                <div className='your-channels-list-item' key={index}>
+                                    <div onClick={() => this.handleChannelClick(channel.channelName)}>
+                                        <p className='your-channels-list-item-name'>{channel.channelName}</p>
+                                    </div>
+                                </div>
+                            )
+                        }, this) : null}
+                    </div>
                 </div>
                 <div className='channels-list-div'>
                     <div className='channels-list-header'>
