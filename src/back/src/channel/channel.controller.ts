@@ -32,4 +32,9 @@ export class ChannelController {
     async getChannelMessages(@Body() body: { username: string, accessToken: string, refreshToken: string, channelName: string }) {
         return await this.channelService.getChannelMessages(body);
     }
+
+    @Post('quit_channel')
+    async quitChannel(@Body() body: { username: string, accessToken: string, refreshToken: string, channelName: string }) {
+        return await this.channelService.quitChannel(body);
+    }
 }

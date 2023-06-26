@@ -101,3 +101,19 @@
     width: 50px;
     background-color: black;
 }
+
+.channel-quit {
+    position: absolute;
+    border: 3px solid white;
+    top: 2em;
+    left: 17em;
+    height: 50px;
+    width: 50px;
+    background-color: black;
+}
+
+.channel-invite:hover,
+.channel-quit:hover {
+    opacity: 0.8;
+    cursor: pointer;
+}

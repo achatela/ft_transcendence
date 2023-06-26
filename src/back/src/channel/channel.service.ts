@@ -6,6 +6,38 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class ChannelService {
     constructor(private prismaService: PrismaService, private authService: AuthService) { }
 
+    async quitChannel(body: { username: string; accessToken: string; refreshToken: string; channelName: string; }) {
+        const { username, accessToken, refreshToken, channelName } = body;
+        const user = await this.prismaService.user.findUnique({ where: { username: username } });
+        if (!user) {
+            return { success: false, error: 'User not found' };
+        }
+        const ret = await this.authService.checkToken(user, refreshToken, accessToken);
+        if (ret.success == false) {
+            return { success: false, error: 'Invalid token' };
+        }
+        const channel = await this.prismaService.channel.findUnique({ where: { channelName: channelName } });
+        if (!channel) {
+            return { success: false, error: 'Channel not found' };
+        }
+        if (user.id === channel.owner) {
+            await this.prismaService.channel.delete({ where: { channelName: channelName } });
+            return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
+        }
+        else {
+            await this.prismaService.channel.update({
+                where: { channelName: channelName },
+                data: {
+                    users: {
+                        set: channel.users.filter((id) => id !== user.id),
+                    },
+                },
+            });
+            return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
+        }
+
+    }
+
     async getYourChannels(body: { username: string; accessToken: string; refreshToken: string; }) {
         const { username, accessToken, refreshToken } = body;
         const user = await this.prismaService.user.findUnique({ where: { username: username } });

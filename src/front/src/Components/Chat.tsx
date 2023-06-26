@@ -131,12 +131,35 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected }) => {
       console.error("failed to get friend id");
     }
   }
+  async function deleteChat() {
+    const request = await axios.post(
+      "http://localhost:3333/channel/quit_channel/",
+      JSON.stringify({
+        username: sessionStorage.getItem("username"),
+        accessToken: sessionStorage.getItem("accessToken"),
+        refreshToken: sessionStorage.getItem("refreshToken"),
+        channelName: channelName,
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (request.data.success === true) {
+      sessionStorage.setItem('accessToken', request.data.accessToken);
+      sessionStorage.setItem('refreshToken', request.data.refreshToken);
+      window.location.href = "http://localhost:3133/social";
+    }
+    else {
+      console.error("failed to quit chat");
+    }
+  }
 
   return (
     < div >
       <h1 className="chat-title">{channelName}</h1>
       {isChannel === true ?
-        <button className='channel-invite'>Invite</button>
+        <>
+          <button className='channel-invite'>Invite</button>
+          <button className='channel-quit' onClick={deleteChat}>Quit</button>
+        </>
         : null}
       <div ref={messagesRef} className="chat-messages">
         {messages.map((msg, index) => (

@@ -251,6 +251,11 @@
   background-color: black;
 }
 
+.close-chat:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+
 .channels {
   position: absolute;
   height: 100%;
