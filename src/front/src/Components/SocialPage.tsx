@@ -21,6 +21,8 @@ interface IState {
   createChannel: boolean;
   joinChannel: boolean;
   isChannel: boolean;
+  errorMessage: string;
+  isError: boolean;
 }
 
 export default class SocialPage extends Component<IProps, IState> {
@@ -37,6 +39,8 @@ export default class SocialPage extends Component<IProps, IState> {
       createChannel: false,
       joinChannel: false,
       isChannel: false,
+      errorMessage: "",
+      isError: false,
     };
   }
 
@@ -56,11 +60,13 @@ export default class SocialPage extends Component<IProps, IState> {
       console.log("joined channel successfully")
       sessionStorage.setItem("refreshToken", request.data.refreshToken);
       sessionStorage.setItem("accessToken", request.data.accessToken);
+      this.setState({ isError: false })
       return true;
     }
     else {
       console.log("failed to join channel");
       console.log(request.data.error);
+      this.setState({ errorMessage: request.data.error, isError: true });
       return false;
     }
   }
@@ -283,9 +289,12 @@ export default class SocialPage extends Component<IProps, IState> {
     return (
       <div onClick={() => {
         if (this.state.contextMenu)
-          this.setState({ contextMenu: null });
+          this.setState({ contextMenu: null, isError: false });
       }}>
-        <button className="close-chat" onClick={() => { this.setState({ chat: null }); this.setState({ isChannel: false, joinChannel: false, createChannel: false, selectedChat: null }) }}>close-chats</button>
+        <button className="close-chat" onClick={() => { this.setState({ chat: null }); this.setState({ isError: false, isChannel: false, joinChannel: false, createChannel: false, selectedChat: null }) }}>close-chats</button>
+        {this.state.isError === true ? (
+          <p className="error-message">{this.state.errorMessage}</p>
+        ) : null}
         {this.state.friends ? (
           <div className="friends">
             <p className='friends-p'>Friends</p>
@@ -293,13 +302,13 @@ export default class SocialPage extends Component<IProps, IState> {
               <div key={username} className="friends-friend" style={this.state.selectedChat === username ? { backgroundColor: 'grey' } : {}}
                 onClick={async () => {
                   const chat = await this.getFriendChat(username);
-                  this.setState({ selectedChat: username })
+                  this.setState({ selectedChat: username, isError: false })
                   this.setState({ chat: chat });
                 }
                 } onContextMenu={
                   (e) => {
                     e.preventDefault();
-                    this.setState({ contextMenu: { username: username, position: { x: e.pageX, y: e.pageY } } });
+                    this.setState({ contextMenu: { username: username, position: { x: e.pageX, y: e.pageY } }, isError: false });
                   }}>
                 <div className="friend-avatar" style={{ backgroundImage: `url(${avatarUrls.get(username)})` }}></div>
                 <div className="friend-name" data-name={username}>{username}</div>
@@ -332,8 +341,8 @@ export default class SocialPage extends Component<IProps, IState> {
           <div className="channels">
             {this.state.createChannel === false && this.state.joinChannel === false ? (
               <>
-                <button className="create-channel" onClick={() => { this.setState({ createChannel: true }) }}>Create a channel</button>
-                <button className="join-channel" onClick={() => { this.setState({ joinChannel: true }) }} >Join a channel</button>
+                <button className="create-channel" onClick={() => { this.setState({ createChannel: true, isError: false }) }}>Create a channel</button>
+                <button className="join-channel" onClick={() => { this.setState({ joinChannel: true, isError: false }) }} >Join a channel</button>
               </>
             ) : (
               this.state.createChannel === true ? (

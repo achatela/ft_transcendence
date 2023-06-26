@@ -61,7 +61,6 @@ export default class JoinChannel extends Component<IProps, IState> {
     }
 
     render() {
-        console.log(this.state.yourChannels)
         return (
             <div className='join-channel-div'>
                 <div className='your-channels-div'>

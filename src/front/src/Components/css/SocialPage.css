@@ -283,3 +283,11 @@
   margin-right: calc((100vw - 16px - 25vw) / 2 - 200px);
   font-size: 2rem;
 }
+
+.error-message {
+  margin-top: 4vh;
+  margin-left: 26vw;
+  color: red;
+  font-size: 3rem;
+  position: absolute;
+}
