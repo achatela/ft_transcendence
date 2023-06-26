@@ -96,7 +96,19 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected }) => {
   };
 
   function reformatTime(time: string): string {
-    return (time.slice(5, 7) + "-" + time.slice(8, 10) + "-" + time.slice(2, 4) + " " + time.slice(11, 19))
+    // 2020-12-01T12:00:00.000Z to 12-01-20 14:00:00
+    let date = time.split('T')[0];
+    let hour = time.split('T')[1].split('.')[0];
+    let year = date.split('-')[0].substring(2, 4);
+    let month = date.split('-')[1];
+    let day = date.split('-')[2];
+    let hour2 = hour.split(':')[0];
+    let minute = hour.split(':')[1];
+    let second = hour.split(':')[2];
+    let hour3 = (parseInt(hour2) + 2).toString();
+    if (hour3.length === 1)
+      hour3 = "0" + hour3;
+    return month + "-" + day + "-" + year + " " + hour3 + ":" + minute + ":" + second;
   }
 
   async function goToProfile(event: React.MouseEvent<HTMLDivElement>): Promise<void> {
