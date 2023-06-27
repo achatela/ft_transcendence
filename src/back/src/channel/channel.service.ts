@@ -172,7 +172,6 @@ export class ChannelService {
                 channelMode: isPrivate ? 'private' : 'public',
             },
         });
-        console.log("createdChannel: ", createdChannel)
         const updatedChannel = await this.prismaService.channel.update({
             where: { id: createdChannel.id },
             data: {

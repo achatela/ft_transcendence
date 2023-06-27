@@ -168,7 +168,6 @@ export class SocialService {
         }
     }
 
-
     async getFriendId(username: string, friendUsername: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, id?: number }> {
         try {
             const user = await this.prismaService.user.findUnique({ where: { username: username } });
@@ -181,5 +180,53 @@ export class SocialService {
         } catch (error) {
             console.error('Error in getFriendId:', error);
         }
+    }
+
+    async blockedIds(body: { username: string, accessToken: string, refreshToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, blockedIds?: number[], error?: string }> {
+        const { username, accessToken, refreshToken } = body;
+        const user = await this.prismaService.user.findUnique({ where: { username: username } })
+        if (!user) {
+            return { success: false, error: "User not found" };
+        }
+        const ret = await this.authService.checkToken(user, refreshToken, accessToken);
+        if (!ret) {
+            return { success: false, error: "Token not valid" };
+        }
+        return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken, blockedIds: user.blockedIds };
+    }
+
+    async blockUser(body: { username: string, blockedUsername: string, accessToken: string; refreshToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, error?: string }> {
+        const { username, blockedUsername, accessToken, refreshToken } = body;
+        const user = await this.prismaService.user.findUnique({ where: { username: username } });
+        if (user == null)
+            return { success: false, error: "User not found" };
+        const auth = await this.authService.checkToken(user, refreshToken, accessToken);
+        if (auth.success == false)
+            return { success: false, error: "Invalid token" };
+        const blockedUser = await this.prismaService.user.findUnique({ where: { username: blockedUsername } });
+        if (blockedUser == null)
+            return { success: false, error: "Blocked user not found" };
+        // if blockedUser.id is in user.friendsLists remove it
+        const ret = await this.prismaService.friend.findFirst({ where: { userId: user.id, friendId: blockedUser.id } })
+        if (ret != null) {
+            await this.prismaService.friend.deleteMany({ where: { userId: user.id, friendId: blockedUser.id } })
+            await this.prismaService.friend.deleteMany({ where: { userId: blockedUser.id, friendId: user.id } })
+        }
+        // doesn't seems to create problems with friendChat
+        // check if userBlocked.id is already in user.blockedIds
+        let tmp = user.blockedIds;
+        for (let i = 0; i < user.blockedIds.length; i++) {
+            if (tmp[i] == blockedUser.id)
+                return ({ success: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken })
+        }
+        await this.prismaService.user.update({
+            where: { username: username },
+            data: {
+                blockedIds: {
+                    push: blockedUser.id
+                }
+            }
+        });
+        return { success: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken };
     }
 }

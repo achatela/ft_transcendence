@@ -14,6 +14,7 @@ interface IProps { }
 interface IState {
   friendRequests: string[] | null;
   friends: string[] | null;
+  blockedIds: number[] | null;
   chat: { room: string; messages: [{ senderId: string, text: string, time: string, username: string, avatar: string }] } | null;
   contextMenu: { username: string, position: { x: number, y: number } } | null;
   refresh: boolean;
@@ -23,6 +24,8 @@ interface IState {
   isChannel: boolean;
   errorMessage: string;
   isError: boolean;
+  addFriend: boolean;
+  blockUser: boolean;
 }
 
 export default class SocialPage extends Component<IProps, IState> {
@@ -32,6 +35,7 @@ export default class SocialPage extends Component<IProps, IState> {
     this.state = {
       friendRequests: null,
       friends: null,
+      blockedIds: null,
       chat: null,
       contextMenu: null,
       refresh: false,
@@ -41,6 +45,8 @@ export default class SocialPage extends Component<IProps, IState> {
       isChannel: false,
       errorMessage: "",
       isError: false,
+      addFriend: false,
+      blockUser: false,
     };
   }
 
@@ -140,11 +146,37 @@ export default class SocialPage extends Component<IProps, IState> {
     }
   }
 
+  async getBlockedIds(): Promise<number[]> {
+    const response = await axios.post(
+      "http://localhost:3333/social/blocked_ids/",
+      JSON.stringify({
+        username: sessionStorage.getItem("username"),
+        refreshToken: sessionStorage.getItem("refreshToken"),
+        accessToken: sessionStorage.getItem("accessToken"),
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (response.data.success === true) {
+      sessionStorage.setItem("refreshToken", response.data.refreshToken);
+      sessionStorage.setItem("accessToken", response.data.accessToken);
+      console.log("friends", response.data.friends)
+      for (let friend in response.data.friends) {
+        this.getAvatar(response.data.friends[friend]);
+      }
+      return response.data.blockedIds;
+    }
+    else {
+      console.log("failed")
+    }
+  }
+
   async componentDidMount(): Promise<void> {
     const friendRequests = await this.getFriendRequests();
     this.setState({ friendRequests: friendRequests });
     const friends = await this.getFriends();
     this.setState({ friends: friends });
+    const blockedIds = await this.getBlockedIds();
+    this.setState({ blockedIds: blockedIds })
   }
 
   async sendFriendRequestEnter(): Promise<void> {
@@ -265,7 +297,6 @@ export default class SocialPage extends Component<IProps, IState> {
   }
 
   async getAvatar(username: string): Promise<void> {
-    console.log(username)
     const request = await axios.post(
       "http://localhost:3333/social/get_avatar/",
       JSON.stringify({
@@ -285,7 +316,34 @@ export default class SocialPage extends Component<IProps, IState> {
       console.error("failed to get avatar");
   }
 
+  async blockUser(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
+    let inputElement = document.querySelector(".block-user-input") as HTMLInputElement;
+    const request = await axios.post(
+      "http://localhost:3333/social/block_user/",
+      JSON.stringify({
+        username: sessionStorage.getItem("username"),
+        blockedUsername: inputElement.value,
+        accessToken: sessionStorage.getItem("accessToken"),
+        refreshToken: sessionStorage.getItem("refreshToken"),
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (request.data.success === true) {
+      sessionStorage.setItem("refreshToken", request.data.refreshToken);
+      sessionStorage.setItem("accessToken", request.data.accessToken);
+      console.log("blocked")
+    }
+    else
+      console.log("failed to block")
+    return;
+  }
+
+  async blockUserEnter() {
+    return;
+  }
+
   render(): JSX.Element {
+    console.log(this.state.blockedIds)
     return (
       <div onClick={() => {
         if (this.state.contextMenu)
@@ -326,9 +384,24 @@ export default class SocialPage extends Component<IProps, IState> {
           </div>
         )}
         <div className="add-friend">
-          <p className="add-friend-text">Add Friend</p>
-          <input className="add-friend-input" type="text" onKeyUp={(e) => { if (e.key === 'Enter') { this.sendFriendRequestEnter() } }} />
-          <button className="add-friend-button" onClick={this.sendFriendRequest}>Send</button>
+          {this.state.addFriend === true || this.state.blockUser === true ? (
+            <button className="reset-states" onClick={() => { this.setState({ addFriend: false, blockUser: false }) }}>X</button>
+          ) : <>
+            <button className="display-add" onClick={() => { this.setState({ addFriend: true }) }}>Add friend</button>
+            <button className="display-block" onClick={() => { this.setState({ blockUser: true }) }}>Block user</button>
+          </>}
+          {this.state.addFriend === true ? (<>
+            <p className="add-friend-text">Add Friend</p>
+            <input className="add-friend-input" type="text" onKeyUp={(e) => { if (e.key === 'Enter') { this.sendFriendRequestEnter() } }} />
+            <button className="add-friend-button" onClick={this.sendFriendRequest}>Send</button>
+          </>
+          ) : null}
+          {this.state.blockUser === true ? (<>
+            <p className="block-user-text">Block User</p>
+            <input className="block-user-input" type="text" onKeyUp={(e) => { if (e.key === 'Enter') { this.blockUserEnter() } }} />
+            <button className="block-user-button" onClick={this.blockUser}>Block</button>
+          </>
+          ) : null}
         </div>
         {this.state.friendRequests ? (
           <FriendRequests friendRequests={this.state.friendRequests} />

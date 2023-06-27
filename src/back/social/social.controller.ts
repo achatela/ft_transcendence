@@ -5,6 +5,16 @@ import { SocialService } from './social.service';
 export class SocialController {
     constructor(private socialService: SocialService) { }
 
+    @Post('blocked_ids')
+    async blockedIds(@Body() body: { username: string, accessToken: string, refreshToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, error?: string, blockedIds?: number[] }> {
+        return await this.socialService.blockedIds(body);
+    }
+
+    @Post('block_user')
+    async blockUser(@Body() body: { username: string, blockedUsername: string, accessToken: string; refreshToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, error?: string }> {
+        return await this.socialService.blockUser(body);
+    }
+
     @Post('friend_request')
     async getSocial(@Body() userInput: { username: string, accessToken: string, refreshToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, listRequest?: string[] }> {
         return await this.socialService.getFriendRequests(userInput.username, userInput.accessToken, userInput.refreshToken);

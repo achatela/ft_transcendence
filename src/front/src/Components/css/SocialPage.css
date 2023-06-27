@@ -298,3 +298,67 @@
   font-size: 3rem;
   position: absolute;
 }
+
+.reset-states {
+  position: absolute;
+  background-color: red;
+  height: 20px;
+  width: 20px;
+  left: 1vw;
+  top: 1vw;
+  border: none;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.display-add {
+  background: black;
+  border: 3px solid white;
+  padding: 0.5em;
+  color: white;
+  outline: none;
+  margin-top: calc(4.2rem - 1.5rem + 3px);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.display-block {
+  background: black;
+  border: 3px solid white;
+  padding: 0.5em;
+  color: white;
+  outline: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-left: 1rem;
+}
+
+.block-user-text {
+  margin-top: 1rem;
+  font-size: 2rem;
+}
+
+.block-user-input {
+  display: block;
+  background: black;
+  margin-left: calc(15% - 0.6rem);
+  width: 70%;
+  border: 3px solid white;
+  padding: 0.5em;
+  color: white;
+  outline: none;
+  margin-top: 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.block-user-button {
+  background: black;
+  border: 3px solid white;
+  padding: 0.5em;
+  color: white;
+  outline: none;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+}

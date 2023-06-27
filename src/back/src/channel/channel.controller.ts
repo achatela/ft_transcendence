@@ -13,7 +13,6 @@ export class ChannelController {
 
     @Post('create')
     async createChannel(@Body() body: { username: string, accessToken: string, refreshToken: string, channelName: string, password?: string, isPrivate: boolean }) {
-        console.log("create channel body:\n", body);
         return await this.channelService.createChannel(body);
     }
 
@@ -27,7 +26,6 @@ export class ChannelController {
         return await this.channelService.getYourChannels(body);
     }
 
-    // Will need to first add the user to the channel, check if it needs a password etc..
     @Post('get_channel_messages')
     async getChannelMessages(@Body() body: { username: string, accessToken: string, refreshToken: string, channelName: string }) {
         return await this.channelService.getChannelMessages(body);
