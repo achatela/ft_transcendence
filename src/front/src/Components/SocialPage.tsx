@@ -409,7 +409,7 @@ export default class SocialPage extends Component<IProps, IState> {
           <div className="friend-requests">Loading...</div>
         )}
         {this.state.chat ? (
-          <Chat isChannel={this.state.isChannel} chat={this.state.chat} isSelected={this.state.selectedChat} />
+          <Chat isChannel={this.state.isChannel} chat={this.state.chat} isSelected={this.state.selectedChat} blockedIds={this.state.blockedIds} />
         ) : (
           <div className="channels">
             {this.state.createChannel === false && this.state.joinChannel === false ? (

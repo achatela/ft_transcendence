@@ -7,6 +7,7 @@ interface FriendsProps {
   chat: { room: string, messages: [{ senderId: string, text: string, time: string, username: string, avatar: string }] }
   isChannel: boolean;
   isSelected: string;
+  blockedIds: number[];
 }
 
 function useChatScroll<T>(dep: T): React.MutableRefObject<HTMLDivElement> {
@@ -21,7 +22,7 @@ function useChatScroll<T>(dep: T): React.MutableRefObject<HTMLDivElement> {
   return ref;
 }
 
-const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected }) => {
+const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<any[]>([]);
   const messagesRef = useChatScroll(messages);
@@ -153,7 +154,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected }) => {
   }
 
   return (
-    < div >
+    <div>
       <h1 className="chat-title">{channelName}</h1>
       {isChannel === true ?
         <>
@@ -162,7 +163,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected }) => {
         </>
         : null}
       <div ref={messagesRef} className="chat-messages">
-        {messages.map((msg, index) => (
+        {messages.filter(msg => !blockedIds.includes(msg.senderId)).map((msg, index) => (
           <div className="chat-message" key={index}>
             <div className="chat-avatar" style={{ backgroundImage: `url(${msg.avatar})` }} onClick={(e) => { sessionStorage.setItem('tmpUsername', msg.username); goToProfile(e) }}></div>
             <p className="chat-username">{msg.username}<span>&nbsp; &nbsp; &nbsp; {reformatTime(msg.time)}</span></p>
@@ -171,7 +172,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected }) => {
         ))}
       </div>
       <input ref={ref} className="chat-input" type="text" value={message} onChange={(e) => setMessage(e.target.value)} />
-    </div >
+    </div>
   );
 }
 
