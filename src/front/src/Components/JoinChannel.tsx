@@ -94,6 +94,12 @@ export default class JoinChannel extends Component<IProps, IState> {
                             return (
                                 <div onClick={() => {
                                     if (channel.hasPassword === true) {
+                                        for (let yourChannel of this.state.yourChannels) {
+                                            if (yourChannel.channelName === channel.channelName) {
+                                                this.handleChannelClick(channel.channelName)
+                                                return;
+                                            }
+                                        }
                                         const password = prompt("Enter password for channel " + channel.channelName)
                                         if (password !== null) {
                                             this.handleChannelClick(channel.channelName, password)

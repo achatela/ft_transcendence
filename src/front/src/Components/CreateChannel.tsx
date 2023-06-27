@@ -33,7 +33,7 @@ export default class CreateChannel extends Component<IProps, IState> {
                 accessToken: sessionStorage.getItem("accessToken"),
                 refreshToken: sessionStorage.getItem("refreshToken"),
                 channelName: channelNameInput.value,
-                channelPassword: channelPasswordInput.value,
+                password: channelPasswordInput.value,
                 isPrivate: privateCheckbox.checked
             }),
             { headers: { "Content-Type": "application/json" } })
