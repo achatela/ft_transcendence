@@ -117,3 +117,43 @@
     opacity: 0.8;
     cursor: pointer;
 }
+
+.context-menu {
+    position: absolute;
+    /* background-color: red; */
+    width: 100px;
+    /* color: red; */
+    z-index: 1;
+}
+
+.context-menu-item-block {
+    font-size: 2em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    color: black;
+    width: 100%;
+    height: 100%;
+}
+
+.context-menu-item-remove {
+    font-size: 2em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    color: black;
+    width: 100%;
+    height: 100%;
+}
+
+.context-menu-item-remove:hover {
+    opacity: 0.8;
+}
+
+.context-menu-item-block:hover {
+    opacity: 0.8;
+}

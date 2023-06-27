@@ -29,6 +29,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
   const socket = io('http://localhost:3333');
   const ref = useRef(null);
   const channelName = isSelected;
+  const [contextMenu, setContextMenu] = useState({ show: false, username: '', position: { x: 0, y: 0 } });
 
   useEffect(() => {
     if (isChannel == false) {
@@ -82,7 +83,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
         element.removeEventListener('keypress', handleSendMessage);
       }
     }
-  }, [chat]);
+  }, [chat, contextMenu.show, contextMenu.position.x, contextMenu.position.y]);
 
   const handleSendMessage = (event: any) => {
     if (event.key === 'Enter') {
@@ -132,6 +133,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
       console.error("failed to get friend id");
     }
   }
+
   async function deleteChat() {
     const request = await axios.post(
       "http://localhost:3333/channel/quit_channel/",
@@ -155,16 +157,34 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
 
   return (
     <div>
+      {contextMenu.show == true ?
+        <div className='context-menu' style={{ left: contextMenu.position.x, top: contextMenu.position.y }}>
+          <div className='context-menu-item-block'>block</div>
+          <div className='context-menu-item-remove'>remove</div>
+        </div> : null
+      }
       <h1 className="chat-title">{channelName}</h1>
-      {isChannel === true ?
-        <>
-          <button className='channel-invite'>Invite</button>
-          <button className='channel-quit' onClick={deleteChat}>Quit</button>
-        </>
-        : null}
+      {
+        isChannel === true ?
+          <>
+            <button className='channel-invite'>Invite</button>
+            <button className='channel-quit' onClick={deleteChat}>Quit</button>
+          </>
+          : null
+      }
       <div ref={messagesRef} className="chat-messages">
         {messages.filter(msg => !blockedIds.includes(msg.senderId)).map((msg, index) => (
-          <div className="chat-message" key={index}>
+          <div className="chat-message" key={index}
+            onContextMenu={
+              (e) => {
+                e.preventDefault();
+                setContextMenu({
+                  ...contextMenu,
+                  show: true,
+                  position: { x: e.clientX, y: e.clientY }
+                });
+              }
+            }>
             <div className="chat-avatar" style={{ backgroundImage: `url(${msg.avatar})` }} onClick={(e) => { sessionStorage.setItem('tmpUsername', msg.username); goToProfile(e) }}></div>
             <p className="chat-username">{msg.username}<span>&nbsp; &nbsp; &nbsp; {reformatTime(msg.time)}</span></p>
             <p className="chat-message-content">{msg.text}</p>
@@ -172,7 +192,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
         ))}
       </div>
       <input ref={ref} className="chat-input" type="text" value={message} onChange={(e) => setMessage(e.target.value)} />
-    </div>
+    </div >
   );
 }
 
