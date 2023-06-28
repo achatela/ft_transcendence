@@ -208,6 +208,27 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
   }
 
   async function muteUserChannel() {
+    const response = await axios.post(
+      "http://localhost:3333/channel/mute_user_channel/",
+      JSON.stringify({
+        username: sessionStorage.getItem("username"),
+        accessToken: sessionStorage.getItem("accessToken"),
+        refreshToken: sessionStorage.getItem("refreshToken"),
+        channelName: channelName,
+        targetUsername: sessionStorage.getItem('tmpUsername'),
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (response.data.success === true) {
+      sessionStorage.removeItem('tmpUsername');
+      sessionStorage.setItem('accessToken', response.data.accessToken);
+      sessionStorage.setItem('refreshToken', response.data.refreshToken);
+    }
+    else {
+      setError(true);
+      setErrorMessage(response.data.error)
+      sessionStorage.removeItem('tmpUsername');
+    }
     return;
   }
 

@@ -347,4 +347,66 @@ export class ChannelService {
         });
         return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
     }
+
+    async muteUserChannel(body: { username: string; accessToken: string; refreshToken: string; channelName: string; targetUsername: string; }) {
+        const user = await this.prismaService.user.findUnique({ where: { username: body.username } });
+        if (!user) {
+            return { success: false, error: 'User not found' };
+        }
+        const ret = await this.authService.checkToken(user, body.refreshToken, body.accessToken);
+        if (ret.success == false)
+            return { success: false, error: 'Invalid token' };
+        const channel = await this.prismaService.channel.findUnique({
+            where: { channelName: body.channelName },
+            select: {
+                users: true,
+                owner: true,
+                admins: true,
+                mutedIds: true,
+            },
+        });
+        if (!channel) {
+            return { success: false, error: 'Channel not found' };
+        }
+        if (channel.owner != user.id && !channel.admins.includes(user.id)) {
+            return { success: false, error: 'You are not admin' };
+        }
+        const targetUser = await this.prismaService.user.findUnique({ where: { username: body.targetUsername } });
+        if (!targetUser) {
+            return { success: false, error: 'Target user not found' };
+        }
+        if (targetUser.id == channel.owner) {
+            return { success: false, error: 'Cannot mute owner' };
+        }
+        if (!channel.users.includes(targetUser.id)) {
+            return { success: false, error: 'Target user is not in this channel' };
+        }
+        if (channel.admins.includes(targetUser.id)) {
+            if (channel.admins.includes(user.id))
+                return { success: false, error: 'Cannot mute another admin' };
+            else if (channel.owner == user.id) {
+                await this.prismaService.channel.update({
+                    where: { channelName: body.channelName },
+                    data: {
+                        mutedIds: {
+                            set: [...channel.mutedIds, targetUser.id],
+                        },
+                    },
+                });
+                // add a setInterval to unmute the user after 1 hour
+                return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
+            }
+            else
+                return { success: false, error: 'You are not admin' };
+        }
+        await this.prismaService.channel.update({
+            where: { channelName: body.channelName },
+            data: {
+                mutedIds: {
+                    set: [...channel.mutedIds, targetUser.id],
+                },
+            },
+        });
+        return
+    }
 }

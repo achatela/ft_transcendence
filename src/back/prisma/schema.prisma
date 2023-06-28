@@ -80,6 +80,7 @@ model Channel {
   owner     Int
 
   bannedIds Int[]
+  mutedIds  Int[]
 
   channelName String           @unique
   channelMode String
