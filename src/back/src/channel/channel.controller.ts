@@ -35,4 +35,14 @@ export class ChannelController {
     async quitChannel(@Body() body: { username: string, accessToken: string, refreshToken: string, channelName: string }) {
         return await this.channelService.quitChannel(body);
     }
+
+    @Post('kick_user_channel')
+    async kickUserChannel(@Body() body: { username: string, accessToken: string, refreshToken: string, channelName: string, targetUsername: string }) {
+        return await this.channelService.kickUserChannel(body);
+    }
+
+    @Post('ban_user_channel')
+    async banUserChannel(@Body() body: { username: string, accessToken: string, refreshToken: string, channelName: string, targetUsername: string }) {
+        return await this.channelService.banUserChannel(body);
+    }
 }

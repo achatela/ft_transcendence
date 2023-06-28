@@ -25,6 +25,8 @@ function useChatScroll<T>(dep: T): React.MutableRefObject<HTMLDivElement> {
 const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<any[]>([]);
+  const [isError, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const messagesRef = useChatScroll(messages);
   const socket = io('http://localhost:3333');
   const ref = useRef(null);
@@ -156,6 +158,59 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
     }
   }
 
+  async function kickUserChannel() {
+    const response = await axios.post(
+      "http://localhost:3333/channel/kick_user_channel/",
+      JSON.stringify({
+        username: sessionStorage.getItem("username"),
+        accessToken: sessionStorage.getItem("accessToken"),
+        refreshToken: sessionStorage.getItem("refreshToken"),
+        channelName: channelName,
+        targetUsername: sessionStorage.getItem('tmpUsername'),
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (response.data.success === true) {
+      sessionStorage.removeItem('tmpUsername');
+      sessionStorage.setItem('accessToken', response.data.accessToken);
+      sessionStorage.setItem('refreshToken', response.data.refreshToken);
+      // window.location.href = "http://localhost:3133/social";
+    }
+    else {
+      setError(true);
+      setErrorMessage(response.data.error)
+      sessionStorage.removeItem('tmpUsername');
+    }
+  }
+
+  async function banUserChannel() {
+    const response = await axios.post(
+      "http://localhost:3333/channel/ban_user_channel/",
+      JSON.stringify({
+        username: sessionStorage.getItem("username"),
+        accessToken: sessionStorage.getItem("accessToken"),
+        refreshToken: sessionStorage.getItem("refreshToken"),
+        channelName: channelName,
+        targetUsername: sessionStorage.getItem('tmpUsername'),
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (response.data.success === true) {
+      sessionStorage.removeItem('tmpUsername');
+      sessionStorage.setItem('accessToken', response.data.accessToken);
+      sessionStorage.setItem('refreshToken', response.data.refreshToken);
+    }
+    else {
+      setError(true);
+      setErrorMessage(response.data.error)
+      sessionStorage.removeItem('tmpUsername');
+    }
+  }
+
+  async function muteUserChannel() {
+    return;
+  }
+
   return (
     <div>
       <div onClick={() => { setContextMenu({ ...contextMenu, show: false }) }}>
@@ -167,11 +222,12 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
         }
         {contextMenu.show == true && isChannel == true ?
           <div className='context-menu' style={{ left: contextMenu.position.x, top: contextMenu.position.y }}>
-            <div>kick</div>
-            <div>ban</div>
-            <div>mute</div>
+            <div onClick={() => { kickUserChannel() }}>kick</div>
+            <div onClick={() => { banUserChannel() }}>ban</div>
+            <div onClick={() => { muteUserChannel() }}>mute</div>
           </div> : null
         }
+        {isError === true ? <div className='error-message-chat'>{errorMessage}</div> : null}
         <h1 className="chat-title">{channelName}</h1>
         {
           isChannel === true ?
@@ -192,6 +248,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
                   setContextMenu({
                     ...contextMenu,
                     show: true,
+                    username: msg.username,
                     position: { x: e.clientX, y: e.clientY }
                   });
                 }

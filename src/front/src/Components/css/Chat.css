@@ -142,3 +142,11 @@
 .context-menu div:hover {
     opacity: 0.8;
 }
+
+.error-message-chat {
+    margin-top: 5vh;
+    margin-left: 46vw;
+    color: red;
+    font-size: 3rem;
+    position: absolute;
+}

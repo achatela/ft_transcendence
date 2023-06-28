@@ -79,6 +79,8 @@ model Channel {
   admins    Int[]
   owner     Int
 
+  bannedIds Int[]
+
   channelName String           @unique
   channelMode String
   password    String?

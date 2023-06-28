@@ -82,6 +82,9 @@ export class ChannelService {
         if (!channel) {
             return { success: false, error: 'Channel not found' };
         }
+        if (channel.bannedIds.includes(user.id)) {
+            return { success: false, error: 'You are banned from this channel' };
+        }
         const userInChannel = channel.users.find((id) => id == user.id);
         if (userInChannel) {
             return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
@@ -216,5 +219,132 @@ export class ChannelService {
             });
         }
         return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken, chat: { room: channelName, messages: retMessage } };
+    }
+
+    async kickUserChannel(body: { username: string; accessToken: string; refreshToken: string; channelName: string; targetUsername: string; }) {
+        const user = await this.prismaService.user.findUnique({ where: { username: body.username } });
+        if (!user) {
+            return { success: false, error: 'User not found' };
+        }
+        const ret = await this.authService.checkToken(user, body.refreshToken, body.accessToken);
+        if (ret.success == false)
+            return { success: false, error: 'Invalid token' };
+        const channel = await this.prismaService.channel.findUnique({
+            where: { channelName: body.channelName },
+            select: {
+                users: true,
+                owner: true,
+                admins: true,
+            },
+        });
+        if (!channel) {
+            return { success: false, error: 'Channel not found' };
+        }
+        if (channel.owner != user.id && !channel.admins.includes(user.id)) {
+            return { success: false, error: 'You are not admin' };
+        }
+        const targetUser = await this.prismaService.user.findUnique({ where: { username: body.targetUsername } });
+        if (!targetUser) {
+            return { success: false, error: 'Target user not found' };
+        }
+        if (targetUser.id == channel.owner) {
+            return { success: false, error: 'Cannot kick owner' };
+        }
+        if (!channel.users.includes(targetUser.id)) {
+            return { success: false, error: 'Target user is not in this channel' };
+        }
+        if (channel.admins.includes(targetUser.id)) {
+            if (channel.admins.includes(user.id))
+                return { success: false, error: 'Cannot kick another admin' };
+            else if (channel.owner == user.id) {
+                await this.prismaService.channel.update({
+                    where: { channelName: body.channelName },
+                    data: {
+                        users: {
+                            set: channel.users.filter((id) => id != targetUser.id),
+                        },
+                    },
+                });
+                return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
+            }
+            else
+                return { success: false, error: 'You are not admin' };
+        }
+        await this.prismaService.channel.update({
+            where: { channelName: body.channelName },
+            data: {
+                users: {
+                    set: channel.users.filter((id) => id != targetUser.id),
+                },
+            },
+        });
+        return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
+    }
+
+    async banUserChannel(body: { username: string; accessToken: string; refreshToken: string; channelName: string; targetUsername: string; }) {
+        const user = await this.prismaService.user.findUnique({ where: { username: body.username } });
+        if (!user) {
+            return { success: false, error: 'User not found' };
+        }
+        const ret = await this.authService.checkToken(user, body.refreshToken, body.accessToken);
+        if (ret.success == false)
+            return { success: false, error: 'Invalid token' };
+        const channel = await this.prismaService.channel.findUnique({
+            where: { channelName: body.channelName },
+            select: {
+                users: true,
+                owner: true,
+                admins: true,
+                bannedIds: true,
+            },
+        });
+        if (!channel) {
+            return { success: false, error: 'Channel not found' };
+        }
+        if (channel.owner != user.id && !channel.admins.includes(user.id)) {
+            return { success: false, error: 'You are not admin' };
+        }
+        const targetUser = await this.prismaService.user.findUnique({ where: { username: body.targetUsername } });
+        if (!targetUser) {
+            return { success: false, error: 'Target user not found' };
+        }
+        if (targetUser.id == channel.owner) {
+            return { success: false, error: 'Cannot ban owner' };
+        }
+        if (!channel.users.includes(targetUser.id)) {
+            return { success: false, error: 'Target user is not in this channel' };
+        }
+        if (channel.admins.includes(targetUser.id)) {
+            if (channel.admins.includes(user.id))
+                return { success: false, error: 'Cannot ban another admin' };
+            else if (channel.owner == user.id) {
+                await this.prismaService.channel.update({
+                    where: { channelName: body.channelName },
+                    data: {
+                        users: {
+                            set: channel.users.filter((id) => id != targetUser.id),
+                        },
+                        bannedIds: {
+                            set: [...channel.bannedIds, targetUser.id],
+                        },
+                    },
+                });
+                return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
+            }
+            else
+                return { success: false, error: 'You are not admin' };
+        }
+        await this.prismaService.channel.update({
+            where: { channelName: body.channelName },
+            data: {
+                users: {
+                    set: channel.users.filter((id) => id != targetUser.id),
+                },
+                bannedIds: {
+                    set: [...channel.bannedIds, targetUser.id],
+                },
+            },
+        });
+        return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
     }
 }
