@@ -245,6 +245,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
                   if (sessionStorage.getItem('username') === msg.username)
                     return;
                   e.preventDefault();
+                  sessionStorage.setItem('tmpUsername', msg.username);
                   setContextMenu({
                     ...contextMenu,
                     show: true,
