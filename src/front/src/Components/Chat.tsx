@@ -32,6 +32,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
   const [contextMenu, setContextMenu] = useState({ show: false, username: '', position: { x: 0, y: 0 } });
 
   useEffect(() => {
+    console.log("useEffect in Chat.tsx", isChannel)
     if (isChannel == false) {
       const element = ref.current;
       for (let i = 0; i < chat.messages.length; i++) {
@@ -83,7 +84,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
         element.removeEventListener('keypress', handleSendMessage);
       }
     }
-  }, [chat, contextMenu.show, contextMenu.position.x, contextMenu.position.y]);
+  }, [chat, contextMenu.show, contextMenu.position.x, contextMenu.position.y, isChannel]);
 
   const handleSendMessage = (event: any) => {
     if (event.key === 'Enter') {
@@ -157,42 +158,51 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
 
   return (
     <div>
-      {contextMenu.show == true ?
-        <div className='context-menu' style={{ left: contextMenu.position.x, top: contextMenu.position.y }}>
-          <div className='context-menu-item-block'>block</div>
-          <div className='context-menu-item-remove'>remove</div>
-        </div> : null
-      }
-      <h1 className="chat-title">{channelName}</h1>
-      {
-        isChannel === true ?
-          <>
-            <button className='channel-invite'>Invite</button>
-            <button className='channel-quit' onClick={deleteChat}>Quit</button>
-          </>
-          : null
-      }
-      <div ref={messagesRef} className="chat-messages">
-        {messages.filter(msg => !blockedIds.includes(msg.senderId)).map((msg, index) => (
-          <div className="chat-message" key={index}
-            onContextMenu={
-              (e) => {
-                e.preventDefault();
-                setContextMenu({
-                  ...contextMenu,
-                  show: true,
-                  position: { x: e.clientX, y: e.clientY }
-                });
-              }
-            }>
-            <div className="chat-avatar" style={{ backgroundImage: `url(${msg.avatar})` }} onClick={(e) => { sessionStorage.setItem('tmpUsername', msg.username); goToProfile(e) }}></div>
-            <p className="chat-username">{msg.username}<span>&nbsp; &nbsp; &nbsp; {reformatTime(msg.time)}</span></p>
-            <p className="chat-message-content">{msg.text}</p>
-          </div>
-        ))}
-      </div>
-      <input ref={ref} className="chat-input" type="text" value={message} onChange={(e) => setMessage(e.target.value)} />
-    </div >
+      <div onClick={() => { setContextMenu({ ...contextMenu, show: false }) }}>
+        {contextMenu.show == true && isChannel == false ?
+          <div className='context-menu' style={{ left: contextMenu.position.x, top: contextMenu.position.y }}>
+            <div>block</div>
+            <div>remove</div>
+          </div> : null
+        }
+        {contextMenu.show == true && isChannel == true ?
+          <div className='context-menu' style={{ left: contextMenu.position.x, top: contextMenu.position.y }}>
+            <div>kick</div>
+            <div>ban</div>
+            <div>mute</div>
+          </div> : null
+        }
+        <h1 className="chat-title">{channelName}</h1>
+        {
+          isChannel === true ?
+            <>
+              <button className='channel-invite'>Invite</button>
+              <button className='channel-quit' onClick={deleteChat}>Quit</button>
+            </>
+            : null
+        }
+        <div ref={messagesRef} className="chat-messages">
+          {messages.filter(msg => !blockedIds.includes(msg.senderId)).map((msg, index) => (
+            <div className="chat-message" key={index}
+              onContextMenu={
+                (e) => {
+                  e.preventDefault();
+                  setContextMenu({
+                    ...contextMenu,
+                    show: true,
+                    position: { x: e.clientX, y: e.clientY }
+                  });
+                }
+              }>
+              <div className="chat-avatar" style={{ backgroundImage: `url(${msg.avatar})` }} onClick={(e) => { sessionStorage.setItem('tmpUsername', msg.username); goToProfile(e) }}></div>
+              <p className="chat-username">{msg.username}<span>&nbsp; &nbsp; &nbsp; {reformatTime(msg.time)}</span></p>
+              <p className="chat-message-content">{msg.text}</p>
+            </div>
+          ))}
+        </div>
+        <input ref={ref} className="chat-input" type="text" value={message} onChange={(e) => setMessage(e.target.value)} />
+      </div >
+    </div>
   );
 }
 

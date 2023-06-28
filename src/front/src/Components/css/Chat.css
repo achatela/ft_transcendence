@@ -120,13 +120,14 @@
 
 .context-menu {
     position: absolute;
-    /* background-color: red; */
-    width: 100px;
-    /* color: red; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     z-index: 1;
 }
 
-.context-menu-item-block {
+.context-menu div {
     font-size: 2em;
     display: flex;
     flex-direction: column;
@@ -138,22 +139,6 @@
     height: 100%;
 }
 
-.context-menu-item-remove {
-    font-size: 2em;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: white;
-    color: black;
-    width: 100%;
-    height: 100%;
-}
-
-.context-menu-item-remove:hover {
-    opacity: 0.8;
-}
-
-.context-menu-item-block:hover {
+.context-menu div:hover {
     opacity: 0.8;
 }

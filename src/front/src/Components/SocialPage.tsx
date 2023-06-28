@@ -360,7 +360,7 @@ export default class SocialPage extends Component<IProps, IState> {
               <div key={username} className="friends-friend" style={this.state.selectedChat === username ? { backgroundColor: 'grey' } : {}}
                 onClick={async () => {
                   const chat = await this.getFriendChat(username);
-                  this.setState({ selectedChat: username, isError: false })
+                  this.setState({ selectedChat: username, isError: false, isChannel: false })
                   this.setState({ chat: chat });
                 }
                 } onContextMenu={
