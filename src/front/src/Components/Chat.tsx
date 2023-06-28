@@ -84,7 +84,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
         element.removeEventListener('keypress', handleSendMessage);
       }
     }
-  }, [chat, contextMenu.show, contextMenu.position.x, contextMenu.position.y, isChannel]);
+  }, [chat, isChannel]);
 
   const handleSendMessage = (event: any) => {
     if (event.key === 'Enter') {
@@ -183,9 +183,11 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
         }
         <div ref={messagesRef} className="chat-messages">
           {messages.filter(msg => !blockedIds.includes(msg.senderId)).map((msg, index) => (
-            <div className="chat-message" key={index}
+            < div className="chat-message" key={index}
               onContextMenu={
                 (e) => {
+                  if (sessionStorage.getItem('username') === msg.username)
+                    return;
                   e.preventDefault();
                   setContextMenu({
                     ...contextMenu,
@@ -202,7 +204,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
         </div>
         <input ref={ref} className="chat-input" type="text" value={message} onChange={(e) => setMessage(e.target.value)} />
       </div >
-    </div>
+    </div >
   );
 }
 
