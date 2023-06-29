@@ -7,11 +7,13 @@ import ProfilePage from './Components/ProfilePage'
 import GameBoard from './Components/GameBoard'
 import SocialPage from './Components/SocialPage'
 import TwoFa from './Components/TwoFa'
+import NavBar from './Components/NavBar'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 function App() {
   return (
     <BrowserRouter>
+      <NavBar />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/mode" element={<ModePage />} />
