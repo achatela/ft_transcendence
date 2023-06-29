@@ -208,7 +208,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
   }
 
   async function muteUserChannel() {
-    const duration = prompt("Select a time limit in seconds")
+    const duration = prompt("Select a time duration (seconds)")
     const response = await axios.post(
       "http://localhost:3333/channel/mute_user_channel/",
       JSON.stringify({

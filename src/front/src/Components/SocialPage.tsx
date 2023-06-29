@@ -339,50 +339,73 @@ export default class SocialPage extends Component<IProps, IState> {
   }
 
   async blockUserEnter() {
+    let inputElement = document.querySelector(".block-user-input") as HTMLInputElement;
+    const request = await axios.post(
+      "http://localhost:3333/social/block_user/",
+      JSON.stringify({
+        username: sessionStorage.getItem("username"),
+        blockedUsername: inputElement.value,
+        accessToken: sessionStorage.getItem("accessToken"),
+        refreshToken: sessionStorage.getItem("refreshToken"),
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (request.data.success === true) {
+      sessionStorage.setItem("refreshToken", request.data.refreshToken);
+      sessionStorage.setItem("accessToken", request.data.accessToken);
+      console.log("blocked")
+    }
+    else
+      console.log("failed to block")
     return;
   }
 
   render(): JSX.Element {
-    console.log(this.state.blockedIds)
     return (
-      <div onClick={() => {
+      < div onClick={() => {
         if (this.state.contextMenu)
           this.setState({ contextMenu: null, isError: false });
       }}>
         <button className="close-chat" onClick={() => { this.setState({ chat: null }); this.setState({ isError: false, isChannel: false, joinChannel: false, createChannel: false, selectedChat: null }) }}>home</button>
-        {this.state.isError === true ? (
-          <p className="error-message">{this.state.errorMessage}</p>
-        ) : null}
-        {this.state.friends ? (
-          <div className="friends">
-            <p className='friends-p'>Friends</p>
-            {this.state.friends.map((username) => (
-              <div key={username} className="friends-friend" style={this.state.selectedChat === username ? { backgroundColor: 'grey' } : {}}
-                onClick={async () => {
-                  const chat = await this.getFriendChat(username);
-                  this.setState({ selectedChat: username, isError: false, isChannel: false })
-                  this.setState({ chat: chat });
-                }
-                } onContextMenu={
-                  (e) => {
-                    e.preventDefault();
-                    this.setState({ contextMenu: { username: username, position: { x: e.pageX, y: e.pageY } }, isError: false });
-                  }}>
-                <div className="friend-avatar" style={{ backgroundImage: `url(${avatarUrls.get(username)})` }}></div>
-                <div className="friend-name" data-name={username}>{username}</div>
-                {/* <div className="friend-status" data-name={username}>{status}</div> */}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="friends">Loading...</div>
-        )}
-        {this.state.contextMenu && (
-          <div className="friend-context" style={{ top: this.state.contextMenu.position.y, left: this.state.contextMenu.position.x }}>
-            <button className="friend-profile" onClick={this.seeProfile} data-name={this.state.contextMenu.username}>see profile</button>
-            <button className="friend-remove" onClick={this.removeFriend} data-name={this.state.contextMenu.username}>remove friend</button>
-          </div>
-        )}
+        {
+          this.state.isError === true ? (
+            <p className="error-message">{this.state.errorMessage}</p>
+          ) : null
+        }
+        {
+          this.state.friends ? (
+            <div className="friends">
+              <p className='friends-p'>Friends</p>
+              {this.state.friends.map((username) => (
+                <div key={username} className="friends-friend" style={this.state.selectedChat === username ? { backgroundColor: 'grey' } : {}}
+                  onClick={async () => {
+                    const chat = await this.getFriendChat(username);
+                    this.setState({ selectedChat: username, isError: false, isChannel: false })
+                    this.setState({ chat: chat });
+                  }
+                  } onContextMenu={
+                    (e) => {
+                      e.preventDefault();
+                      this.setState({ contextMenu: { username: username, position: { x: e.pageX, y: e.pageY } }, isError: false });
+                    }}>
+                  <div className="friend-avatar" style={{ backgroundImage: `url(${avatarUrls.get(username)})` }}></div>
+                  <div className="friend-name" data-name={username}>{username}</div>
+                  {/* <div className="friend-status" data-name={username}>{status}</div> */}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="friends">Loading...</div>
+          )
+        }
+        {
+          this.state.contextMenu && (
+            <div className="friend-context" style={{ top: this.state.contextMenu.position.y, left: this.state.contextMenu.position.x }}>
+              <button className="friend-profile" onClick={this.seeProfile} data-name={this.state.contextMenu.username}>see profile</button>
+              <button className="friend-remove" onClick={this.removeFriend} data-name={this.state.contextMenu.username}>remove friend</button>
+            </div>
+          )
+        }
         <div className="add-friend">
           {this.state.addFriend === true || this.state.blockUser === true ? (
             <button className="reset-states" onClick={() => { this.setState({ addFriend: false, blockUser: false }) }}>X</button>
@@ -403,31 +426,35 @@ export default class SocialPage extends Component<IProps, IState> {
           </>
           ) : null}
         </div>
-        {this.state.friendRequests ? (
-          <FriendRequests friendRequests={this.state.friendRequests} />
-        ) : (
-          <div className="friend-requests">Loading...</div>
-        )}
-        {this.state.chat ? (
-          <Chat isChannel={this.state.isChannel} chat={this.state.chat} isSelected={this.state.selectedChat} blockedIds={this.state.blockedIds} />
-        ) : (
-          <div className="channels">
-            {this.state.createChannel === false && this.state.joinChannel === false ? (
-              <>
-                <button className="create-channel" onClick={() => { this.setState({ createChannel: true, isError: false }) }}>Create a channel</button>
-                <button className="join-channel" onClick={() => { this.setState({ joinChannel: true, isError: false }) }} >Join a channel</button>
-              </>
-            ) : (
-              this.state.createChannel === true ? (
-                <CreateChannel />
+        {
+          this.state.friendRequests ? (
+            <FriendRequests friendRequests={this.state.friendRequests} />
+          ) : (
+            <div className="friend-requests">Loading...</div>
+          )
+        }
+        {
+          this.state.chat ? (
+            <Chat isChannel={this.state.isChannel} chat={this.state.chat} isSelected={this.state.selectedChat} blockedIds={this.state.blockedIds} />
+          ) : (
+            <div className="channels">
+              {this.state.createChannel === false && this.state.joinChannel === false ? (
+                <>
+                  <button className="create-channel" onClick={() => { this.setState({ createChannel: true, isError: false }) }}>Create a channel</button>
+                  <button className="join-channel" onClick={() => { this.setState({ joinChannel: true, isError: false }) }} >Join a channel</button>
+                </>
               ) : (
-                <JoinChannel handleChannelClick={this.handleChannelClick.bind(this)} />
-              )
-            )}
-          </div>
-        )}
+                this.state.createChannel === true ? (
+                  <CreateChannel />
+                ) : (
+                  <JoinChannel handleChannelClick={this.handleChannelClick.bind(this)} />
+                )
+              )}
+            </div>
+          )
+        }
 
-      </div>
+      </div >
     );
   }
 }
