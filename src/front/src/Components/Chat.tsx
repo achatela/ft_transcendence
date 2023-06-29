@@ -208,6 +208,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
   }
 
   async function muteUserChannel() {
+    const duration = prompt("Select a time limit in seconds")
     const response = await axios.post(
       "http://localhost:3333/channel/mute_user_channel/",
       JSON.stringify({
@@ -216,6 +217,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
         refreshToken: sessionStorage.getItem("refreshToken"),
         channelName: channelName,
         targetUsername: sessionStorage.getItem('tmpUsername'),
+        duration: duration,
       }),
       { headers: { "Content-Type": "application/json" } }
     );
@@ -232,13 +234,57 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
     return;
   }
 
+  async function blockUserPrivate() {
+    const request = await axios.post(
+      "http://localhost:3333/social/block_user/",
+      JSON.stringify({
+        username: sessionStorage.getItem("username"),
+        blockedUsername: sessionStorage.getItem("tmpUsername"),
+        accessToken: sessionStorage.getItem("accessToken"),
+        refreshToken: sessionStorage.getItem("refreshToken"),
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (request.data.success === true) {
+      sessionStorage.setItem("refreshToken", request.data.refreshToken);
+      sessionStorage.setItem("accessToken", request.data.accessToken);
+      console.log("blocked")
+    }
+    else
+      console.log("failed to block")
+    return;
+  }
+
+  async function removeUserPrivate() {
+    const request = await axios.post(
+      "http://localhost:3333/social/remove_friend",
+      JSON.stringify({
+        removerUsername: sessionStorage.getItem("username"),
+        removedUsername: sessionStorage.getItem("tmpUsername"),
+        refreshToken: sessionStorage.getItem("refreshToken"),
+        accessToken: sessionStorage.getItem("accessToken"),
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (request.data.success === true) {
+      sessionStorage.setItem("refreshToken", request.data.refreshToken);
+      sessionStorage.setItem("accessToken", request.data.accessToken);
+      console.log("removed")
+    }
+    else {
+      console.log("failed to remove")
+    }
+    window.location.href = "http://localhost:3133/social/";
+    return;
+  }
+
   return (
     <div>
       <div onClick={() => { setContextMenu({ ...contextMenu, show: false }) }}>
         {contextMenu.show == true && isChannel == false ?
           <div className='context-menu' style={{ left: contextMenu.position.x, top: contextMenu.position.y }}>
-            <div>block</div>
-            <div>remove</div>
+            <div onClick={() => { blockUserPrivate() }}>block</div>
+            <div onClick={() => { removeUserPrivate() }} >remove</div>
           </div> : null
         }
         {contextMenu.show == true && isChannel == true ?

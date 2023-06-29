@@ -96,9 +96,6 @@ export class ChannelService {
                 return { success: false, error: 'Invalid password' };
             }
         }
-        // else if (channel.isPrivate == true) {
-        //     // to do
-        // }
         await this.prismaService.channel.update({
             where: { id: channel.id },
             data: {
@@ -348,7 +345,7 @@ export class ChannelService {
         return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
     }
 
-    async muteUserChannel(body: { username: string; accessToken: string; refreshToken: string; channelName: string; targetUsername: string; }) {
+    async muteUserChannel(body: { username: string; accessToken: string; refreshToken: string; channelName: string; targetUsername: string, duration: number }) {
         const user = await this.prismaService.user.findUnique({ where: { username: body.username } });
         if (!user) {
             return { success: false, error: 'User not found' };
@@ -393,7 +390,16 @@ export class ChannelService {
                         },
                     },
                 });
-                // add a setInterval to unmute the user after 1 hour
+                setTimeout(async () => {
+                    await this.prismaService.channel.update({
+                        where: { channelName: body.channelName },
+                        data: {
+                            mutedIds: {
+                                set: channel.mutedIds.filter((id) => id != targetUser.id),
+                            },
+                        },
+                    });
+                }, body.duration * 1000);
                 return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
             }
             else
@@ -407,6 +413,16 @@ export class ChannelService {
                 },
             },
         });
+        setTimeout(async () => {
+            await this.prismaService.channel.update({
+                where: { channelName: body.channelName },
+                data: {
+                    mutedIds: {
+                        set: channel.mutedIds.filter((id) => id != targetUser.id),
+                    },
+                },
+            });
+        }, body.duration * 1000);
         return
     }
 }

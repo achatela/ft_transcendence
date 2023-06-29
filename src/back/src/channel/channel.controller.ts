@@ -47,7 +47,7 @@ export class ChannelController {
     }
 
     @Post('mute_user_channel')
-    async muteUserChannel(@Body() body: { username: string, accessToken: string, refreshToken: string, channelName: string, targetUsername: string }) {
+    async muteUserChannel(@Body() body: { username: string, accessToken: string, refreshToken: string, channelName: string, targetUsername: string, duration: number }) {
         return await this.channelService.muteUserChannel(body);
     }
 }
