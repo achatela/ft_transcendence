@@ -425,4 +425,285 @@ export class ChannelService {
         }, body.duration * 1000);
         return
     }
+
+    async changePasswordChannel(body: { username: string; newPassword: string; accessToken: string; refreshToken: string; channelName: string; }) {
+        const user = await this.prismaService.user.findUnique({ where: { username: body.username } });
+        if (!user) {
+            return { success: false, error: 'User not found' };
+        }
+        const ret = await this.authService.checkToken(user, body.refreshToken, body.accessToken);
+        if (ret.success == false)
+            return { success: false, error: 'Invalid token' };
+        const channel = await this.prismaService.channel.findUnique({
+            where: { channelName: body.channelName },
+            select: {
+                owner: true,
+            },
+        });
+        if (!channel) {
+            return { success: false, error: 'Channel not found' };
+        }
+        if (channel.owner != user.id) {
+            return { success: false, error: 'You are not owner' };
+        }
+        await this.prismaService.channel.update({
+            where: { channelName: body.channelName },
+            data: {
+                password: body.newPassword,
+            },
+        });
+        return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
+    }
+
+
+    async inviteUserChannel(body: { username: string; accessToken: string; refreshToken: string; channelName: string; invitedUser: string; }) {
+        const user = await this.prismaService.user.findUnique({ where: { username: body.username } });
+        if (!user) {
+            return { success: false, error: 'User not found' };
+        }
+        const ret = await this.authService.checkToken(user, body.refreshToken, body.accessToken);
+        if (ret.success == false)
+            return { success: false, error: 'Invalid token' };
+        const channel = await this.prismaService.channel.findUnique({
+            where: { channelName: body.channelName },
+            select: {
+                owner: true,
+                admins: true,
+                users: true,
+                bannedIds: true,
+                pendingIds: true,
+                id: true,
+            },
+        });
+        if (!channel) {
+            return { success: false, error: 'Channel not found' };
+        }
+        if (channel.owner != user.id && !channel.admins.includes(user.id)) {
+            return { success: false, error: 'You are not admin' };
+        }
+        const invitedUser = await this.prismaService.user.findUnique({ where: { username: body.invitedUser } });
+        if (!invitedUser) {
+            return { success: false, error: 'Invited user not found' };
+        }
+        if (channel.users.includes(invitedUser.id)) {
+            return { success: false, error: 'User is already in this channel' };
+        }
+        if (channel.bannedIds.includes(invitedUser.id))
+            return { success: false, error: 'User is banned from this channel' };
+        if (channel.pendingIds.includes(invitedUser.id))
+            return { success: false, error: 'User is already invited' };
+        await this.prismaService.channel.update({
+            where: { channelName: body.channelName },
+            data: {
+                pendingIds: {
+                    set: [...channel.pendingIds, invitedUser.id],
+                },
+            },
+        });
+        await this.prismaService.user.update({
+            where: { username: body.invitedUser },
+            data: {
+                channelRequests: {
+                    set: [...invitedUser.channelRequests, channel.id],
+                },
+            },
+        });
+        return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
+    }
+
+
+    async getChannelInvites(body: { username: string; accessToken: string; refreshToken: string; }) {
+        const user = await this.prismaService.user.findUnique({ where: { username: body.username } });
+        if (!user) {
+            return { success: false, error: 'User not found' };
+        }
+        const ret = await this.authService.checkToken(user, body.refreshToken, body.accessToken);
+        if (ret.success == false)
+            return { success: false, error: 'Invalid token' };
+        let channelInvites = [];
+        for (let i = 0; i < user.channelRequests.length; i++) {
+            const channel = await this.prismaService.channel.findUnique({
+                where: { id: user.channelRequests[i] },
+                select: {
+                    channelName: true,
+                },
+            });
+            channelInvites.push({ channelName: channel.channelName });
+        }
+        return { success: true, channelInvites: channelInvites, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
+    }
+
+
+    async acceptChannelInvite(body: { username: string; accessToken: string; refreshToken: string; channelName: string; }) {
+        const user = await this.prismaService.user.findUnique({ where: { username: body.username } });
+        if (!user) {
+            return { success: false, error: 'User not found' };
+        }
+        const ret = await this.authService.checkToken(user, body.refreshToken, body.accessToken);
+        if (ret.success == false)
+            return { success: false, error: 'Invalid token' };
+        const channel = await this.prismaService.channel.findUnique({
+            where: { channelName: body.channelName },
+            select: {
+                pendingIds: true,
+                users: true,
+                id: true,
+            },
+        });
+        if (!channel) {
+            return { success: false, error: 'Channel not found' };
+        }
+        if (!channel.pendingIds.includes(user.id)) {
+            return { success: false, error: 'You are not invited to this channel' };
+        }
+        await this.prismaService.channel.update({
+            where: { channelName: body.channelName },
+            data: {
+                pendingIds: {
+                    set: channel.pendingIds.filter((id) => id != user.id),
+                },
+                users: {
+                    set: [...channel.users, user.id],
+                },
+            },
+        });
+        await this.prismaService.user.update({
+            where: { username: body.username },
+            data: {
+                channelRequests: {
+                    set: user.channelRequests.filter((id) => id != channel.id),
+                },
+            },
+        });
+    }
+
+
+    async declineChannelInvite(body: { username: string; accessToken: string; refreshToken: string; channelName: string; }) {
+        const user = await this.prismaService.user.findUnique({ where: { username: body.username } });
+        if (!user) {
+            return { success: false, error: 'User not found' };
+        }
+        const ret = await this.authService.checkToken(user, body.refreshToken, body.accessToken);
+        if (ret.success == false)
+            return { success: false, error: 'Invalid token' };
+        const channel = await this.prismaService.channel.findUnique({
+            where: { channelName: body.channelName },
+            select: {
+                pendingIds: true,
+                id: true,
+            },
+        });
+        if (!channel) {
+            return { success: false, error: 'Channel not found' };
+        }
+        if (!channel.pendingIds.includes(user.id)) {
+            return { success: false, error: 'You are not invited to this channel' };
+        }
+        await this.prismaService.channel.update({
+            where: { channelName: body.channelName },
+            data: {
+                pendingIds: {
+                    set: channel.pendingIds.filter((id) => id != user.id),
+                },
+            },
+        });
+        await this.prismaService.user.update({
+            where: { username: body.username },
+            data: {
+                channelRequests: {
+                    set: user.channelRequests.filter((id) => id != channel.id),
+                },
+            },
+        });
+    }
+
+
+    async promoteUserChannel(body: { username: string; accessToken: string; refreshToken: string; channelName: string; targetUsername: string; }) {
+        const user = await this.prismaService.user.findUnique({ where: { username: body.username } });
+        if (!user) {
+            return { success: false, error: 'User not found' };
+        }
+        const ret = await this.authService.checkToken(user, body.refreshToken, body.accessToken);
+        if (ret.success == false)
+            return { success: false, error: 'Invalid token' };
+        const channel = await this.prismaService.channel.findUnique({
+            where: { channelName: body.channelName },
+            select: {
+                users: true,
+                owner: true,
+                admins: true,
+                id: true,
+            },
+        });
+        if (!channel) {
+            return { success: false, error: 'Channel not found' };
+        }
+        if (user.id != channel.owner) {
+            return { success: false, error: 'You are not the owner of this channel' };
+        }
+        const targetUser = await this.prismaService.user.findUnique({ where: { username: body.targetUsername } });
+        if (!targetUser) {
+            return { success: false, error: 'Target user not found' };
+        }
+        if (!channel.users.includes(targetUser.id)) {
+            return { success: false, error: 'Target user is not a member of this channel' };
+        }
+        if (channel.admins.includes(targetUser.id)) {
+            return { success: false, error: 'Target user is already an admin of this channel' };
+        }
+        await this.prismaService.channel.update({
+            where: { channelName: body.channelName },
+            data: {
+                admins: {
+                    set: [...channel.admins, targetUser.id],
+                },
+            },
+        });
+        return ({ success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken });
+    }
+
+
+    async demoteUserChannel(body: { username: string; accessToken: string; refreshToken: string; channelName: string; targetUsername: string; }) {
+        const user = await this.prismaService.user.findUnique({ where: { username: body.username } });
+        if (!user) {
+            return { success: false, error: 'User not found' };
+        }
+        const ret = await this.authService.checkToken(user, body.refreshToken, body.accessToken);
+        if (ret.success == false)
+            return { success: false, error: 'Invalid token' };
+        const channel = await this.prismaService.channel.findUnique({
+            where: { channelName: body.channelName },
+            select: {
+                users: true,
+                owner: true,
+                admins: true,
+                id: true,
+            },
+        });
+        if (!channel) {
+            return { success: false, error: 'Channel not found' };
+        }
+        if (user.id != channel.owner) {
+            return { success: false, error: 'You are not the owner of this channel' };
+        }
+        const targetUser = await this.prismaService.user.findUnique({ where: { username: body.targetUsername } });
+        if (!targetUser) {
+            return { success: false, error: 'Target user not found' };
+        }
+        if (!channel.users.includes(targetUser.id)) {
+            return { success: false, error: 'Target user is not a member of this channel' };
+        }
+        if (!channel.admins.includes(targetUser.id)) {
+            return { success: false, error: 'Target user is not an admin of this channel' };
+        }
+        await this.prismaService.channel.update({
+            where: { channelName: body.channelName },
+            data: {
+                admins: {
+                    set: channel.admins.filter((id) => id != targetUser.id),
+                },
+            },
+        });
+        return ({ success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken });
+    }
 }

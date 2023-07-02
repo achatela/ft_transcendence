@@ -10,6 +10,7 @@ interface IProps {
 interface IState {
     channels: [{ channelName: string, users: number, hasPassword: boolean, owner: string }] | null;
     yourChannels: [{ channelName: string }] | null;
+    channelInvites: [{ channelName: string }] | null;
 }
 
 export default class JoinChannel extends Component<IProps, IState> {
@@ -19,6 +20,7 @@ export default class JoinChannel extends Component<IProps, IState> {
         this.state = {
             channels: null,
             yourChannels: null,
+            channelInvites: null
         }
         this.handleChannelClick = props.handleChannelClick;
     }
@@ -58,6 +60,66 @@ export default class JoinChannel extends Component<IProps, IState> {
             console.log("failed to get your channels")
             console.log(request2.data.error)
         }
+        const request3 = await axios.post('http://localhost:3333/channel/get_channel_invites/',
+            JSON.stringify({
+                username: sessionStorage.getItem("username"),
+                accessToken: sessionStorage.getItem("accessToken"),
+                refreshToken: sessionStorage.getItem("refreshToken")
+            }),
+            { headers: { "Content-Type": "application/json" } })
+        if (request3.data.success === true) {
+            sessionStorage.setItem("refreshToken", request3.data.refreshToken);
+            sessionStorage.setItem("accessToken", request3.data.accessToken);
+            this.setState({ channelInvites: request3.data.channelInvites })
+            console.log("channel invites received")
+            console.log(request3.data.channelInvites)
+        }
+        else {
+            console.log("failed to get channel invites")
+            console.log(request3.data.error)
+        }
+    }
+
+    async acceptChannelInvite(channelName: string) {
+        const request = await axios.post('http://localhost:3333/channel/accept_channel_invite/',
+            JSON.stringify({
+                username: sessionStorage.getItem("username"),
+                accessToken: sessionStorage.getItem("accessToken"),
+                refreshToken: sessionStorage.getItem("refreshToken"),
+                channelName: channelName,
+            }),
+            { headers: { "Content-Type": "application/json" } })
+        if (request.data.success === true) {
+            sessionStorage.setItem("refreshToken", request.data.refreshToken);
+            sessionStorage.setItem("accessToken", request.data.accessToken);
+            console.log("channel invite accepted")
+            window.location.reload();
+        }
+        else {
+            console.log("failed to accept channel invite")
+            console.log(request.data.error)
+        }
+    }
+
+    async declineChannelInvite(channelName: string) {
+        const request = await axios.post('http://localhost:3333/channel/decline_channel_invite/',
+            JSON.stringify({
+                username: sessionStorage.getItem("username"),
+                accessToken: sessionStorage.getItem("accessToken"),
+                refreshToken: sessionStorage.getItem("refreshToken"),
+                channelName: channelName,
+            }),
+            { headers: { "Content-Type": "application/json" } })
+        if (request.data.success === true) {
+            sessionStorage.setItem("refreshToken", request.data.refreshToken);
+            sessionStorage.setItem("accessToken", request.data.accessToken);
+            console.log("channel invite accepted")
+            window.location.reload();
+        }
+        else {
+            console.log("failed to accept channel invite")
+            console.log(request.data.error)
+        }
     }
 
     render() {
@@ -73,6 +135,24 @@ export default class JoinChannel extends Component<IProps, IState> {
                                 <div className='your-channels-list-item' key={index}>
                                     <div onClick={() => this.handleChannelClick(channel.channelName)}>
                                         <p className='your-channels-list-item-name'>{channel.channelName}</p>
+                                    </div>
+                                </div>
+                            )
+                        }, this) : null}
+                    </div>
+                </div>
+                <div className='channels-invite'>
+                    <div className='channels-header'>
+                        <p className='channels-invite-p'>Channel invite</p>
+                    </div>
+                    <div className='channels-invite-items'>
+                        {this.state.channelInvites !== null ? this.state.channelInvites.map((channelInvite, index) => {
+                            return (
+                                <div className='channels-invite-list-item' key={index}>
+                                    <div onClick={() => console.log("tmp")}>
+                                        <p className='channels-invite-list-item-name'>{channelInvite.channelName}</p>
+                                        <button className='channels-invite-accept' onClick={() => { this.acceptChannelInvite(channelInvite.channelName) }}>accept</button>
+                                        <button className='channels-invite-decline' onClick={() => { this.declineChannelInvite(channelInvite.channelName) }}>decline</button>
                                     </div>
                                 </div>
                             )

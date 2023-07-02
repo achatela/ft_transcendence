@@ -278,6 +278,107 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
     return;
   }
 
+  async function changePassword() {
+    const newPassword = prompt("Enter new password");
+    const request = await axios.post(
+      "http://localhost:3333/channel/change_password_channel",
+      JSON.stringify({
+        username: sessionStorage.getItem("username"),
+        newPassword: newPassword,
+        accessToken: sessionStorage.getItem("accessToken"),
+        refreshToken: sessionStorage.getItem("refreshToken"),
+        channelName: channelName,
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (request.data.success === true) {
+      sessionStorage.setItem("refreshToken", request.data.refreshToken);
+      sessionStorage.setItem("accessToken", request.data.accessToken);
+      console.log("password changed")
+    }
+    else {
+      setError(true);
+      setErrorMessage(request.data.error)
+      sessionStorage.removeItem('tmpUsername');
+    }
+    return;
+  }
+
+  async function inviteUser() {
+    const user = prompt("Enter username");
+    const request = await axios.post(
+      "http://localhost:3333/channel/invite_user_channel",
+      JSON.stringify({
+        username: sessionStorage.getItem("username"),
+        accessToken: sessionStorage.getItem("accessToken"),
+        refreshToken: sessionStorage.getItem("refreshToken"),
+        channelName: channelName,
+        invitedUser: user,
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (request.data.success === true) {
+      sessionStorage.setItem("refreshToken", request.data.refreshToken);
+      sessionStorage.setItem("accessToken", request.data.accessToken);
+      console.log("invited")
+    }
+    else {
+      setError(true);
+      setErrorMessage(request.data.error)
+      sessionStorage.removeItem('tmpUsername');
+    }
+    return;
+  }
+
+  async function promoteUserChannel() {
+    const response = await axios.post(
+      "http://localhost:3333/channel/promote_user_channel/",
+      JSON.stringify({
+        username: sessionStorage.getItem("username"),
+        accessToken: sessionStorage.getItem("accessToken"),
+        refreshToken: sessionStorage.getItem("refreshToken"),
+        channelName: channelName,
+        targetUsername: sessionStorage.getItem('tmpUsername'),
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (response.data.success === true) {
+      sessionStorage.removeItem('tmpUsername');
+      sessionStorage.setItem('accessToken', response.data.accessToken);
+      sessionStorage.setItem('refreshToken', response.data.refreshToken);
+    }
+    else {
+      setError(true);
+      setErrorMessage(response.data.error)
+      sessionStorage.removeItem('tmpUsername');
+    }
+  }
+
+
+  async function demoteUserChannel() {
+    const response = await axios.post(
+      "http://localhost:3333/channel/demote_user_channel/",
+      JSON.stringify({
+        username: sessionStorage.getItem("username"),
+        accessToken: sessionStorage.getItem("accessToken"),
+        refreshToken: sessionStorage.getItem("refreshToken"),
+        channelName: channelName,
+        targetUsername: sessionStorage.getItem('tmpUsername'),
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (response.data.success === true) {
+      sessionStorage.removeItem('tmpUsername');
+      sessionStorage.setItem('accessToken', response.data.accessToken);
+      sessionStorage.setItem('refreshToken', response.data.refreshToken);
+    }
+    else {
+      setError(true);
+      setErrorMessage(response.data.error)
+      sessionStorage.removeItem('tmpUsername');
+    }
+  }
+
   return (
     <div>
       <div onClick={() => { setContextMenu({ ...contextMenu, show: false }) }}>
@@ -292,6 +393,8 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
             <div onClick={() => { kickUserChannel() }}>kick</div>
             <div onClick={() => { banUserChannel() }}>ban</div>
             <div onClick={() => { muteUserChannel() }}>mute</div>
+            <div onClick={() => { promoteUserChannel() }}>promote</div>
+            <div onClick={() => { demoteUserChannel() }}>demote</div>
           </div> : null
         }
         {isError === true ? <div className='error-message-chat'>{errorMessage}</div> : null}
@@ -299,7 +402,8 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
         {
           isChannel === true ?
             <>
-              <button className='channel-invite'>Invite</button>
+              <button className='channel-invite' onClick={inviteUser}>Invite</button>
+              <button className='channel-password' onClick={changePassword}>Change password</button>
               <button className='channel-quit' onClick={deleteChat}>Quit</button>
             </>
             : null
