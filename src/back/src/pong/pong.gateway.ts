@@ -32,7 +32,7 @@ export class PongGateway {
       socket.on('update', (data) => {
         // need to move the setInterval, so we check before if the player is already in a game
         interval = setInterval(() => {
-          const ret = this.pongService.getGameState(data.socketId);
+          const ret = this.pongService.getGameState(data.socketId, io);
           socket.emit('update', ret);
           // if (ret.success === false) {
           //   clearInterval(interval);

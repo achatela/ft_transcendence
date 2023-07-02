@@ -116,6 +116,9 @@ class GameBoard extends Component<IProps, IState> {
                 this.leftUser = data.leftUser;
                 this.rightUser = data.rightUser;
             })
+            this.state.socket.on('gameOver', (data: any) => {
+                window.location.href = "/profile";
+            })
             this.state.socket.emit("events", { socketId: this.state.socket.id, login: sessionStorage.getItem("username") });
             this.state.socket.emit("update", { socketId: this.state.socket.id });
             console.log("socketId", this.state.socket.id)
