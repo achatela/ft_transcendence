@@ -1,5 +1,5 @@
-docker compose up --build -d
-
-docker compose down
-
-docker system prune -afhttps://forums.docker.com/t/error-connect-econnrefused-127-0-0-1-5432/125906/3
+todo:
+css context menu channel in chat.tsx
+css accept/decline buttons channel invite in JoinChannel.tsx
+vérifier que promote/demote fonctionne (peut-être problème avec le fait que les admins ont leur id dans users et admins)
+changer add friend pour que les gens bloqués ne puissent pas envoyer de requests
