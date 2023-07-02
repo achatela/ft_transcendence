@@ -39,6 +39,8 @@ model User {
   secret2FA  String?
   qrCode2FA  String?
 
+  xpBar Int @default(0)
+
   blockedIds Int[]
 }
 

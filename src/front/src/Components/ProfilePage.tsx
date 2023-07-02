@@ -10,7 +10,6 @@ function withParams(WrappedComponent: React.ComponentType<any>) {
     };
 }
 
-
 interface IProps {
     profileId: string;
 }
@@ -25,6 +24,7 @@ interface IState {
     profileId: number;
     is2FAEnabled: boolean;
     qrCode: string;
+    xp: number;
 }
 
 class ProfilePage extends Component<IProps, IState> {
@@ -41,6 +41,7 @@ class ProfilePage extends Component<IProps, IState> {
             profileId: parseInt(props.profileId),
             is2FAEnabled: false,
             qrCode: "",
+            xp: 0,
         };
         this.fileInputRef = React.createRef();
     }
@@ -134,6 +135,7 @@ class ProfilePage extends Component<IProps, IState> {
                         wins: userInfo.wins,
                         losses: userInfo.losses,
                         ladderLevel: userInfo.ladderLevel,
+                        xp: userInfo.xp,
                         achievements: userInfo.achievements
                     });
                 })
@@ -212,7 +214,7 @@ class ProfilePage extends Component<IProps, IState> {
     }
 
     render() {
-        console.log(this.state.qrCode)
+        console.log(this.state.xp)
         let ratio = this.state.wins * 100 / (this.state.wins + this.state.losses);
         if (this.state.wins === 0
             || this.state.losses === 0)
@@ -257,7 +259,7 @@ class ProfilePage extends Component<IProps, IState> {
                         <p>Level: {this.state.ladderLevel}</p>
                     </div>
                     <div className="achievements">
-                        <p>Achievements: </p>
+                        <p>Xp: {this.state.xp}/{this.state.ladderLevel * 100}</p>
                     </div>
                 </div>
             </div>
