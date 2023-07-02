@@ -23,6 +23,8 @@ interface IState {
     rightPaddleY: number;
     canvasContext: CanvasRenderingContext2D | null;
     socket: any;
+    gameEnded: boolean;
+    message: string;
 }
 
 class GameBoard extends Component<IProps, IState> {
@@ -51,6 +53,8 @@ class GameBoard extends Component<IProps, IState> {
             ballX: 0,
             ballY: 0,
             canvasContext: null,
+            gameEnded: false,
+            message: "",
         };
         this.interval = setInterval(() => { }, 10);
         this.rect = null;
@@ -117,7 +121,10 @@ class GameBoard extends Component<IProps, IState> {
                 this.rightUser = data.rightUser;
             })
             this.state.socket.on('gameOver', (data: any) => {
-                window.location.href = "/profile";
+                // window.location.href = "/profile";
+                this.setState({ gameEnded: true, message: data.message });
+                this.state.socket.off('update');
+                this.state.socket.disconnect();
             })
             this.state.socket.emit("events", { socketId: this.state.socket.id, login: sessionStorage.getItem("username") });
             this.state.socket.emit("update", { socketId: this.state.socket.id });
@@ -178,18 +185,39 @@ class GameBoard extends Component<IProps, IState> {
 
     render(): JSX.Element {
         return (
-            <>
-                <p className="leftUser">{this.leftUser}</p>
-                <p className="rightUser">{this.rightUser}</p>
-                <div className="gameBoard">
-                    <p className="leftScore">{this.state.leftPlayerScore}</p>
-                    <p className="rightScore">{this.state.rightPlayerScore}</p>
-                    <div className="leftPaddle" style={{ top: this.state.leftPaddleY }}></div>
-                    <div className="ball" style={{ left: this.state.ballX, top: this.state.ballY }}></div>
-                    <div className="rightPaddle" style={{ top: this.state.rightPaddleY }}></div>
+            this.state.gameEnded == false ? (
+                <div className='gameboard-div'>
+                    <p className="leftUser">{this.leftUser}</p>
+                    <p className="rightUser">{this.rightUser}</p>
+                    <div className="gameBoard">
+                        <p className="leftScore">{this.state.leftPlayerScore}</p>
+                        <p className="rightScore">{this.state.rightPlayerScore}</p>
+                        <div className="leftPaddle" style={{ top: this.state.leftPaddleY }}></div>
+                        <div className="ball" style={{ left: this.state.ballX, top: this.state.ballY }}></div>
+                        <div className="rightPaddle" style={{ top: this.state.rightPaddleY }}></div>
+                    </div>
                 </div>
-            </>
+            ) :
+                <>
+                    <div className="gameOver">
+                        <p>Game is over !</p>
+                        <p>{this.state.message}</p>
+                        <button className='go-back-button' onClick={() => window.location.href = "/profile"}>Back to profile</button>
+                    </div>
+                    <div className='gameboard-div' style={{ opacity: "0.3" }}>
+                        <p className="leftUser">{this.leftUser}</p>
+                        <p className="rightUser">{this.rightUser}</p>
+                        <div className="gameBoard">
+                            <p className="leftScore">{this.state.leftPlayerScore}</p>
+                            <p className="rightScore">{this.state.rightPlayerScore}</p>
+                            <div className="leftPaddle" style={{ top: this.state.leftPaddleY }}></div>
+                            <div className="ball" style={{ left: this.state.ballX, top: this.state.ballY }}></div>
+                            <div className="rightPaddle" style={{ top: this.state.rightPaddleY }}></div>
+                        </div>
+                    </div>
+                </>
         );
+
     }
 }
 

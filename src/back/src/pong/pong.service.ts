@@ -156,8 +156,16 @@ export class PongService {
           }
           // add history, update ladderLevel (add xp bar)
         }
-        io.to(this.gameStates[index].socketLeft).emit('gameOver');
-        io.to(this.gameStates[index].socketRight).emit('gameOver');
+        const user1 = await this.prismaService.user.findUnique({ where: { id: gameState.id1 } });
+        const user2 = await this.prismaService.user.findUnique({ where: { id: gameState.id2 } });
+        if (gameState.leftScore == 2) {
+          io.to(this.gameStates[index].socketLeft).emit('gameOver', { message: "You won " + this.gameStates[index].leftScore + " - " + this.gameStates[index].rightScore + " against " + user2.username });
+          io.to(this.gameStates[index].socketRight).emit('gameOver', { message: "You lost" + this.gameStates[index].leftScore + " - " + this.gameStates[index].rightScore + " against " + user1.username });
+        }
+        else {
+          io.to(this.gameStates[index].socketLeft).emit('gameOver', { message: "You lost " + this.gameStates[index].leftScore + " - " + this.gameStates[index].rightScore + " against " + user2.username });
+          io.to(this.gameStates[index].socketRight).emit('gameOver', { message: "You won " + this.gameStates[index].leftScore + " - " + this.gameStates[index].rightScore + " against " + user1.username });
+        }
         await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { status: "online" } });
         await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { status: "online" } });
 
