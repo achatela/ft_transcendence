@@ -61,7 +61,7 @@ export default class CreateChannel extends Component<IProps, IState> {
                     <p className='channel-name-create'>Channel name</p>
                     <input className='input-name-create' type="text" />
                     <p className='channel-password-create' >Password (optionnal)</p>
-                    <input className='input-password-create' type="text" />
+                    <input className='input-password-create' type="password" />
                     <p className='channel-private-create'>Private</p>
                     <input className='private-checkbox-create' type="checkbox" />
                     <button className='create-button-create' onClick={this.createChannel} >Create</button>

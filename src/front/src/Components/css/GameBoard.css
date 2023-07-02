@@ -45,3 +45,19 @@
     right: 0;
     margin-right: 50px;
 }
+
+.leftUser {
+    position: absolute;
+    margin-left: 37.5vw;
+    font-size: 3em;
+    top: 10vh;
+    color: white;
+}
+
+.rightUser {
+    position: absolute;
+    right: 37.5vw;
+    font-size: 3em;
+    top: 10vh;
+    color: white;
+}

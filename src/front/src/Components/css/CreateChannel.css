@@ -56,6 +56,19 @@
     cursor: pointer;
 }
 
+.create-channel-div input[type="password"] {
+    width: 26%;
+    height: 2vh;
+    margin-bottom: 2vh;
+    background-color: black;
+    border: 3px solid white;
+    padding: 0.5em;
+    color: white;
+    outline: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
 .create-channel-div input[type="checkbox"] {
     margin-bottom: 2vh;
     cursor: pointer;

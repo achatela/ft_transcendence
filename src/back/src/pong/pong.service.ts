@@ -118,8 +118,28 @@ export class PongService {
     return false;
   }
 
-  gameLogicClassic(index: number) {
+  async gameLogicClassic(index: number) {
     let gameState = this.gameStates[index];
+
+    if (gameState.leftScore == 10 || gameState.rightScore == 10) {
+      if (gameState.statsAttributed == false) {
+        gameState.statsAttributed = true;
+        if (gameState.leftScore == 1) {
+          await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { wins: { increment: 1 } } });
+          await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { losses: { increment: 1 } } });
+          // add history, update ladderLevel (add xp bar)
+          // { id: gameState.id1, wins: 1, losses: 0, ladderLevel: 1, history: "W" }
+          // { id: gameState.id2, wins: 0, losses: 1, ladderLevel: 1, history: "L" }
+        }
+        else {
+          await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { losses: { increment: 1 } } });
+          await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { wins: { increment: 1 } } });
+          // add history, update ladderLevel (add xp bar)
+        }
+        await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { status: "online" } });
+        await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { status: "online" } });
+      }
+    }
 
     const newX = gameState.x + gameState.dx * speedMultiplier;
     const newY = gameState.y + gameState.dy * speedMultiplier;
@@ -209,23 +229,29 @@ export class PongService {
           this.gameStates[index].socketLeft = socketId;
           this.map1.set(socketId, index);
           if (this.gameStates[index].socketRight !== 0 && this.gameStates[index].socketLeft !== 0) {
-            // const username1 = await this.prismaService.user.findUnique({ where: { id: this.gameStates[index].id1 } });
-            // const username2 = await this.prismaService.user.findUnique({ where: { id: this.gameStates[index].id2 } });
-            // // io.to('').emit('usernames', { leftUser: username1.username, rightUser: username2.username });
-            // io.to(this.gameStates[index].socketLeft).emit('usernames', { leftUser: username1.username, rightUser: username2.username });
-            // io.to(this.gameStates[index].socketRight).emit('usernames', { leftUser: username1.username, rightUser: username2.username });
-            this.gameStartClassic(index);
+            const username1 = await this.prismaService.user.findUnique({ where: { id: this.gameStates[index].id1 } });
+            const username2 = await this.prismaService.user.findUnique({ where: { id: this.gameStates[index].id2 } });
+            io.to('').emit('usernames', { leftUser: username1.username, rightUser: username2.username });
+            io.to(this.gameStates[index].socketLeft).emit('usernames', { leftUser: username1.username, rightUser: username2.username });
+            io.to(this.gameStates[index].socketRight).emit('usernames', { leftUser: username1.username, rightUser: username2.username });
+            if (this.gameStates[index].started === false) {
+              this.gameStartClassic(index);
+              this.gameStates[index].started = true;
+            }
           }
         }
         else {
           this.gameStates[index].socketRight = socketId;
           this.map1.set(socketId, index);
           if (this.gameStates[index].socketRight !== 0 && this.gameStates[index].socketLeft !== 0) {
-            // const username1 = await this.prismaService.user.findUnique({ where: { id: this.gameStates[index].id1 } });
-            // const username2 = await this.prismaService.user.findUnique({ where: { id: this.gameStates[index].id2 } });
-            // io.to(this.gameStates[index].socketLeft).emit('usernames', { leftUser: username1.username, rightUser: username2.username });
-            // io.to(this.gameStates[index].socketRight).emit('usernames', { leftUser: username1.username, rightUser: username2.username });
-            this.gameStartClassic(index);
+            const username1 = await this.prismaService.user.findUnique({ where: { id: this.gameStates[index].id1 } });
+            const username2 = await this.prismaService.user.findUnique({ where: { id: this.gameStates[index].id2 } });
+            io.to(this.gameStates[index].socketLeft).emit('usernames', { leftUser: username1.username, rightUser: username2.username });
+            io.to(this.gameStates[index].socketRight).emit('usernames', { leftUser: username1.username, rightUser: username2.username });
+            if (this.gameStates[index].started === false) {
+              this.gameStartClassic(index);
+              this.gameStates[index].started = true;
+            }
           }
         }
         console.log('gameStates in classic', this.gameStates);
@@ -254,12 +280,11 @@ export class PongService {
   }
 
   async checkQueueCustom(): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
-    // console.log('custom', this.queueCustom)
     try {
       if (this.queueCustom.length >= 2) {
         const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueCustom[0] } });
         const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueCustom[1] } });
-        this.gameStates.push({ id1: 0, id2: 0, socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false });
+        this.gameStates.push({ statsAttributed: false, started: false, id1: this.queueClassic[0], id2: this.queueClassic[1], socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false });
         this.queueCustom.splice(0, 2);
         console.log('gameStates in custom', this.gameStates);
         await this.prismaService.user.update({ where: { id: user1.id }, data: { status: 'playing custom' } });
@@ -326,7 +351,7 @@ export class PongService {
       if (this.queueClassic.length >= 2) {
         const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueClassic[0] } });
         const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueClassic[1] } });
-        this.gameStates.push({ id1: 0, id2: 0, socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false });
+        this.gameStates.push({ statsAttributed: false, started: false, id1: this.queueClassic[0], id2: this.queueClassic[1], socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false });
         this.queueClassic.splice(0, 2);
         console.log('gameStates in classic', this.gameStates);
         await this.prismaService.user.update({ where: { id: user1.id }, data: { status: 'playing classic' } });
@@ -370,25 +395,5 @@ export class PongService {
       console.log(e);
     }
     return { success: false };
-  }
-
-  create(createPongDto: CreatePongDto) {
-    return 'This action adds a new pong';
-  }
-
-  findAll() {
-    return `This action returns all pong`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} pong`;
-  }
-
-  update(id: number, updatePongDto: UpdatePongDto) {
-    return `This action updates a #${id} pong`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} pong`;
   }
 }

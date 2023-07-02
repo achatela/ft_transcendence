@@ -111,10 +111,8 @@ class GameBoard extends Component<IProps, IState> {
             });
             this.state.socket.on('update', (data: any) => {
                 this.displayGame(data);
-                // console.log(data);
             });
             this.state.socket.on('usernames', (data: any) => {
-                console.log(data)
                 this.leftUser = data.leftUser;
                 this.rightUser = data.rightUser;
             })
@@ -177,13 +175,17 @@ class GameBoard extends Component<IProps, IState> {
 
     render(): JSX.Element {
         return (
-            <div className="gameBoard">
-                <p className="leftScore">{this.state.leftPlayerScore}</p>
-                <p className="rightScore">{this.state.rightPlayerScore}</p>
-                <div className="leftPaddle" style={{ top: this.state.leftPaddleY }}></div>
-                <div className="ball" style={{ left: this.state.ballX, top: this.state.ballY }}></div>
-                <div className="rightPaddle" style={{ top: this.state.rightPaddleY }}></div>
-            </div>
+            <>
+                <p className="leftUser">{this.leftUser}</p>
+                <p className="rightUser">{this.rightUser}</p>
+                <div className="gameBoard">
+                    <p className="leftScore">{this.state.leftPlayerScore}</p>
+                    <p className="rightScore">{this.state.rightPlayerScore}</p>
+                    <div className="leftPaddle" style={{ top: this.state.leftPaddleY }}></div>
+                    <div className="ball" style={{ left: this.state.ballX, top: this.state.ballY }}></div>
+                    <div className="rightPaddle" style={{ top: this.state.rightPaddleY }}></div>
+                </div>
+            </>
         );
     }
 }
