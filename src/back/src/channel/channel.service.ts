@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 
+let bcrypt = require('bcryptjs');
+
 @Injectable()
 export class ChannelService {
     constructor(private prismaService: PrismaService, private authService: AuthService) { }
@@ -92,7 +94,7 @@ export class ChannelService {
         if (channel.password != '') {
             console.log("channel password: ", channel.password);
             console.log("password: ", password)
-            if (channel.password != password) {
+            if (bcrypt.compareSync(password, channel.password, function (err, res) { }) == false) {
                 return { success: false, error: 'Invalid password' };
             }
         }

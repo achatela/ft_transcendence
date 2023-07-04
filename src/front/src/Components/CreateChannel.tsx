@@ -2,6 +2,7 @@ import React from 'react';
 import { Component } from 'react';
 import './css/CreateChannel.css';
 import axios from 'axios';
+var bcrypt = require('bcryptjs');
 
 interface IProps {
 }
@@ -33,7 +34,7 @@ export default class CreateChannel extends Component<IProps, IState> {
                 accessToken: sessionStorage.getItem("accessToken"),
                 refreshToken: sessionStorage.getItem("refreshToken"),
                 channelName: channelNameInput.value,
-                password: channelPasswordInput.value,
+                password: bcrypt.hashSync(channelPasswordInput.value, 10),
                 isPrivate: privateCheckbox.checked
             }),
             { headers: { "Content-Type": "application/json" } })
@@ -66,7 +67,7 @@ export default class CreateChannel extends Component<IProps, IState> {
                     <input className='private-checkbox-create' type="checkbox" />
                     <button className='create-button-create' onClick={this.createChannel} >Create</button>
                 </div>
-            </div>
+            </div >
         )
     }
 }

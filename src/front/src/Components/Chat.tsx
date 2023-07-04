@@ -3,6 +3,8 @@ import io, { Socket } from 'socket.io-client';
 import "./css/Chat.css"
 import axios from 'axios';
 
+let bcrypt = require('bcryptjs')
+
 interface FriendsProps {
   chat: { room: string, messages: [{ senderId: string, text: string, time: string, username: string, avatar: string }] }
   isChannel: boolean;
@@ -284,7 +286,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
       "http://localhost:3333/channel/change_password_channel",
       JSON.stringify({
         username: sessionStorage.getItem("username"),
-        newPassword: newPassword,
+        newPassword: bcrypt.hashSync(newPassword, 10),
         accessToken: sessionStorage.getItem("accessToken"),
         refreshToken: sessionStorage.getItem("refreshToken"),
         channelName: channelName,
