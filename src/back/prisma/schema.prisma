@@ -39,7 +39,8 @@ model User {
   secret2FA  String?
   qrCode2FA  String?
 
-  xpBar Int @default(0)
+  xpBar        Int      @default(0)
+  matchHistory String[]
 
   blockedIds Int[]
 }

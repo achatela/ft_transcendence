@@ -141,3 +141,19 @@
     height: 100px;
     background-size: cover;
 }
+
+.match-history-button {
+    position: absolute;
+    left: 50%;
+    bottom: 12%;
+    transform: translateX(-50%);
+    background-color: black;
+    border: white 3px solid;
+    padding: 1vh 1vw;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 2rem;
+    cursor: pointer;
+}

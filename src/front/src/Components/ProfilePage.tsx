@@ -214,7 +214,6 @@ class ProfilePage extends Component<IProps, IState> {
     }
 
     render() {
-        console.log(this.state.xp)
         let ratio = this.state.wins * 100 / (this.state.wins + this.state.losses);
         if (this.state.wins === 0
             || this.state.losses === 0)
@@ -262,9 +261,9 @@ class ProfilePage extends Component<IProps, IState> {
                         <p>Xp: {this.state.xp}/{this.state.ladderLevel * 100}</p>
                     </div>
                 </div>
+                <button className='match-history-button' onClick={() => { window.location.href = "/history" }}>Match History</button>
             </div>
         );
     }
 }
-
 export default withParams(ProfilePage);

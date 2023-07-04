@@ -124,6 +124,8 @@ export class PongService {
     if (gameState.leftScore == 2 || gameState.rightScore == 2) {
       if (gameState.statsAttributed == false) {
         gameState.statsAttributed = true;
+        let historyWinnerString = "";
+        let historyLoserString = "";
         if (gameState.leftScore == 2) {
           await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { wins: { increment: 1 }, xpBar: { increment: 100 } } });
           await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { losses: { increment: 1 }, xpBar: { increment: 50 } } });
@@ -137,24 +139,28 @@ export class PongService {
             await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { ladderLevel: { increment: 1 } } });
             await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { xpBar: { decrement: user2.ladderLevel * 100 } } });
           }
-          // add history, update ladderLevel (add xp bar)
-          // { id: gameState.id1, wins: 1, losses: 0, ladderLevel: 1, history: "W" }
-          // { id: gameState.id2, wins: 0, losses: 1, ladderLevel: 1, history: "L" }
+          historyWinnerString = 'W:' + user1.username + ' L:' + user2.username + ' ' + gameState.leftScore + ' - ' + gameState.rightScore;
+          historyLoserString = 'L:' + user1.username + ' W:' + user2.username + ' ' + gameState.rightScore + ' - ' + gameState.leftScore;
+          await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { matchHistory: { push: historyWinnerString } } });
+          await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { matchHistory: { push: historyLoserString } } });
         }
         else {
           await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { losses: { increment: 1 }, xpBar: { increment: 50 } } });
           await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { wins: { increment: 1 }, xpBar: { increment: 100 } } });
           const user1 = await this.prismaService.user.findUnique({ where: { id: gameState.id1 } });
           const user2 = await this.prismaService.user.findUnique({ where: { id: gameState.id2 } });
-          if (user1.xpBar > user1.ladderLevel * 100) {
+          if (user1.xpBar >= user1.ladderLevel * 100) {
             await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { ladderLevel: { increment: 1 } } });
             await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { xpBar: { decrement: user1.ladderLevel * 100 } } });
           }
-          if (user2.xpBar > user2.ladderLevel * 100) {
+          if (user2.xpBar >= user2.ladderLevel * 100) {
             await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { ladderLevel: { increment: 1 } } });
             await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { xpBar: { decrement: user2.ladderLevel * 100 } } });
           }
-          // add history, update ladderLevel (add xp bar)
+          historyWinnerString = 'W:' + user2.username + ' L:' + user1.username + ' ' + gameState.rightScore + ' - ' + gameState.leftScore;
+          historyLoserString = 'L:' + user2.username + ' W:' + user1.username + ' ' + gameState.leftScore + ' - ' + gameState.rightScore;
+          await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { matchHistory: { push: historyLoserString } } });
+          await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { matchHistory: { push: historyWinnerString } } });
         }
         const user1 = await this.prismaService.user.findUnique({ where: { id: gameState.id1 } });
         const user2 = await this.prismaService.user.findUnique({ where: { id: gameState.id2 } });
