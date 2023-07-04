@@ -5,5 +5,19 @@
     width: 50%;
     height: 80%;
     transform: translate(-50%, -50%);
-    border: 1px red solid;
+    border: 2px white solid;
+    overflow-y: auto;
+}
+
+.match-history-match-info-div {
+    border: solid 2px white;
+    width: 100%;
+    height: 5vh;
+}
+
+.match-history-match-info-div p {
+    text-align: center;
+    font-size: 2rem;
+    vertical-align: middle;
+    line-height: calc(5vh - 4px);
 }

@@ -64,7 +64,19 @@ class MatchHistory extends Component<IProps, IState> {
         console.log("rednering match history")
         return (
             <div className='match-history-div'>
-                e
+                {this.state.matches?.map((match, index) => {
+                    return (
+                        <div className='match-history-match-div' key={index}>
+                            {/* <div className='match-history-match-id-div'>
+                                <p className='match-history-match-id-text'>Match {index + 1}</p>
+                            </div> */}
+                            <div className='match-history-match-info-div'>
+                                <p className='match-history-match-info-text'>{match}</p>
+                            </div>
+                        </div>
+                    )
+                })
+                }
             </div>
         );
     }
