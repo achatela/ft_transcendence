@@ -142,15 +142,15 @@ export default class JoinChannel extends Component<IProps, IState> {
                     </div>
                 </div>
                 <div className='channels-invite'>
-                    <div className='channels-header'>
-                        <p className='channels-invite-p'>Channel invite</p>
-                    </div>
+                    {/* <div className='channels-header'> */}
+                    <p className='channels-invite-p'>Channel invite</p>
+                    {/* </div> */}
                     <div className='channels-invite-items'>
                         {this.state.channelInvites !== null ? this.state.channelInvites.map((channelInvite, index) => {
                             return (
                                 <div className='channels-invite-list-item' key={index}>
-                                    <div onClick={() => console.log("tmp")}>
-                                        <p className='channels-invite-list-item-name'>{channelInvite.channelName}</p>
+                                    <p className='channels-invite-list-item-name'>{channelInvite.channelName}</p>
+                                    <div>
                                         <button className='channels-invite-accept' onClick={() => { this.acceptChannelInvite(channelInvite.channelName) }}>accept</button>
                                         <button className='channels-invite-decline' onClick={() => { this.declineChannelInvite(channelInvite.channelName) }}>decline</button>
                                     </div>

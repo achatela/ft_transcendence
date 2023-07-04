@@ -162,11 +162,11 @@
 
 .channels-invite {
     position: absolute;
-    height: 40%;
     border: 1px solid white;
     top: 60%;
-    height: calc(40% - 12px);
+    height: calc(40%);
     width: 30%;
+    overflow-y: auto;
 }
 
 .channels-header {
@@ -178,47 +178,63 @@
 }
 
 .channels-invite-p {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
+    width: calc(100% - 6px);
+    text-align: center;
+    border: 3px solid white;
+    padding-top: 1rem;
+    padding-bottom: 1vh;
+    font-size: 2rem;
 }
 
-.channels-invite-items {
+/* .channels-invite-items {
     display: flex;
     flex-direction: column;
     height: 82%;
     border: 1px solid white;
+} */
+
+.channels-invite-items {
+    display: block;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 2rem;
 }
 
 .channels-invite-list-item {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 5vh;
+    height: 7vh;
+    min-width: 100%;
     border: 1px solid white;
 }
 
 .channels-invite-list-item-name {
     /*align to left*/
-    display: inline-block;
-    max-width: 80%;
-    justify-content: flex-start;
-    font-size: 2em;
+    margin-top: 0.7rem;
+    height: 2rem;
+    width: 85%;
+    margin-left: 12%;
+    margin-right: 12%;
+    overflow-x: auto;
 }
 
 .channels-invite-accept {
-    border-radius: 5%;
-    font-size: 2em;
-    display: inline-block;
-    background-color: greenyellow;
-    border: 0;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 0.25rem 0.5rem;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #28a745;
 }
 
 .channels-invite-decline {
-    border-radius: 5%;
-    font-size: 2em;
-    display: inline-block;
-    background-color: red;
-    border: 0;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 0.25rem 0.5rem;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #dc3545;
 }
