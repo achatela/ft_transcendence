@@ -93,12 +93,13 @@ export default class JoinChannel extends Component<IProps, IState> {
             sessionStorage.setItem("refreshToken", request.data.refreshToken);
             sessionStorage.setItem("accessToken", request.data.accessToken);
             console.log("channel invite accepted")
-            window.location.reload();
         }
         else {
             console.log("failed to accept channel invite")
             console.log(request.data.error)
         }
+        sessionStorage.setItem("refresh", "true");
+        window.location.href = "/social";
     }
 
     async declineChannelInvite(channelName: string) {
@@ -120,6 +121,8 @@ export default class JoinChannel extends Component<IProps, IState> {
             console.log("failed to accept channel invite")
             console.log(request.data.error)
         }
+        sessionStorage.setItem("refresh", "true");
+        window.location.href = "/social";
     }
 
     render() {

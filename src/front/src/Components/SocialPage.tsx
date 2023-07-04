@@ -177,6 +177,10 @@ export default class SocialPage extends Component<IProps, IState> {
     this.setState({ friends: friends });
     const blockedIds = await this.getBlockedIds();
     this.setState({ blockedIds: blockedIds })
+    if (sessionStorage.getItem("refresh") == "true") {
+      this.setState({ joinChannel: true });
+      sessionStorage.setItem("refresh", "false");
+    }
   }
 
   async sendFriendRequestEnter(): Promise<void> {

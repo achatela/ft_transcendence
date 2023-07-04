@@ -46,6 +46,10 @@
 }
 
 .friend-requests-p {
+  position: -webkit-sticky;
+  /* Required for Safari */
+  position: sticky;
+  top: 0;
   width: calc(100% - 6px);
   text-align: center;
   border: 3px solid white;
@@ -53,6 +57,10 @@
   padding-bottom: 1vh;
   font-size: 2rem;
 }
+
+/* .friend-requests-p.sticky .invisible-div-fix {
+  display: block;
+} */
 
 .friends-p {
   width: calc(100% - 6px);

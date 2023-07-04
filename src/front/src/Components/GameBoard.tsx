@@ -200,8 +200,8 @@ class GameBoard extends Component<IProps, IState> {
             ) :
                 <>
                     <div className="gameOver">
-                        <p>Game is over !</p>
-                        <p>{this.state.message}</p>
+                        <p className='game-over-p'>Game is over !</p>
+                        <p className='state-message-p'>{this.state.message}</p>
                         <button className='go-back-button' onClick={() => window.location.href = "/profile"}>Back to profile</button>
                     </div>
                     <div className='gameboard-div' style={{ opacity: "0.3" }}>
