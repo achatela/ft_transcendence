@@ -93,7 +93,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
       if (event.target.value === "")
         return;
       if (isChannel == false)
-        socket.emit('message', { room: chat.room, senderUsername: sessionStorage.getItem("username"), message: event.target.value });
+        socket.emit('message', { room: chat.room, senderUsername: sessionStorage.getItem("username"), message: event.target.value, receiverUsername: isSelected });
       else
         socket.emit('messageChannel', { room: chat.room, senderUsername: sessionStorage.getItem("username"), message: event.target.value });
       setMessage('');

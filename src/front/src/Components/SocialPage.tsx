@@ -339,7 +339,7 @@ export default class SocialPage extends Component<IProps, IState> {
     }
     else
       console.log("failed to block")
-    return;
+    window.location.href = "/social"
   }
 
   async blockUserEnter() {
@@ -361,7 +361,7 @@ export default class SocialPage extends Component<IProps, IState> {
     }
     else
       console.log("failed to block")
-    return;
+    window.location.href = "/social"
   }
 
   render(): JSX.Element {
