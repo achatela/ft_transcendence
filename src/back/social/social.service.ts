@@ -30,22 +30,6 @@ export class SocialService {
 
         await this.prismaService.friend.delete({ where: { id: friend.id } });
         await this.prismaService.friend.delete({ where: { id: friend2.id } });
-        // await this.prismaService.user.update({
-        //     where: { username: removerUsername },
-        //     data: {
-        //         friends: {
-        //             delete: { id: removed.id }
-        //         },
-        //     },
-        // });
-        // await this.prismaService.user.update({
-        //     where: { username: removedUsername },
-        //     data: {
-        //         friends: {
-        //             delete: { id: remover.id }
-        //         },
-        //     },
-        // });
 
         return { success: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken };
     }
@@ -108,6 +92,8 @@ export class SocialService {
     }
 
     async sendFriendRequest(requesterUsername: string, requestedUsername: string, accessToken: string, refreshToken: string): Promise<{ error?: string, success: boolean, accessToken?: string, refreshToken?: string }> {
+        if (requesterUsername == requestedUsername)
+            return { error: "You can't send friend request to yourself.", success: false };
         const requester = await this.prismaService.user.findUnique({ where: { username: requesterUsername }, include: { friends: true } });
         const auth = await this.authService.checkToken(requester, refreshToken, accessToken);
         if (auth.success == false)
@@ -121,6 +107,19 @@ export class SocialService {
             if (friend.friendId == requested.id)
                 return { error: "User already in friend list.", success: false, accessToken: auth.accessToken, refreshToken: auth.refreshToken };
         }
+        if (requester.blockedIds.includes(requested.id)) {
+            // remove from blockedIds
+            await this.prismaService.user.update({ where: { username: requesterUsername }, data: { blockedIds: { set: requester.blockedIds.filter((blockedId) => blockedId !== requested.id) } } });
+            if (requested.blockedIds.includes(requester.id)) {
+                return { error: "Remove from block list, but user blocked you.", success: false, accessToken: auth.accessToken, refreshToken: auth.refreshToken };
+            }
+            await this.prismaService.user.update({ where: { username: requestedUsername }, data: { friendRequests: { push: requester.id } } });
+            return { error: "Sent and remove from blocked list.", success: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken };
+        }
+        if (requested.blockedIds.includes(requester.id)) {
+            return { error: "User blocked you.", success: false, accessToken: auth.accessToken, refreshToken: auth.refreshToken };
+        }
+
         await this.prismaService.user.update({ where: { username: requestedUsername }, data: { friendRequests: { push: requester.id } } });
         return { success: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken };
     }
@@ -206,14 +205,11 @@ export class SocialService {
         const blockedUser = await this.prismaService.user.findUnique({ where: { username: blockedUsername } });
         if (blockedUser == null)
             return { success: false, error: "Blocked user not found" };
-        // if blockedUser.id is in user.friendsLists remove it
         const ret = await this.prismaService.friend.findFirst({ where: { userId: user.id, friendId: blockedUser.id } })
         if (ret != null) {
             await this.prismaService.friend.deleteMany({ where: { userId: user.id, friendId: blockedUser.id } })
             await this.prismaService.friend.deleteMany({ where: { userId: blockedUser.id, friendId: user.id } })
         }
-        // doesn't seems to create problems with friendChat
-        // check if userBlocked.id is already in user.blockedIds
         let tmp = user.blockedIds;
         for (let i = 0; i < user.blockedIds.length; i++) {
             if (tmp[i] == blockedUser.id)
@@ -227,6 +223,26 @@ export class SocialService {
                 }
             }
         });
+        if (blockedUser.friendRequests.includes(user.id)) {
+            await this.prismaService.user.update({
+                where: { username: blockedUsername },
+                data: {
+                    friendRequests: {
+                        set: blockedUser.friendRequests.filter((requesterId) => requesterId !== user.id)
+                    }
+                }
+            });
+        }
+        if (user.friendRequests.includes(blockedUser.id)) {
+            await this.prismaService.user.update({
+                where: { username: username },
+                data: {
+                    friendRequests: {
+                        set: user.friendRequests.filter((requesterId) => requesterId !== blockedUser.id)
+                    }
+                }
+            });
+        }
         return { success: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken };
     }
 }
