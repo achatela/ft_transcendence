@@ -86,4 +86,26 @@ export class ProfileService {
     }
     return;
   }
+
+
+  async getMatchHistory(username: string, refreshToken: string, accessToken: string, profileId: number) {
+    const user = await this.prismaService.user.findUnique({ where: { username: username } });
+    if (!user) {
+      return ({ success: false, error: "User not found" })
+    }
+    const ret = await this.authService.checkToken(user, refreshToken, accessToken);
+    if (ret.success != true) {
+      return ({ success: false, error: "Wrong token" })
+    }
+    if (profileId != 0) {
+      const userToReturn = await this.prismaService.user.findUnique({ where: { id: profileId } })
+      if (!userToReturn) {
+        return ({ success: false, error: "Wrong id" })
+      }
+      return ({ success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken, matches: userToReturn.matchHistory })
+    }
+    else {
+      return ({ success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken, matches: user.matchHistory })
+    }
+  }
 }

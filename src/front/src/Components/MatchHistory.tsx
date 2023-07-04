@@ -29,12 +29,18 @@ class MatchHistory extends Component<IProps, IState> {
     }
 
     async componentDidMount() {
-        console.log(this.state.profileId)
-        const response = await axios.post('http://localhost:3333/match_history/',
+        let profileId;
+        if (Number.isNaN(this.state.profileId))
+            profileId = 0;
+        else
+            profileId = this.state.profileId;
+
+        const response = await axios.post('http://localhost:3333/profile/match_history/',
             JSON.stringify({
                 username: sessionStorage.getItem("username"),
                 accessToken: sessionStorage.getItem("accessToken"),
                 refreshToken: sessionStorage.getItem("refreshToken"),
+                profileId: profileId,
             }),
             { headers: { "Content-Type": "application/json" } })
         if (response.data.success === true) {
@@ -46,6 +52,8 @@ class MatchHistory extends Component<IProps, IState> {
             return;
         }
         else {
+            // if (response.data.error == "Wrong id")
+            // window.location.href = "/history"
             console.log("failed to retrieve match history")
             console.log(response.data.error)
             return;

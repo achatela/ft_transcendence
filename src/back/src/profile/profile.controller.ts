@@ -12,6 +12,11 @@ import * as path from 'path';
 export class ProfileController {
   constructor(private readonly profileService: ProfileService, private authService: AuthService) { }
 
+  @Post('match_history')
+  async getMatchHistory(@Body() userInput: { username: string, refreshToken: string, accessToken: string, profileId: number }) {
+    return await this.profileService.getMatchHistory(userInput.username, userInput.refreshToken, userInput.accessToken, userInput.profileId);
+  }
+
   @Post('user_info')
   async getUserInfo(@Body() userInput: { username: string, refreshToken: string, accessToken: string }): Promise<{ userInfo: { username: string, wins: number, losses: number, avatar: string, ladderLevel: number, xp: number }, refreshToken: string, accessToken: string }> {
     return await this.profileService.getUserInfo(userInput.username, userInput.refreshToken, userInput.accessToken);
