@@ -15,6 +15,11 @@
     height: 5vh;
 }
 
+.match-history-match-info-div:hover {
+    opacity: 0.8;
+    cursor: pointer;
+}
+
 .match-history-match-info-div p {
     text-align: center;
     font-size: 2rem;
