@@ -123,6 +123,10 @@
     /* Add this line to make the button a block element */
 }
 
+.cancelButton:hover {
+    opacity: 0.7;
+}
+
 .dot-1,
 .dot-2,
 .dot-3 {

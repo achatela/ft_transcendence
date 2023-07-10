@@ -164,6 +164,10 @@
   cursor: pointer;
 }
 
+.add-friend-button:hover {
+  opacity: 0.8;
+}
+
 /* Rules for items in FriendRequest.tsx */
 
 .friend-requests-item {
@@ -285,6 +289,10 @@
   font-size: 2rem;
 }
 
+.create-channel:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
 
 .join-channel {
   background-color: black;
@@ -297,6 +305,11 @@
   right: 0;
   margin-right: calc((100vw - 16px - 25vw) / 2 - 200px);
   font-size: 2rem;
+}
+
+.join-channel:hover {
+  opacity: 0.8;
+  cursor: pointer;
 }
 
 .error-message {
@@ -319,6 +332,10 @@
   cursor: pointer;
 }
 
+.reset-states:hover {
+  opacity: 0.8;
+}
+
 .display-add {
   background: black;
   border: 3px solid white;
@@ -330,6 +347,10 @@
   cursor: pointer;
 }
 
+.display-add:hover {
+  opacity: 0.8;
+}
+
 .display-block {
   background: black;
   border: 3px solid white;
@@ -339,6 +360,10 @@
   font-size: 1.5rem;
   cursor: pointer;
   margin-left: 1rem;
+}
+
+.display-block:hover {
+  opacity: 0.8;
 }
 
 .block-user-text {
@@ -369,4 +394,8 @@
   margin-top: 0.5rem;
   font-size: 1rem;
   cursor: pointer;
+}
+
+.block-user-button:hover {
+  opacity: 0.8;
 }
