@@ -8,6 +8,13 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class SocialService {
     constructor(private prismaService: PrismaService, private authService: AuthService) { }
 
+    async getStatus(username: string): Promise<{ success: boolean, status?: string }> {
+        const user = await this.prismaService.user.findUnique({ where: { username: username }, select: { status: true } });
+        if (user == null)
+            return { success: false };
+        return { success: true, status: user.status };
+    }
+
     async getAvatar(username: string): Promise<{ success: boolean, avatar?: string }> {
         const user = await this.prismaService.user.findUnique({ where: { username: username }, select: { avatar: true } });
         if (user == null)

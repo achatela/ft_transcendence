@@ -62,4 +62,9 @@ export class SocialController {
     async getAvatar(@Body() userInput: { username: string }): Promise<{ success: boolean, avatar?: string }> {
         return await this.socialService.getAvatar(userInput.username);
     }
+
+    @Post('get_status')
+    async getStatus(@Body() userInput: { username: string }): Promise<{ success: boolean, status?: string }> {
+        return await this.socialService.getStatus(userInput.username);
+    }
 }

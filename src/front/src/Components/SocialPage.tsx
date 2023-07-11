@@ -8,6 +8,7 @@ import CreateChannel from "./CreateChannel";
 import JoinChannel from "./JoinChannel";
 
 let avatarUrls: Map<string, string> = new Map<string, string>();
+let status: Map<string, string> = new Map<string, string>();
 
 interface IProps { }
 
@@ -138,6 +139,7 @@ export default class SocialPage extends Component<IProps, IState> {
       console.log("friends", response.data.friends)
       for (let friend in response.data.friends) {
         this.getAvatar(response.data.friends[friend]);
+        this.getStatus(response.data.friends[friend]);
       }
       return response.data.friends;
     }
@@ -320,6 +322,27 @@ export default class SocialPage extends Component<IProps, IState> {
       console.error("failed to get avatar");
   }
 
+
+  async getStatus(username: string) {
+    const request = await axios.post(
+      "http://localhost:3333/social/get_status/",
+      JSON.stringify({
+        username: username,
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (request.data.success === true) {
+      status.set(username, request.data.status)
+      if (this.state.refresh === false)
+        this.setState({ refresh: true })
+      if (this.state.refresh === true)
+        this.setState({ refresh: false })
+      console.log("got status")
+    }
+    else
+      console.error("failed to get status");
+  }
+
   async blockUser(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
     let inputElement = document.querySelector(".block-user-input") as HTMLInputElement;
     const request = await axios.post(
@@ -364,6 +387,7 @@ export default class SocialPage extends Component<IProps, IState> {
     window.location.href = "/social"
   }
 
+
   render(): JSX.Element {
     return (
       < div onClick={() => {
@@ -394,7 +418,7 @@ export default class SocialPage extends Component<IProps, IState> {
                     }}>
                   <div className="friend-avatar" style={{ backgroundImage: `url(${avatarUrls.get(username)})` }}></div>
                   <div className="friend-name" data-name={username}>{username}</div>
-                  {/* <div className="friend-status" data-name={username}>{status}</div> */}
+                  <div className="friend-status">{status.get(username)}</div>
                 </div>
               ))}
             </div>
