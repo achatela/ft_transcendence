@@ -2,8 +2,8 @@ todo:
 css context menu channel in chat.tsx
 Inviter des gens à jouer à partir du chat
 Mettre les jwt dans un cookie httpOnly
-Rediriger toutes les pages "/\*" vers "/" quand user pas log
 Ajouter un bouton add friend sur les pages de profile
 Faire un mode Custom
 Fix le bug qui ralenti quand on refresh
 Ajouter un check JWT quand on upload un avatar + vérifier qu'on check partout
+Ajouter la date des games dans l'historique, peut-être get que les 10 dernières

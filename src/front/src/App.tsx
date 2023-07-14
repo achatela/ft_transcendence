@@ -9,6 +9,7 @@ import SocialPage from './Components/SocialPage'
 import TwoFa from './Components/TwoFa'
 import NavBar from './Components/NavBar'
 import MatchHistory from './Components/MatchHistory'
+import PageNotFound from './Components/PageNotFound'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 function App() {
@@ -16,15 +17,19 @@ function App() {
     <BrowserRouter>
       <NavBar />
       <Routes>
+        {sessionStorage.getItem('username') !== null && (
+          <>
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/mode" element={<ModePage />} />
+            <Route path="/game" element={<GameBoard />} />
+            <Route path="/social" element={<SocialPage />} />
+            <Route path="/two_fa" element={<TwoFa />} />
+            <Route path="/history" element={<MatchHistory />} />
+            <Route path="/history/:profileId" element={<MatchHistory />} />
+          </>
+        )}
         <Route path="/" element={<HomePage />} />
-        <Route path="/mode" element={<ModePage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/profile/:profileId" element={<ProfilePage />} />
-        <Route path="/game" element={<GameBoard />} />
-        <Route path="/social" element={<SocialPage />} />
-        <Route path="/two_fa" element={<TwoFa />} />
-        <Route path="/history" element={<MatchHistory />} />
-        <Route path="/history/:profileId" element={<MatchHistory />} />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </BrowserRouter>
   );

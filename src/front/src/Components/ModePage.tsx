@@ -24,6 +24,9 @@ class ModePage extends Component<IProps, IState> {
     };
 
     async componentDidMount(): Promise<void> {
+        if (sessionStorage.getItem("username") === null) {
+            window.location.href = "/";
+        }
         if (sessionStorage.getItem("queueing") === "Classic Pong") {
             this.interval = setInterval(async () => {
                 const response = await axios.post('http://localhost:3333/pong/classic/queue_status/',
