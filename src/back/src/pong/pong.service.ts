@@ -10,7 +10,7 @@ const widthGameboard: number = 1000;
 const heightGameboard: number = 600;
 const widthGameboardMid: number = widthGameboard / 2;
 const heightGameboardMid: number = heightGameboard / 2;
-const speedMultiplier: number = 4;
+const speedMultiplier: number = 10;
 const paddleStep: number = 25;
 const paddleHeight: number = 100;
 const paddleMid: number = paddleHeight / 2;
@@ -24,7 +24,7 @@ export class PongService {
   private queueClassic: number[] = [];
   private queueCustom: number[] = [];
   gameStates: Array<any> = [];
-  //[{ id1: number, id2: number, socketLeft: number, socketRight: number, x: number, y: number, dx: number, dy: number, paddleLeft: number, paddleRight: number, leftScore: number, rightScore: number, prevLpc: boolean, prevRpc: boolean }]
+  //[{ id1: number, id2: number, socketLeft: number, socketRight: number, x: number, y: number, dx: number, dy: number, paddleLeft: number, paddleRight: number, leftScore: number, rightScore: number, prevLpc: boolean, prevRpc: boolean, onOff: boolean}]
   map1 = new Map();
 
   constructor(private prismaService: PrismaService, private authService: AuthService) {
@@ -121,12 +121,12 @@ export class PongService {
   async gameLogicClassic(index: number, io: any) {
     let gameState = this.gameStates[index];
 
-    if (gameState.leftScore == 2 || gameState.rightScore == 2) {
+    if (gameState.leftScore == 11 || gameState.rightScore == 11) {
       if (gameState.statsAttributed == false) {
         gameState.statsAttributed = true;
         let historyWinnerString = "";
         let historyLoserString = "";
-        if (gameState.leftScore == 2) {
+        if (gameState.leftScore == 11) {
           await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { wins: { increment: 1 }, xpBar: { increment: 100 } } });
           await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { losses: { increment: 1 }, xpBar: { increment: 50 } } });
           const user1 = await this.prismaService.user.findUnique({ where: { id: gameState.id1 } });
@@ -164,9 +164,9 @@ export class PongService {
         }
         const user1 = await this.prismaService.user.findUnique({ where: { id: gameState.id1 } });
         const user2 = await this.prismaService.user.findUnique({ where: { id: gameState.id2 } });
-        if (gameState.leftScore == 2) {
+        if (gameState.leftScore == 11) {
           io.to(this.gameStates[index].socketLeft).emit('gameOver', { message: "You won " + this.gameStates[index].leftScore + " - " + this.gameStates[index].rightScore + " against " + user2.username });
-          io.to(this.gameStates[index].socketRight).emit('gameOver', { message: "You lost" + this.gameStates[index].leftScore + " - " + this.gameStates[index].rightScore + " against " + user1.username });
+          io.to(this.gameStates[index].socketRight).emit('gameOver', { message: "You lost " + this.gameStates[index].leftScore + " - " + this.gameStates[index].rightScore + " against " + user1.username });
         }
         else {
           io.to(this.gameStates[index].socketLeft).emit('gameOver', { message: "You lost " + this.gameStates[index].leftScore + " - " + this.gameStates[index].rightScore + " against " + user2.username });
@@ -180,20 +180,30 @@ export class PongService {
       }
     }
 
-    const newX = gameState.x + gameState.dx * speedMultiplier;
-    const newY = gameState.y + gameState.dy * speedMultiplier;
+    const newX = gameState.x + gameState.dx * this.gameStates[index].speedMultiplier;
+    const newY = gameState.y + gameState.dy * this.gameStates[index].speedMultiplier;
     const lpc = this.checkPaddleCollision(newX, newY, paddleGap, gameState.paddleLeft);
     const rpc = this.checkPaddleCollision(newX, newY, widthGameboard - paddleGap - paddleWidth, gameState.paddleRight);
     if (lpc == true && gameState.prevLpc == false) {
       const dirX = -gameState.dx;
-      const dirY = (gameState.y + squareSize / 2 - gameState.paddleLeft - paddleMid) / paddleMid;
+      let dirY = (gameState.y + squareSize / 2 - gameState.paddleLeft - paddleMid) / paddleMid;
+      if (dirY < -0.5)
+        dirY = -0.5;
+      else
+        dirY = 0.5;
+      this.gameStates[index].speedMultiplier += 1;
       const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
       gameState.dx = dirX / magnitude;
       gameState.dy = dirY / magnitude;
     }
     else if (rpc == true && gameState.prevRpc == false) {
       const dirX = -gameState.dx;
-      const dirY = (gameState.y + squareSize / 2 - gameState.paddleRight - paddleMid) / paddleMid;
+      let dirY = (gameState.y + squareSize / 2 - gameState.paddleRight - paddleMid) / paddleMid;
+      if (dirY < -0.5)
+        dirY = -0.5;
+      else
+        dirY = 0.5;
+      this.gameStates[index].speedMultiplier += 1;
       const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
       gameState.dx = dirX / magnitude;
       gameState.dy = dirY / magnitude;
@@ -202,24 +212,74 @@ export class PongService {
       gameState.dy = -gameState.dy;
     }
     else if (newX < 0) {
+      this.gameStates[index].speedMultiplier = 10;
       const dirX = Math.random() * 2 - 1;
-      const dirY = Math.random() * 2 - 1;
+      if (gameState.dx < 0)
+        gameState.dx = -1;
+      else
+        gameState.dx = 1;
+      let dirY = Math.random() * 2 - 1;
+      if (gameState.dy < -0.5)
+        gameState.dy = -0.5;
+      else
+        gameState.dy = 0.5;
       const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
       gameState.rightScore++;
       gameState.x = widthGameboardMid - midSquare;
       gameState.y = heightGameboardMid - midSquare;
       gameState.dx = dirX / magnitude;
       gameState.dy = dirY / magnitude;
+      while ((Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) < 30 && (Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) > -30
+        || ((Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) > 150 && (Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) < -150)) {
+        gameState.dx = Math.random() * 2 - 1;
+        if (gameState.dx < 0)
+          gameState.dx = -1;
+        else
+          gameState.dx = 1;
+        gameState.dy = Math.random() * 2 - 1;
+        if (gameState.dy < -0.5)
+          gameState.dy = -0.5;
+        else
+          gameState.dy = 0.5;
+        const magnitude = Math.sqrt(gameState.dx ** 2) + Math.sqrt(gameState.dy ** 2);
+        gameState.dx /= magnitude;
+        gameState.dy /= magnitude;
+      }
     }
     else if (newX + squareSize > widthGameboard) {
+      this.gameStates[index].speedMultiplier = 10;
       const dirX = Math.random() * 2 - 1;
-      const dirY = Math.random() * 2 - 1;
+      if (gameState.dx < 0)
+        gameState.dx = -1;
+      else
+        gameState.dx = 1;
+      let dirY = Math.random() * 2 - 1;
+      if (gameState.dy < -0.5)
+        gameState.dy = -0.5;
+      else
+        gameState.dy = 0.5;
       const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
       gameState.leftScore++;
       gameState.x = widthGameboardMid - midSquare;
       gameState.y = heightGameboardMid - midSquare;
       gameState.dx = dirX / magnitude;
       gameState.dy = dirY / magnitude;
+      while ((Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) < 30 && (Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) > -30
+        || ((Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) > 150 && (Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) < -150)) {
+        gameState.dx = Math.random() * 2 - 1;
+        if (gameState.dx < 0)
+          gameState.dx = -1;
+        else
+          gameState.dx = 1;
+        gameState.dy = Math.random() * 2 - 1;
+        if (gameState.dy < -0.5)
+          gameState.dy = -0.5;
+        else
+          gameState.dy = 0.5;
+        const magnitude = Math.sqrt(gameState.dx ** 2) + Math.sqrt(gameState.dy ** 2);
+        gameState.dx /= magnitude;
+        gameState.dy /= magnitude;
+      }
     }
     else {
       gameState.x = newX;
@@ -233,10 +293,16 @@ export class PongService {
     try {
       const index = this.map1.get(socketId);
       if (this.gameStates[index].socketLeft === 0 || this.gameStates[index].socketRight === 0) {
+        console.log('user disconnected')
         return { success: false };
       }
       if (index !== undefined) {
-        this.gameLogicClassic(index, io);
+        if (this.gameStates[index].onOff === false) {
+          this.gameStates[index].onOff = true;
+          this.gameLogicClassic(index, io);
+        }
+        else
+          this.gameStates[index].onOff = false;
         return { success: true, gameState: { x: this.gameStates[index].x, y: this.gameStates[index].y, dx: this.gameStates[index].dx, dy: this.gameStates[index].dy, paddleLeft: this.gameStates[index].paddleLeft, paddleRight: this.gameStates[index].paddleRight, leftScore: this.gameStates[index].leftScore, rightScore: this.gameStates[index].rightScore } };
       }
     } catch (e) {
@@ -247,14 +313,37 @@ export class PongService {
 
   gameStartClassic(index: number) {
     let gameState = this.gameStates[index];
-
     gameState.x = widthGameboardMid - (squareSize / 2);
     gameState.y = heightGameboardMid - (squareSize / 2);
-    gameState.dx = Math.random() < 0.5 ? -1 : 1;
+    gameState.dx = Math.random() * 2 - 1;
+    if (gameState.dx < 0)
+      gameState.dx = -1;
+    else
+      gameState.dx = 1;
     gameState.dy = Math.random() * 2 - 1;
+    if (gameState.dy < -0.5)
+      gameState.dy = -0.5;
+    else
+      gameState.dy = 0.5;
     let magnitude = Math.sqrt(gameState.dx ** 2) + Math.sqrt(gameState.dy ** 2);
     gameState.dx /= magnitude;
     gameState.dy /= magnitude;
+    while ((Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) < 30 && (Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) > -30
+      || ((Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) > 150 && (Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) < -150)) {
+      gameState.dx = Math.random() * 2 - 1;
+      if (gameState.dx < 0)
+        gameState.dx = -1;
+      else
+        gameState.dx = 1;
+      gameState.dy = Math.random() * 2 - 1;
+      if (gameState.dy < -0.5)
+        gameState.dy = -0.5;
+      else
+        gameState.dy = 0.5;
+      magnitude = Math.sqrt(gameState.dx ** 2) + Math.sqrt(gameState.dy ** 2);
+      gameState.dx /= magnitude;
+      gameState.dy /= magnitude;
+    }
     gameState.paddleLeft = heightGameboardMid - paddleMid;
     gameState.paddleRight = heightGameboardMid - paddleMid;
   }
@@ -323,7 +412,7 @@ export class PongService {
       if (this.queueCustom.length >= 2) {
         const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueCustom[0] } });
         const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueCustom[1] } });
-        this.gameStates.push({ statsAttributed: false, started: false, id1: this.queueClassic[0], id2: this.queueClassic[1], socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false });
+        this.gameStates.push({ statsAttributed: false, started: false, id1: this.queueClassic[0], id2: this.queueClassic[1], socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false, onOff: false, speedMultiplier: 10 });
         this.queueCustom.splice(0, 2);
         console.log('gameStates in custom', this.gameStates);
         await this.prismaService.user.update({ where: { id: user1.id }, data: { status: 'playing custom' } });
@@ -390,7 +479,7 @@ export class PongService {
       if (this.queueClassic.length >= 2) {
         const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueClassic[0] } });
         const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueClassic[1] } });
-        this.gameStates.push({ statsAttributed: false, started: false, id1: this.queueClassic[0], id2: this.queueClassic[1], socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false });
+        this.gameStates.push({ statsAttributed: false, started: false, id1: this.queueClassic[0], id2: this.queueClassic[1], socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false, onOff: false, speedMultiplier: 10 });
         this.queueClassic.splice(0, 2);
         console.log('gameStates in classic', this.gameStates);
         await this.prismaService.user.update({ where: { id: user1.id }, data: { status: 'playing classic' } });

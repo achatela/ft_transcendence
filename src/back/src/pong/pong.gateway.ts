@@ -42,7 +42,8 @@ export class PongGateway {
       });
       socket.on('disconnect', (data) => {
         this.pongService.disconnectSocket(data.socketId, data.username);
-        clearInterval(interval);
+        if (interval)
+          clearInterval(interval);
         console.log("disconnect");
       });
     });
