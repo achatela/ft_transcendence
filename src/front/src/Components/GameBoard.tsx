@@ -124,7 +124,7 @@ class GameBoard extends Component<IProps, IState> {
                 // window.location.href = "/profile";
                 this.setState({ gameEnded: true, message: data.message });
                 this.state.socket.off('update');
-                this.state.socket.disconnect();
+                this.state.socket.disconnect({ socketId: this.state.socket.id });
             })
             this.state.socket.emit("events", { socketId: this.state.socket.id, login: sessionStorage.getItem("username") });
             this.state.socket.emit("update", { socketId: this.state.socket.id });

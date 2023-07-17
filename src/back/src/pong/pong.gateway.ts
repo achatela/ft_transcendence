@@ -19,6 +19,7 @@ export class PongGateway {
     // this.pongService.gameStates.push({ id1: 0, id2: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0 });
     io.on('connection', (socket) => {
       let interval: NodeJS.Timer;
+      interval = null;
       socket.emit('gameState', {});
       socket.on('connectGameClassic', (data) => {
         this.pongService.changeSocketClassic(data.socketId, data.login, io);
@@ -32,20 +33,24 @@ export class PongGateway {
       socket.on('update', (data) => {
         // need to move the setInterval, so we check before if the player is already in a game
         interval = setInterval(() => {
+          if (this.pongService.gameStatus(data.socketId, io) == 0)
+            return;
           const ret = this.pongService.getGameState(data.socketId, io);
           socket.emit('update', ret);
-          // if (ret.success === false) {
-          //   clearInterval(interval);
-          // }
         }, 16); // 30 fps je crois
         console.log("update", data);
       });
       socket.on('disconnect', (data) => {
+        console.log("disconnectId", data)
         this.pongService.disconnectSocket(data.socketId, data.username);
-        if (interval)
-          clearInterval(interval);
-        console.log("disconnect");
+        clearInterval(interval);
       });
+      // socket.on('disconnect', (data) => {
+      //   console.log("disconnect", data)
+      //   this.pongService.disconnectSocket(data.socketId, data.username);
+      //   clearInterval(interval);
+      //   console.log("disconnect");
+      // });
     });
   }
 

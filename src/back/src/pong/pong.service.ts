@@ -36,24 +36,40 @@ export class PongService {
     }, 1000);
   }
 
-  async disconnectSocket(socketId: number, username: string) {
+  gameStatus(socketId: any, io: any) {
     try {
-      await this.prismaService.user.update({ where: { username: username }, data: { status: "online" } });
-
       const index = this.map1.get(socketId);
       if (index !== undefined) {
-        if (this.gameStates[index].socketLeft === socketId) {
-          this.gameStates[index].socketLeft = 0;
-          // this.gameStates[index].id1 = 0;
+        if (this.gameStates[index].socketLeft === 0 || this.gameStates[index].socketRight === 0) {
+          return 0;
         }
-        else {
-          this.gameStates[index].socketRight = 0;
-          // this.gameStates[index].id2 = 0;
+        if (this.gameStates[index].socketLeft !== 0 && this.gameStates[index].socketRight !== 0) {
+          return 1;
         }
       }
     } catch (e) {
       console.log(e);
     }
+    return 0;
+  }
+
+  async disconnectSocket(socketId: any, username: string) {
+    console.log("in disconnect socket function, socket = ", socketId)
+    const index = this.map1.get(socketId);
+    if (index !== undefined) {
+      if (this.gameStates[index].socketLeft === socketId) {
+        console.log('left set to 0')
+        this.gameStates[index].socketLeft = 0;
+        // this.gameStates[index].id1 = 0;
+      }
+      else {
+        console.log('right set to 0')
+        this.gameStates[index].socketRight = 0;
+        // this.gameStates[index].id2 = 0;
+      }
+    }
+    this.map1.delete(socketId);
+    console.log('deleted', + socketId)
   }
 
   moveUp(socketId: number) {
