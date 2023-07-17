@@ -203,10 +203,10 @@ export class PongService {
     if (lpc == true && gameState.prevLpc == false) {
       const dirX = -gameState.dx;
       let dirY = (gameState.y + squareSize / 2 - gameState.paddleLeft - paddleMid) / paddleMid;
-      if (dirY < -0.5)
-        dirY = -0.5;
-      else
-        dirY = 0.5;
+      if (dirY / dirX > 2)
+        dirY = 2 * dirX;
+      else if (dirY / dirX < -2)
+        dirY = -2 * dirX;
       this.gameStates[index].speedMultiplier += 1;
       const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
       gameState.dx = dirX / magnitude;
@@ -215,10 +215,10 @@ export class PongService {
     else if (rpc == true && gameState.prevRpc == false) {
       const dirX = -gameState.dx;
       let dirY = (gameState.y + squareSize / 2 - gameState.paddleRight - paddleMid) / paddleMid;
-      if (dirY < -0.5)
-        dirY = -0.5;
-      else
-        dirY = 0.5;
+      if (dirY / dirX > 2)
+        dirY = 2 * dirX;
+      else if (dirY / dirX < -2)
+        dirY = -2 * dirX;
       this.gameStates[index].speedMultiplier += 1;
       const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
       gameState.dx = dirX / magnitude;
@@ -230,72 +230,32 @@ export class PongService {
     else if (newX < 0) {
       this.gameStates[index].speedMultiplier = 10;
       const dirX = Math.random() * 2 - 1;
-      if (gameState.dx < 0)
-        gameState.dx = -1;
-      else
-        gameState.dx = 1;
       let dirY = Math.random() * 2 - 1;
-      if (gameState.dy < -0.5)
-        gameState.dy = -0.5;
-      else
-        gameState.dy = 0.5;
+      if (dirY / dirX > 2)
+        dirY = 2 * dirX;
+      else if (dirY / dirX < -2)
+        dirY = -2 * dirX;
       const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
       gameState.rightScore++;
       gameState.x = widthGameboardMid - midSquare;
       gameState.y = heightGameboardMid - midSquare;
       gameState.dx = dirX / magnitude;
       gameState.dy = dirY / magnitude;
-      while ((Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) < 30 && (Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) > -30
-        || ((Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) > 150 && (Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) < -150)) {
-        gameState.dx = Math.random() * 2 - 1;
-        if (gameState.dx < 0)
-          gameState.dx = -1;
-        else
-          gameState.dx = 1;
-        gameState.dy = Math.random() * 2 - 1;
-        if (gameState.dy < -0.5)
-          gameState.dy = -0.5;
-        else
-          gameState.dy = 0.5;
-        const magnitude = Math.sqrt(gameState.dx ** 2) + Math.sqrt(gameState.dy ** 2);
-        gameState.dx /= magnitude;
-        gameState.dy /= magnitude;
-      }
     }
     else if (newX + squareSize > widthGameboard) {
       this.gameStates[index].speedMultiplier = 10;
       const dirX = Math.random() * 2 - 1;
-      if (gameState.dx < 0)
-        gameState.dx = -1;
-      else
-        gameState.dx = 1;
       let dirY = Math.random() * 2 - 1;
-      if (gameState.dy < -0.5)
-        gameState.dy = -0.5;
-      else
-        gameState.dy = 0.5;
+      if (dirY / dirX > 2)
+        dirY = 2 * dirX;
+      else if (dirY / dirX < -2)
+        dirY = -2 * dirX;
       const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
       gameState.leftScore++;
       gameState.x = widthGameboardMid - midSquare;
       gameState.y = heightGameboardMid - midSquare;
       gameState.dx = dirX / magnitude;
       gameState.dy = dirY / magnitude;
-      while ((Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) < 30 && (Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) > -30
-        || ((Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) > 150 && (Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) < -150)) {
-        gameState.dx = Math.random() * 2 - 1;
-        if (gameState.dx < 0)
-          gameState.dx = -1;
-        else
-          gameState.dx = 1;
-        gameState.dy = Math.random() * 2 - 1;
-        if (gameState.dy < -0.5)
-          gameState.dy = -0.5;
-        else
-          gameState.dy = 0.5;
-        const magnitude = Math.sqrt(gameState.dx ** 2) + Math.sqrt(gameState.dy ** 2);
-        gameState.dx /= magnitude;
-        gameState.dy /= magnitude;
-      }
     }
     else {
       gameState.x = newX;
@@ -332,34 +292,14 @@ export class PongService {
     gameState.x = widthGameboardMid - (squareSize / 2);
     gameState.y = heightGameboardMid - (squareSize / 2);
     gameState.dx = Math.random() * 2 - 1;
-    if (gameState.dx < 0)
-      gameState.dx = -1;
-    else
-      gameState.dx = 1;
     gameState.dy = Math.random() * 2 - 1;
-    if (gameState.dy < -0.5)
-      gameState.dy = -0.5;
-    else
-      gameState.dy = 0.5;
+    if (gameState.dy / gameState.dx > 2)
+      gameState.dy = 2 * gameState.dx;
+    else if (gameState.dy / gameState.dx < -2)
+      gameState.dy = -2 * gameState.dx;
     let magnitude = Math.sqrt(gameState.dx ** 2) + Math.sqrt(gameState.dy ** 2);
     gameState.dx /= magnitude;
     gameState.dy /= magnitude;
-    while ((Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) < 30 && (Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) > -30
-      || ((Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) > 150 && (Math.atan2(gameState.dy, gameState.dx) * (180 / Math.PI)) < -150)) {
-      gameState.dx = Math.random() * 2 - 1;
-      if (gameState.dx < 0)
-        gameState.dx = -1;
-      else
-        gameState.dx = 1;
-      gameState.dy = Math.random() * 2 - 1;
-      if (gameState.dy < -0.5)
-        gameState.dy = -0.5;
-      else
-        gameState.dy = 0.5;
-      magnitude = Math.sqrt(gameState.dx ** 2) + Math.sqrt(gameState.dy ** 2);
-      gameState.dx /= magnitude;
-      gameState.dy /= magnitude;
-    }
     gameState.paddleLeft = heightGameboardMid - paddleMid;
     gameState.paddleRight = heightGameboardMid - paddleMid;
   }
