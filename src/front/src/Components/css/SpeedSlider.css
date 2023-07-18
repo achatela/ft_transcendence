@@ -19,16 +19,17 @@ input[type="range"]::-webkit-slider-thumb {
 
 .speed {
     color: white;
-    font-size: 4vw;
-    margin-bottom: 1vh;
+    font-size: 2.5em;
+    margin-bottom: 1.75vh;
 }
 
 .slide-container {
-    width: 14vw;
+    width: 11vw;
+    height: 5vh;
     position: absolute;
-    top: 75vh;
-    left: 45vw;
-    height: 10vh;
+    top: 18.5vh;
+    left: calc(89vw - 5vh);
+    text-align: center;
 }
   
   

@@ -118,34 +118,32 @@
     background-color: black;
     border: white 2px solid;
     color: white;
-    padding: 0.5rem 1rem;
     text-align: center;
     text-decoration: none;
     font-size: 2.5vw;
-    margin: 0.5rem 0;
     cursor: pointer;
     position: absolute;
     display: block;
-    top: 63vh;
-    left: 42.5vw;
-    width: 15vw;
+    top: 5vh;
+    left: calc(89vw - 5vh);
+    width: 11vw;
+    height: 5vh;
 }
 
 .removeBallButton {
     background-color: black;
     border: white 2px solid;
     color: white;
-    padding: 0.5rem 1rem;
     text-align: center;
     text-decoration: none;
     font-size: 2.5vw;
-    margin: 0.5rem 0;
     cursor: pointer;
     position: absolute;
     display: block;
-    top: 68vh;
-    left: 42.5vw;
-    width: 15vw;
+    top: 11vh;
+    left: calc(89vw - 5vh);
+    width: 11vw;
+    height: 5vh;
 }
 
 .alreadyExists {

@@ -31,7 +31,7 @@ class BouncingBall extends Component<{ speed: number, loginDiv: any }, State> {
     this.animationRef = 0;
     this.lastFrameTime = performance.now();
     this.speed = 3;
-    this.squareSize = 40;
+    this.squareSize = 30;
     this.loginDiv = null;
     this.addedDiv = null;
     this.removeDiv = null;
