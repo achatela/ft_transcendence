@@ -166,3 +166,29 @@
 .match-history-button:hover {
     opacity: 0.7;
 }
+
+.add-friend-profile {
+    border: 3px solid white;
+    background-color: black;
+    width: 10vw;
+    height: 5vh;
+    margin-top: 27vh;
+    margin-left: calc(50vw - 5vw);
+    font-size: 2rem;
+}
+
+.add-friend-profile:hover {
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.friend-state-div {
+    position: absolute;
+    border: 3px solid white;
+    background-color: black;
+    width: 10vw;
+    height: 5vh;
+    margin-top: 27vh;
+    margin-left: calc(50vw - 5vw);
+    font-size: 2rem;
+}

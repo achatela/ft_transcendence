@@ -20,6 +20,7 @@ function App() {
         {sessionStorage.getItem('username') !== null && (
           <>
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/profile/:profileId" element={<ProfilePage />} />
             <Route path="/mode" element={<ModePage />} />
             <Route path="/game" element={<GameBoard />} />
             <Route path="/social" element={<SocialPage />} />

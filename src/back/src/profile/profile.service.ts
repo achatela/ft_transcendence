@@ -7,6 +7,22 @@ import { AuthService } from 'src/auth/auth.service';
 export class ProfileService {
   constructor(private prismaService: PrismaService, private authService: AuthService) { }
 
+
+  async getIsFriend(username: string, refreshToken: string, accessToken: string, profileId: number) {
+    const user = await this.prismaService.user.findFirst({ where: { username: username } })
+    const userFriend = await this.prismaService.user.findFirst({ where: { id: profileId } })
+
+    if (!user || !userFriend)
+      return ({ success: false, error: "User not found" })
+    const ret = await this.authService.checkToken(user, refreshToken, accessToken);
+    if (ret.success == true) {
+      const friend = await this.prismaService.friend.findFirst({ where: { friendId: profileId, userId: user.id } })
+      if (!friend)
+        return ({ success: true, isFriend: false, accessToken: ret.accessToken, refreshToken: ret.refreshToken })
+      return ({ success: true, isFriend: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken })
+    }
+  }
+
   async checkUserExists(username: string, refreshToken: string, accessToken: string, id: number): Promise<{ success: boolean; refreshToken: string; accessToken: string; }> {
     try {
       await this.prismaService.user.findUniqueOrThrow({ where: { id: id } });

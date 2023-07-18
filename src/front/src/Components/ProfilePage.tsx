@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './css/ProfilePage.css';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { isButtonElement } from 'react-router-dom/dist/dom';
 
 function withParams(WrappedComponent: React.ComponentType<any>) {
     return (props: any) => {
@@ -25,6 +26,7 @@ interface IState {
     is2FAEnabled: boolean;
     qrCode: string;
     xp: number;
+    isFriend: boolean;
 }
 
 class ProfilePage extends Component<IProps, IState> {
@@ -42,6 +44,7 @@ class ProfilePage extends Component<IProps, IState> {
             is2FAEnabled: false,
             qrCode: "",
             xp: 0,
+            isFriend: false,
         };
         this.fileInputRef = React.createRef();
     }
@@ -160,7 +163,26 @@ class ProfilePage extends Component<IProps, IState> {
                     console.error("Error fetching user info:", error);
                 }
                 );
+            this.setState({ isFriend: await this.getIsFriend() })
         }
+        console.log(sessionStorage.getItem('username'))
+        console.log(this.state.username)
+    }
+
+    async getIsFriend() {
+        const request = await axios.post('http://localhost:3333/profile/is_friend/',
+            JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken"), profileId: this.state.profileId }), { headers: { 'Content-Type': 'application/json' } }
+        )
+        if (request.data.success === true) {
+            if (request.data.isFriend === true) {
+                sessionStorage.setItem("refreshToken", request.data.refreshToken);
+                sessionStorage.setItem("accessToken", request.data.accessToken);
+                return true;
+            }
+            sessionStorage.setItem("refreshToken", request.data.refreshToken);
+            sessionStorage.setItem("accessToken", request.data.accessToken);
+        }
+        return false;
     }
 
     async checkUserExists() {
@@ -213,7 +235,35 @@ class ProfilePage extends Component<IProps, IState> {
         }
     }
 
+    async addFriend(): Promise<void> {
+        const request = await axios.post(
+            "http://localhost:3333/social/send_friend_request/",
+            JSON.stringify({
+                requesterUsername: sessionStorage.getItem("username"),
+                requestedUsername: this.state.username,
+                refreshToken: sessionStorage.getItem("refreshToken"),
+                accessToken: sessionStorage.getItem("accessToken"),
+            }),
+            { headers: { "Content-Type": "application/json" } }
+        );
+        if (request.data.success === true) {
+            sessionStorage.setItem("refreshToken", request.data.refreshToken);
+            sessionStorage.setItem("accessToken", request.data.accessToken);
+        }
+        else {
+            if (request.data.error === "User already in friend list.") {
+                sessionStorage.setItem("refreshToken", request.data.refreshToken);
+                sessionStorage.setItem("accessToken", request.data.accessToken);
+                console.error(request.data.error)
+            }
+            console.log("failed to send")
+            console.error(request.data.error)
+        }
+    }
+
     render() {
+        if (this.props.profileId != undefined && sessionStorage.getItem('username') == this.state.username)
+            window.location.href = "/profile"
         let ratio = this.state.wins * 100 / (this.state.wins + this.state.losses);
         if (this.state.wins === 0
             || this.state.losses === 0)
@@ -250,6 +300,17 @@ class ProfilePage extends Component<IProps, IState> {
                         </button>
                     }
                 </div>
+                {this.props.profileId !== undefined ?
+                    (this.state.isFriend === false ? (
+                        <button onClick={() => this.addFriend()} className='add-friend-profile'>
+                            Add Friend
+                        </button>
+                    ) : <div className='friend-state-div'>
+                        TMP STATUS HERE
+                    </div>)
+                    : null
+                }
+
                 <div className="stats">
                     <div className="winLose">
                         <p>Wins/Losses: {this.state.wins}/{this.state.losses} &ensp;{ratio.toFixed(2)}%</p>
