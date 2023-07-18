@@ -12,7 +12,7 @@ export class ChannelController {
     }
 
     @Post('create')
-    async createChannel(@Body() body: { username: string, accessToken: string, refreshToken: string, channelName: string, password?: string, isPrivate: boolean }) {
+    async createChannel(@Body() body: { username: string, accessToken: string, refreshToken: string, channelName: string, hasPassword: boolean, password?: string, isPrivate: boolean }) {
         return await this.channelService.createChannel(body);
     }
 

@@ -282,6 +282,9 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
 
   async function changePassword() {
     const newPassword = prompt("Enter new password");
+    if (newPassword.length < 1) {
+      return;
+    }
     const request = await axios.post(
       "http://localhost:3333/channel/change_password_channel",
       JSON.stringify({

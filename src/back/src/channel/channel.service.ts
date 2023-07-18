@@ -152,8 +152,8 @@ export class ChannelService {
         return { success: true, channels: retChannels, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
     }
 
-    async createChannel(body: { username: string, accessToken: string, refreshToken: string, channelName: string, password?: string, isPrivate: boolean }) {
-        const { username, accessToken, refreshToken, channelName, password, isPrivate } = body;
+    async createChannel(body: { username: string, accessToken: string, refreshToken: string, channelName: string, hasPassword: boolean, password?: string, isPrivate: boolean }) {
+        const { username, accessToken, refreshToken, channelName, hasPassword, password, isPrivate } = body;
         const user = await this.prismaService.user.findUnique({ where: { username: username } });
         if (!user) {
             return { success: false, error: 'User not found' };
@@ -165,23 +165,44 @@ export class ChannelService {
         if (channel) {
             return { success: false, error: 'Channel already exists' };
         }
-        const createdChannel = await this.prismaService.channel.create({
-            data: {
-                channelName: channelName,
-                password: password,
-                isPrivate: isPrivate,
-                owner: user.id,
-                channelMode: isPrivate ? 'private' : 'public',
-            },
-        });
-        const updatedChannel = await this.prismaService.channel.update({
-            where: { id: createdChannel.id },
-            data: {
-                users: {
-                    set: [...createdChannel.users, user.id],
+        if (hasPassword == true) {
+            const createdChannel = await this.prismaService.channel.create({
+                data: {
+                    channelName: channelName,
+                    password: password,
+                    isPrivate: isPrivate,
+                    owner: user.id,
+                    channelMode: isPrivate ? 'private' : 'public',
                 },
-            },
-        });
+            });
+            const updatedChannel = await this.prismaService.channel.update({
+                where: { id: createdChannel.id },
+                data: {
+                    users: {
+                        set: [...createdChannel.users, user.id],
+                    },
+                },
+            });
+        }
+        else {
+            const createdChannel = await this.prismaService.channel.create({
+                data: {
+                    channelName: channelName,
+                    password: '',
+                    isPrivate: isPrivate,
+                    owner: user.id,
+                    channelMode: isPrivate ? 'private' : 'public',
+                },
+            });
+            const updatedChannel = await this.prismaService.channel.update({
+                where: { id: createdChannel.id },
+                data: {
+                    users: {
+                        set: [...createdChannel.users, user.id],
+                    },
+                },
+            });
+        }
         return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
     }
 
