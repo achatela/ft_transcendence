@@ -139,12 +139,23 @@ class GameBoard extends Component<IProps, IState> {
         this.magicWidthRatio = this.rect!.width / 1000;
         let leftPaddle = document.querySelector('.leftPaddle') as HTMLElement
         let rightPaddle = document.querySelector('.rightPaddle') as HTMLElement
+        let middleBoard = document.querySelector('.middleBoard') as HTMLElement
+        let points = document.querySelectorAll('.point') as NodeListOf<HTMLElement>
         leftPaddle.style.width = 20 / 1000 * this.rect!.width + "px";
         leftPaddle.style.height = 100 / 600 * this.rect!.height + "px";
         leftPaddle.style.marginLeft = 50 / 1000 * this.rect!.width + "px";
         rightPaddle.style.width = 20 / 1000 * this.rect!.width + "px";
         rightPaddle.style.height = 100 / 600 * this.rect!.height + "px";
         rightPaddle.style.marginRight = 50 / 1000 * this.rect!.width + "px";
+        middleBoard.style.width = 3 / 1000 * this.rect!.width + "px";
+        middleBoard.style.height = 600 / 600 * this.rect!.height + "px";
+        points.forEach((point) => {
+            point.style.width = 100 + "%";
+            // point.style.height = 3 / 600 * this.rect!.height + "px";
+            // point.style.marginBottom = (600 / 600 * this.rect!.height) / 12 + "px";
+            point.style.height = 100 + "%";
+            point.style.marginBottom = 100 / 11 + "px";
+        })
         let ball = document.querySelector('.ball') as HTMLElement
         ball.style.width = 20 / 1000 * this.rect!.width + "px";
         ball.style.height = 20 / 600 * this.rect!.height + "px";
@@ -190,6 +201,19 @@ class GameBoard extends Component<IProps, IState> {
                     <p className="leftUser">{this.leftUser}</p>
                     <p className="rightUser">{this.rightUser}</p>
                     <div className="gameBoard">
+                        <div className='middleBoard'>
+                            <div className='point'></div>
+                            <div className='point'></div>
+                            <div className='point'></div>
+                            <div className='point'></div>
+                            <div className='point'></div>
+                            <div className='point'></div>
+                            <div className='point'></div>
+                            <div className='point'></div>
+                            <div className='point'></div>
+                            <div className='point'></div>
+                            <div className='point'></div>
+                        </div>
                         <p className="leftScore">{this.state.leftPlayerScore}</p>
                         <p className="rightScore">{this.state.rightPlayerScore}</p>
                         <div className="leftPaddle" style={{ top: this.state.leftPaddleY }}></div>
@@ -208,6 +232,7 @@ class GameBoard extends Component<IProps, IState> {
                         <p className="leftUser">{this.leftUser}</p>
                         <p className="rightUser">{this.rightUser}</p>
                         <div className="gameBoard">
+                            <div className='middleBoard'></div>
                             <p className="leftScore">{this.state.leftPlayerScore}</p>
                             <p className="rightScore">{this.state.rightPlayerScore}</p>
                             <div className="leftPaddle" style={{ top: this.state.leftPaddleY }}></div>

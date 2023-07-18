@@ -9,4 +9,7 @@ Ajouter un check JWT quand on upload un avatar + vérifier qu'on check partout
 Ajouter la date des games dans l'historique, peut-être get que les 10 dernières
 Bug mdp de channels (ajouter un boolean quand la string mdp est vide a la creation)
 
-Pour mode custom: - Nouvelle map -
+Pour mode custom:
+    - Nouvelle map
+    - Double paddle, fleches et zs
+    - 

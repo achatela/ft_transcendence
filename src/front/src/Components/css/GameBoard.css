@@ -6,7 +6,11 @@
     height: 70vh;
     background-color: black;
     transform: translate(-50%, -50%);
-    border: 4px solid white;
+    /*outside border*/
+    border: 1px solid white;
+    border-radius: 10px;
+    /*inside border*/
+    box-shadow: 0 0 0 4px black, 0 0 0 5px white;
 }
 
 .ball {
@@ -96,4 +100,15 @@
 .state-message-p {
     font-size: 4rem;
     display: block;
+}
+
+.middleBoard {
+    position: absolute;
+    margin-left: 50%;
+    display: flex;
+    flex-direction: column;
+}
+
+.point {
+    background-color: white;
 }
