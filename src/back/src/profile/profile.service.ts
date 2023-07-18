@@ -118,10 +118,12 @@ export class ProfileService {
       if (!userToReturn) {
         return ({ success: false, error: "Wrong id" })
       }
-      return ({ success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken, matches: userToReturn.matchHistory })
+      const matches = userToReturn.matchHistory.slice(-10);
+      return ({ success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken, matches: matches })
     }
     else {
-      return ({ success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken, matches: user.matchHistory })
+      const matches = user.matchHistory.slice(-10);
+      return ({ success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken, matches: matches })
     }
   }
 }

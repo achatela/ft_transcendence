@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './css/MatchHistory.css'
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { match } from 'assert';
 
 function withParams(WrappedComponent: React.ComponentType<any>) {
     return (props: any) => {
@@ -60,23 +61,49 @@ class MatchHistory extends Component<IProps, IState> {
         }
     }
 
+    matchDecoder(match: string) {
+        // the string is formatted like this: "L:dokzaodi W:teodpzja 8 - 11" or "W:teodpzja L:teodpzja 11 - 9"
+
+        let winner = match.split(" ")[0].split(":")[1]
+        let loser = match.split(" ")[1].split(":")[1]
+        let winnerScore = parseInt(match.split(" ")[2].split("-")[0])
+        let loserScore = parseInt(match.split(" ")[4])
+        if (winner == sessionStorage.getItem("username")) {
+            return { leftLetter: "W", rightLetter: "L", leftUsername: winner, rightUsername: loser, leftScore: winnerScore, rightScore: loserScore }
+        }
+        else {
+            return { leftLetter: "L", rightLetter: "W", leftUsername: loser, rightUsername: winner, leftScore: loserScore, rightScore: winnerScore }
+        }
+    }
+
     render() {
-        console.log("rednering match history")
         return (
             <div className='match-history-div'>
                 {this.state.matches?.map((match, index) => {
+                    let matchObj = this.matchDecoder(match)
+                    setTimeout((index) => {
+                        let leftLetter = document.querySelectorAll('.match-left-letter')[index] as HTMLElement;
+                        leftLetter.style.color = matchObj.leftLetter == "W" ? "green" : "red";
+                        let leftUsername = document.querySelectorAll('.match-left-username')[index] as HTMLElement;
+                        leftUsername.style.color = matchObj.leftLetter == "W" ? "green" : "red";
+                        let rightLetter = document.querySelectorAll('.match-right-letter')[index] as HTMLElement;
+                        rightLetter.style.color = matchObj.rightLetter == "W" ? "green" : "red";
+                        let rightUsername = document.querySelectorAll('.match-right-username')[index] as HTMLElement;
+                        rightUsername.style.color = matchObj.rightLetter == "W" ? "green" : "red";
+                    }, 20, index)
                     return (
                         <div className='match-history-match-div' key={index}>
-                            {/* <div className='match-history-match-id-div'>
-                                <p className='match-history-match-id-text'>Match {index + 1}</p>
-                            </div> */}
                             <div className='match-history-match-info-div'>
-                                <p className='match-history-match-info-text'>{match}</p>
+                                <p className='match-left-letter'>{matchObj.leftLetter}</p>
+                                <p className='match-left-username'>{matchObj.leftUsername}</p>
+                                <p className='match-left-score'>{matchObj.leftScore}</p>
+                                <p className='match-right-letter'>{matchObj.rightLetter}</p>
+                                <p className='match-right-username'>{matchObj.rightUsername}</p>
+                                <p className='match-right-score'>{matchObj.rightScore}</p>
                             </div>
                         </div>
                     )
-                })
-                }
+                })}
             </div>
         );
     }
