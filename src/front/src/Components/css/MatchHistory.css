@@ -15,23 +15,11 @@
     height: calc(8vh - 4px);
 }
 
-.match-history-match-info-div:hover {
-    opacity: 0.8;
-}
-
 .match-history-match-info-div p {
     text-align: center;
     font-size: 2rem;
     vertical-align: middle;
-    line-height: calc(5vh - 4px);
-    display: inline;
-}
-
-.match-history-match-div p {
-    text-align: center;
-    font-size: 2rem;
-    vertical-align: middle;
-    line-height: calc(5vh - 4px);
+    line-height: calc(8vh - 4px);
     display: inline;
 }
 
@@ -40,6 +28,7 @@
     width: 5%;
     height: 100%;
     background-color: #1e1e1e;
+    /*move the text vertically to the middle of the parent div*/
 }
 
 .match-right-letter {
