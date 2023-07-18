@@ -43,7 +43,7 @@ export default function HomePage(props: any) {
   function removeBall() {
     setBalls((prevBalls) => {
       "accessToken"
-      if (prevBalls.length > 1) {
+      if (prevBalls.length > 0) {
         return prevBalls.slice(0, -1);
       } else {
         return prevBalls;
@@ -161,12 +161,12 @@ export default function HomePage(props: any) {
         </div>
         <div className="remember-me-wrapper">
         </div>
+        {showErrorUser && usernameAlreadyExists()}
+        {showErrorUnique && loginNotUnique()}
+        {showErrorNot && loginNot()}
         <button className="sign-up-button" type="button" onClick={redirectFortyTwo}>Sign Up</button>
         <button className="sign-in-button" type="button" onClick={redirectSignIn}>Sign In</button>
       </div>
-      {showErrorUser && usernameAlreadyExists()}
-      {showErrorUnique && loginNotUnique()}
-      {showErrorNot && loginNot()}
       {balls.map((ball, index) => (
         <BouncingBall key={index} loginDiv={loginDivRef} speed={speed} />
       ))}
