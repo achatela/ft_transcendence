@@ -201,7 +201,7 @@ export default class SocialPage extends Component<IProps, IState> {
       sessionStorage.setItem("refreshToken", request.data.refreshToken);
       sessionStorage.setItem("accessToken", request.data.accessToken);
       inputElement.value = "Friend request sent !";
-    }
+    } 
     else {
       if (request.data.error === "User already in friend list.") {
         sessionStorage.setItem("refreshToken", request.data.refreshToken);
