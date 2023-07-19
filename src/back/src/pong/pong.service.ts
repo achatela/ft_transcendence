@@ -48,10 +48,10 @@ export class PongService {
     try {
       const index = this.map1.get(socketId);
       if (index !== undefined) {
-        if (this.gameStates[index].socketLeft === 0 || this.gameStates[index].socketRight === 0) {
+        if (this.gameStates[index]?.socketLeft === 0 || this.gameStates[index]?.socketRight === 0) {
           return 0;
         }
-        if (this.gameStates[index].socketLeft !== 0 && this.gameStates[index].socketRight !== 0) {
+        if (this.gameStates[index]?.socketLeft !== 0 && this.gameStates[index]?.socketRight !== 0) {
           return 1;
         }
       }
@@ -65,11 +65,11 @@ export class PongService {
     console.log("in disconnect socket function, socket = ", socketId)
     const index = this.map1.get(socketId);
     if (index !== undefined) {
-      if (this.gameStates[index].socketLeft === socketId) {
+      if (this.gameStates[index]?.socketLeft === socketId) {
         this.gameStates[index].socketLeft = 0;
         io.to(this.gameStates[index].socketRight).emit('opponentDisconnected', { message: "Your opponent disconnected" });
         setTimeout(() => {
-          if (this.gameStates[index].socketLeft === 0) {
+          if (this.gameStates[index]?.socketLeft === 0) {
             // set to online
             this.gameStates.splice(index, 1);
           }
@@ -79,7 +79,7 @@ export class PongService {
         this.gameStates[index].socketRight = 0;
         io.to(this.gameStates[index].socketLeft).emit('opponentDisconnected', { message: "Your opponent disconnected" });
         setTimeout(() => {
-          if (this.gameStates[index].socketRight === 0) {
+          if (this.gameStates[index]?.socketRight === 0) {
             // set to online
             this.gameStates.splice(index, 1);
           }
