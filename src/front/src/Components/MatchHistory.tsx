@@ -49,12 +49,10 @@ class MatchHistory extends Component<IProps, IState> {
             sessionStorage.setItem("accessToken", response.data.accessToken);
             console.log("match history retrieved")
             console.log(response.data.matches)
-            this.setState({ matches: response.data.matches })
+            this.setState({ matches: response.data.matches.reverse() })
             return;
         }
         else {
-            // if (response.data.error == "Wrong id")
-            // window.location.href = "/history"
             console.log("failed to retrieve match history")
             console.log(response.data.error)
             return;

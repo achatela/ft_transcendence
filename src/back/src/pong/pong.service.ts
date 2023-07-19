@@ -36,6 +36,14 @@ export class PongService {
     }, 1000);
   }
 
+  async createClassic(username: string, opponentUsername: string, usernameId: number, opponentUsernameId: number) {
+    this.gameStates.push({ id1: usernameId, id2: opponentUsernameId, socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false, onOff: false, started: false, speedMultiplier: 10, statsAttributed: false });
+
+    await this.prismaService.user.update({ where: { id: usernameId }, data: { status: 'playing classic' } });
+    await this.prismaService.user.update({ where: { id: opponentUsernameId }, data: { status: 'playing classic' } });
+    return { success: true };
+  }
+
   gameStatus(socketId: any, io: any) {
     try {
       const index = this.map1.get(socketId);
@@ -137,12 +145,12 @@ export class PongService {
   async gameLogicClassic(index: number, io: any) {
     let gameState = this.gameStates[index];
 
-    if (gameState.leftScore == 11 || gameState.rightScore == 11) {
+    if (gameState.leftScore == 1 || gameState.rightScore == 1) {
       if (gameState.statsAttributed == false) {
         gameState.statsAttributed = true;
         let historyWinnerString = "";
         let historyLoserString = "";
-        if (gameState.leftScore == 11) {
+        if (gameState.leftScore == 1) {
           await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { wins: { increment: 1 }, xpBar: { increment: 100 } } });
           await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { losses: { increment: 1 }, xpBar: { increment: 50 } } });
           const user1 = await this.prismaService.user.findUnique({ where: { id: gameState.id1 } });
@@ -180,7 +188,7 @@ export class PongService {
         }
         const user1 = await this.prismaService.user.findUnique({ where: { id: gameState.id1 } });
         const user2 = await this.prismaService.user.findUnique({ where: { id: gameState.id2 } });
-        if (gameState.leftScore == 11) {
+        if (gameState.leftScore == 1) {
           io.to(this.gameStates[index].socketLeft).emit('gameOver', { message: "You won " + this.gameStates[index].leftScore + " - " + this.gameStates[index].rightScore + " against " + user2.username });
           io.to(this.gameStates[index].socketRight).emit('gameOver', { message: "You lost " + this.gameStates[index].leftScore + " - " + this.gameStates[index].rightScore + " against " + user1.username });
         }

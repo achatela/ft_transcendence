@@ -8,6 +8,10 @@ let bcrypt = require('bcryptjs');
 export class ChannelService {
     constructor(private prismaService: PrismaService, private authService: AuthService) { }
 
+    async inviteClassicPong(body: { username: string; accessToken: string; refreshToken: string; channelName: string; }) {
+        const { username, accessToken, refreshToken, channelName } = body;
+    }
+
     async quitChannel(body: { username: string; accessToken: string; refreshToken: string; channelName: string; }) {
         const { username, accessToken, refreshToken, channelName } = body;
         const user = await this.prismaService.user.findUnique({ where: { username: username } });

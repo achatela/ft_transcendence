@@ -37,4 +37,9 @@ export class PongController {
     async getCustomPongStatus(@Body() userInput: { username: string, refreshToken: string, accessToken: string }): Promise<{ success: boolean, refreshToken?: string, accessToken?: string, queueStatus?: string }> {
         return await this.pongService.queueStatusCustomPong(userInput.username, userInput.refreshToken, userInput.accessToken);
     }
+
+    @Post('create_classic')
+    async createClassic(@Body() userInput: { username: string, opponentUsername: string, usernameId: number, opponentUsernameId: number }): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
+        return await this.pongService.createClassic(userInput.username, userInput.opponentUsername, userInput.usernameId, userInput.opponentUsernameId);
+    }
 }

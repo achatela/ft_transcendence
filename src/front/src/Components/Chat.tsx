@@ -80,6 +80,44 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
         console.log("received a message from socket", message)
         setMessages(messages => [...messages, { senderId: message.senderId, text: message.text, time: message.time, username: message.username, avatar: message.avatar }]);
       });
+      socket.on('receiveInviteClassic', (message: { fromUsername: string, toUsername: string }) => {
+        console.log('received invite classic', message)
+        console.log(message.toUsername, sessionStorage.getItem("username"))
+        if (message.toUsername === sessionStorage.getItem("username")) {
+          // eslint-disable-next-line no-restricted-globals
+          const answer = confirm(message.fromUsername + " invited you to play classic mode")
+          if (answer === true) {
+            console.log('WWW sent accept')
+            socket.emit('acceptClassic', { room: chat.room, username: sessionStorage.getItem("username"), targetUsername: message.fromUsername });
+            window.location.href = '/game/'
+          }
+          else {
+            console.log('WWW sent decline')
+            socket.emit('declineClassic', { room: chat.room, username: sessionStorage.getItem("username"), targetUsername: message.fromUsername });
+          }
+        }
+        // else if (message.fromUsername === sessionStorage.getItem("username"))
+        // alert("You invited " + message.toUsername + " to play classic mode")
+      })
+      socket.on('receiveAcceptClassic', async (message: { fromUsername: string, toUsername: string, fromId: number, toId: number }) => {
+        console.log(message)
+        if (message.toUsername === sessionStorage.getItem("username")) {
+          const request = await axios.post('http://localhost:3333/pong/create_classic/', JSON.stringify({
+            username: message.fromUsername,
+            opponentUsername: message.toUsername,
+            usernameId: message.fromId,
+            opponentUsernameId: message.toId,
+          }), { headers: { "Content-Type": "application/json" } });
+          if (request.data.success === true) {
+            if (message.toUsername === sessionStorage.getItem("username"))
+              window.location.href = '/game/'
+          }
+          else {
+            console.error("failed to create classic game")
+          }
+        }
+      })
+
 
       return () => {
         setMessages([]);
@@ -384,6 +422,10 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
     }
   }
 
+  async function classicUserChannel() {
+    socket.emit('inviteClassic', { room: chat.room, username: sessionStorage.getItem("username"), targetUsername: sessionStorage.getItem('tmpUsername') });
+  }
+
   return (
     <div>
       <div onClick={() => { setContextMenu({ ...contextMenu, show: false }) }}>
@@ -395,11 +437,12 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
         }
         {contextMenu.show == true && isChannel == true ?
           <div className='context-menu' style={{ left: contextMenu.position.x, top: contextMenu.position.y }}>
-            <div onClick={() => { kickUserChannel() }}>kick</div>
-            <div onClick={() => { banUserChannel() }}>ban</div>
-            <div onClick={() => { muteUserChannel() }}>mute</div>
-            <div onClick={() => { promoteUserChannel() }}>promote</div>
-            <div onClick={() => { demoteUserChannel() }}>demote</div>
+            <div onClick={() => { kickUserChannel() }}>Kick</div>
+            <div onClick={() => { banUserChannel() }}>Ban</div>
+            <div onClick={() => { muteUserChannel() }}>Mute</div>
+            <div onClick={() => { promoteUserChannel() }}>Promote</div>
+            <div onClick={() => { demoteUserChannel() }}>Demote</div>
+            <div onClick={() => { classicUserChannel() }} >Invite Classic mode</div>
           </div> : null
         }
         {isError === true ? <div className='error-message-chat'>{errorMessage}</div> : null}

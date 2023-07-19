@@ -68,4 +68,18 @@ export class ChannelGateway {
         this.server.emit('messageChannel', { senderId: sender.id, text: body.message, time: messages[0].createdAt, username: user.username, avatar: user.avatar });
         console.log(socket.id, ":", body.message);
     }
+
+    @SubscribeMessage('inviteClassic')
+    async handleInviteClassic(@ConnectedSocket() socket: Socket, @MessageBody() body: { room: string, username: string, targetUsername: string }): Promise<void> {
+        this.server.emit('receiveInviteClassic', { fromUsername: body.username, toUsername: body.targetUsername });
+    }
+
+    @SubscribeMessage('acceptClassic')
+    async acceptClassic(@ConnectedSocket() socket: Socket, @MessageBody() body: { room: string, username: string, targetUsername: string }): Promise<void> {
+        console.log(body.username, body.targetUsername)
+        const user = await this.prismaService.user.findUnique({ where: { username: body.username }, select: { id: true } });
+        const targetUser = await this.prismaService.user.findUnique({ where: { username: body.targetUsername }, select: { id: true } });
+
+        this.server.emit('receiveAcceptClassic', { fromUsername: body.username, toUsername: body.targetUsername, fromId: user.id, toId: targetUser.id });
+    }
 }
