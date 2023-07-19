@@ -61,19 +61,29 @@ export class PongService {
     return 0;
   }
 
-  async disconnectSocket(socketId: any, username: string) {
+  async disconnectSocket(socketId: any, io: any) {
     console.log("in disconnect socket function, socket = ", socketId)
     const index = this.map1.get(socketId);
     if (index !== undefined) {
       if (this.gameStates[index].socketLeft === socketId) {
-        console.log('left set to 0')
         this.gameStates[index].socketLeft = 0;
-        // this.gameStates[index].id1 = 0;
+        io.to(this.gameStates[index].socketRight).emit('opponentDisconnected', { message: "Your opponent disconnected" });
+        setTimeout(() => {
+          if (this.gameStates[index].socketLeft === 0) {
+            // set to online
+            this.gameStates.splice(index, 1);
+          }
+        }, 10000);
       }
       else {
-        console.log('right set to 0')
         this.gameStates[index].socketRight = 0;
-        // this.gameStates[index].id2 = 0;
+        io.to(this.gameStates[index].socketLeft).emit('opponentDisconnected', { message: "Your opponent disconnected" });
+        setTimeout(() => {
+          if (this.gameStates[index].socketRight === 0) {
+            // set to online
+            this.gameStates.splice(index, 1);
+          }
+        }, 10000);
       }
     }
     this.map1.delete(socketId);
@@ -145,12 +155,16 @@ export class PongService {
   async gameLogicClassic(index: number, io: any) {
     let gameState = this.gameStates[index];
 
-    if (gameState.leftScore == 1 || gameState.rightScore == 1) {
+    if (gameState.socketLeft == 0 || gameState.socketRight == 0) {
+      return;
+    }
+
+    if (gameState.leftScore == 11 || gameState.rightScore == 11) {
       if (gameState.statsAttributed == false) {
         gameState.statsAttributed = true;
         let historyWinnerString = "";
         let historyLoserString = "";
-        if (gameState.leftScore == 1) {
+        if (gameState.leftScore == 11) {
           await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { wins: { increment: 1 }, xpBar: { increment: 100 } } });
           await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { losses: { increment: 1 }, xpBar: { increment: 50 } } });
           const user1 = await this.prismaService.user.findUnique({ where: { id: gameState.id1 } });
@@ -188,7 +202,7 @@ export class PongService {
         }
         const user1 = await this.prismaService.user.findUnique({ where: { id: gameState.id1 } });
         const user2 = await this.prismaService.user.findUnique({ where: { id: gameState.id2 } });
-        if (gameState.leftScore == 1) {
+        if (gameState.leftScore == 11) {
           io.to(this.gameStates[index].socketLeft).emit('gameOver', { message: "You won " + this.gameStates[index].leftScore + " - " + this.gameStates[index].rightScore + " against " + user2.username });
           io.to(this.gameStates[index].socketRight).emit('gameOver', { message: "You lost " + this.gameStates[index].leftScore + " - " + this.gameStates[index].rightScore + " against " + user1.username });
         }
@@ -330,6 +344,9 @@ export class PongService {
               this.gameStartClassic(index);
               this.gameStates[index].started = true;
             }
+            else {
+              io.to(this.gameStates[index].socketRight).emit('opponentReconnected', {});
+            }
           }
         }
         else {
@@ -343,6 +360,9 @@ export class PongService {
             if (this.gameStates[index].started === false) {
               this.gameStartClassic(index);
               this.gameStates[index].started = true;
+            }
+            else {
+              io.to(this.gameStates[index].socketLeft).emit('opponentReconnected', {});
             }
           }
         }

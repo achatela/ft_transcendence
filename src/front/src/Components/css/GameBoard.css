@@ -112,3 +112,12 @@
 .point {
     background-color: white;
 }
+
+.reconnect-message {
+    font-size: 2rem;
+    top: 5vh;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    color: white;
+}

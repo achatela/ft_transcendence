@@ -22,27 +22,28 @@ export class PongGateway {
       interval = null;
       socket.emit('gameState', {});
       socket.on('connectGameClassic', (data) => {
-        this.pongService.changeSocketClassic(data.socketId, data.login, io);
+        this.pongService.changeSocketClassic(socket.id, data.login, io);
       });
-      socket.on('moveUp', (data) => {
-        this.pongService.moveUp(data.socketId);
+      socket.on('moveUp', () => {
+        this.pongService.moveUp(socket.id);
       });
-      socket.on('moveDown', (data) => {
-        this.pongService.moveDown(data.socketId);
+      socket.on('moveDown', () => {
+        this.pongService.moveDown(socket.id);
       });
       socket.on('update', (data) => {
         // need to move the setInterval, so we check before if the player is already in a game
         interval = setInterval(() => {
-          if (this.pongService.gameStatus(data.socketId, io) == 0)
+          if (this.pongService.gameStatus(socket.id, io) == 0)
             return;
-          const ret = this.pongService.getGameState(data.socketId, io);
+          const ret = this.pongService.getGameState(socket.id, io);
           socket.emit('update', ret);
         }, 16); // 30 fps je crois
         console.log("update", data);
       });
       socket.on('disconnect', (data) => {
-        console.log("disconnectId", data)
-        this.pongService.disconnectSocket(data.socketId, data.username);
+        console.log(socket.id)
+        // console.log("disconnectId", data, data.ping, data.transport, data.handshake, data.time, data.skip)
+        this.pongService.disconnectSocket(socket.id, io);
         clearInterval(interval);
       });
       // socket.on('disconnect', (data) => {

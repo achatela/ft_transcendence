@@ -25,6 +25,9 @@ interface IState {
     socket: any;
     gameEnded: boolean;
     message: string;
+    disconnectMessage: string;
+    displayDisconnectMessage: boolean;
+    secondsLeft: number;
 }
 
 class GameBoard extends Component<IProps, IState> {
@@ -55,6 +58,9 @@ class GameBoard extends Component<IProps, IState> {
             canvasContext: null,
             gameEnded: false,
             message: "",
+            displayDisconnectMessage: false,
+            disconnectMessage: "Opponent disconnected, redirecting to profile in",
+            secondsLeft: 10,
         };
         this.interval = setInterval(() => { }, 10);
         this.rect = null;
@@ -126,6 +132,22 @@ class GameBoard extends Component<IProps, IState> {
                 this.state.socket.off('update');
                 this.state.socket.disconnect({ socketId: this.state.socket.id });
             })
+            this.state.socket.on('opponentDisconnected', (data: any) => {
+                this.setState({ displayDisconnectMessage: true, secondsLeft: 10 });
+                this.interval = setInterval(() => {
+                    this.setState((prevState) => ({
+                        secondsLeft: prevState.secondsLeft - 1,
+                    }))
+                }, 1000);
+                this.sleep(10000).then(() => {
+                    window.location.href = "/profile";
+                })
+            })
+            this.state.socket.on('opponentReconnected', (data: any) => {
+                this.setState({ displayDisconnectMessage: false });
+                clearInterval(this.interval);
+                // this.state.socket.emit("update", { socketId: this.state.socket.id });
+            })
             this.state.socket.emit("events", { socketId: this.state.socket.id, login: sessionStorage.getItem("username") });
             this.state.socket.emit("update", { socketId: this.state.socket.id });
             console.log("socketId", this.state.socket.id)
@@ -163,13 +185,13 @@ class GameBoard extends Component<IProps, IState> {
 
         document.addEventListener('keydown', (event) => {
             if (event.keyCode === upArrow)
-                this.state.socket.emit("moveUp", { socketId: this.state.socket.id });
+                this.state.socket.emit("moveUp");
             else if (event.keyCode === downArrow)
-                this.state.socket.emit("moveDown", { socketId: this.state.socket.id });
+                this.state.socket.emit("moveDown");
             else if (event.keyCode === zKey)
-                this.state.socket.emit("moveUp", { socketId: this.state.socket.id });
+                this.state.socket.emit("moveUp");
             else if (event.keyCode === sKey)
-                this.state.socket.emit("moveDown", { socketId: this.state.socket.id });
+                this.state.socket.emit("moveDown");
         }
         );
     }
@@ -197,7 +219,14 @@ class GameBoard extends Component<IProps, IState> {
     render(): JSX.Element {
         return (
             this.state.gameEnded == false ? (
-                <div className='gameboard-div'>
+                < div className='gameboard-div' >
+                    {this.state.displayDisconnectMessage == true ?
+                        <p className='reconnect-message'>
+                            {this.state.disconnectMessage} {this.state.secondsLeft}
+                        </p>
+                        :
+                        null
+                    }
                     <p className="leftUser">{this.leftUser}</p>
                     <p className="rightUser">{this.rightUser}</p>
                     <div className="gameBoard">
@@ -220,7 +249,7 @@ class GameBoard extends Component<IProps, IState> {
                         <div className="ball" style={{ left: this.state.ballX, top: this.state.ballY }}></div>
                         <div className="rightPaddle" style={{ top: this.state.rightPaddleY }}></div>
                     </div>
-                </div>
+                </div >
             ) :
                 <>
                     <div className="gameOver">
@@ -232,7 +261,19 @@ class GameBoard extends Component<IProps, IState> {
                         <p className="leftUser">{this.leftUser}</p>
                         <p className="rightUser">{this.rightUser}</p>
                         <div className="gameBoard">
-                            <div className='middleBoard'></div>
+                            <div className='middleBoard'>
+                                <div className='point'></div>
+                                <div className='point'></div>
+                                <div className='point'></div>
+                                <div className='point'></div>
+                                <div className='point'></div>
+                                <div className='point'></div>
+                                <div className='point'></div>
+                                <div className='point'></div>
+                                <div className='point'></div>
+                                <div className='point'></div>
+                                <div className='point'></div>
+                            </div>
                             <p className="leftScore">{this.state.leftPlayerScore}</p>
                             <p className="rightScore">{this.state.rightPlayerScore}</p>
                             <div className="leftPaddle" style={{ top: this.state.leftPaddleY }}></div>
