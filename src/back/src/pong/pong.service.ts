@@ -69,9 +69,10 @@ export class PongService {
         this.gameStates[index].socketLeft = 0;
         io.to(this.gameStates[index].socketRight).emit('opponentDisconnected', { message: "Your opponent disconnected" });
         setTimeout(() => {
-          if (this.gameStates[index]?.socketLeft === 0) {
+          if (this.gameStates[index]?.socketLeft === 0 && this.gameStates[index]?.socketRight === 0) {
             // set to online
             this.gameStates.splice(index, 1);
+            console.log('game removed once?')
           }
         }, 10000);
       }
@@ -79,9 +80,10 @@ export class PongService {
         this.gameStates[index].socketRight = 0;
         io.to(this.gameStates[index].socketLeft).emit('opponentDisconnected', { message: "Your opponent disconnected" });
         setTimeout(() => {
-          if (this.gameStates[index]?.socketRight === 0) {
+          if (this.gameStates[index]?.socketRight === 0 && this.gameStates[index]?.socketLeft === 0) {
             // set to online
             this.gameStates.splice(index, 1);
+            console.log('game removed once?')
           }
         }, 10000);
       }
@@ -290,7 +292,7 @@ export class PongService {
   getGameState(socketId: number, io: any): { success: boolean, gameState?: { x: number, y: number, dx: number, dy: number, paddleLeft: number, paddleRight: number, leftScore: number, rightScore: number } } {
     try {
       const index = this.map1.get(socketId);
-      if (this.gameStates[index].socketLeft === 0 || this.gameStates[index].socketRight === 0) {
+      if (this.gameStates[index]?.socketLeft === 0 || this.gameStates[index]?.socketRight === 0) {
         console.log('user disconnected')
         return { success: false };
       }
