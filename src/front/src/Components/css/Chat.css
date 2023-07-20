@@ -164,3 +164,68 @@
     font-size: 3rem;
     position: absolute;
 }
+
+.invite-div {
+    /*center in the middle of the screen*/
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /*end center*/
+    width: 40vw;
+    height: 15vh;
+    background-color: black;
+    border: 3px solid white;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.invite-div-content {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1.5vh;
+    margin-bottom: 1.5vh;
+    padding-left: 1vh;
+    padding-right: 1vh;
+    font-size: 3rem;
+    color: white;
+}
+
+.invite-div-accept {
+    margin-left: calc(40vw / 2 - 10vw - 1vw);
+    margin-right: 2vw;
+    margin-top: 2vh;
+    font-size: 2rem;
+    width: 10vw;
+    background-color: #28a745;
+    padding: 0.5vh 1vw;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.invite-div-accept:hover {
+    opacity: 0.8;
+    cursor: pointer;
+}
+
+.invite-div-decline {
+    width: 10vw;
+    margin-top: 2vh;
+    font-size: 2rem;
+    background-color: black;
+    padding: 0.5vh 1vw;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.invite-div-decline:hover {
+    opacity: 0.8;
+    cursor: pointer;
+}

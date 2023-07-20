@@ -28,6 +28,8 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<any[]>([]);
   const [isError, setError] = useState(false);
+  const [showInvite, setShowInvite] = useState(false);
+  const [fromUsername, setFromUsername] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const messagesRef = useChatScroll(messages);
   const socket = io('http://localhost:3333');
@@ -84,17 +86,20 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
         console.log('received invite classic', message)
         console.log(message.toUsername, sessionStorage.getItem("username"))
         if (message.toUsername === sessionStorage.getItem("username")) {
+          setFromUsername(message.fromUsername);
+          setShowInvite(true);
+          console.log(showInvite)
           // eslint-disable-next-line no-restricted-globals
-          const answer = confirm(message.fromUsername + " invited you to play classic mode")
-          if (answer === true) {
-            console.log('WWW sent accept')
-            socket.emit('acceptClassic', { room: chat.room, username: sessionStorage.getItem("username"), targetUsername: message.fromUsername });
-            window.location.href = '/game/'
-          }
-          else {
-            console.log('WWW sent decline')
-            socket.emit('declineClassic', { room: chat.room, username: sessionStorage.getItem("username"), targetUsername: message.fromUsername });
-          }
+          // const answer = window.confirm(message.fromUsername + " invited you to play classic mode")
+          // if (answer === true) {
+          //   console.log('WWW sent accept')
+          //   socket.emit('acceptClassic', { room: chat.room, username: sessionStorage.getItem("username"), targetUsername: message.fromUsername });
+          //   window.location.href = '/game/'
+          // }
+          // else {
+          //   console.log('WWW sent decline')
+          //   socket.emit('declineClassic', { room: chat.room, username: sessionStorage.getItem("username"), targetUsername: fromUsername });
+          // }
         }
         // else if (message.fromUsername === sessionStorage.getItem("username"))
         // alert("You invited " + message.toUsername + " to play classic mode")
@@ -428,6 +433,20 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
 
   return (
     <div>
+      {showInvite === true ?
+        <div className='invite-div'>
+          <p className='invite-div-content'>{fromUsername} + " invited you to play classic mode"</p>
+          <button className='invite-div-accept' onClick={() => {
+            setShowInvite(false);
+            socket.emit('acceptClassic', { room: chat.room, username: sessionStorage.getItem("username"), targetUsername: fromUsername });
+            window.location.href = '/game/'
+          }}>Accept</button>
+          <button className='invite-div-decline' onClick={() => {
+            setShowInvite(false);
+            socket.emit('declineClassic', { room: chat.room, username: sessionStorage.getItem("username"), targetUsername: fromUsername });
+          }}>Decline</button>
+        </div> : null
+      }
       <div onClick={() => { setContextMenu({ ...contextMenu, show: false }) }}>
         {contextMenu.show == true && isChannel == false ?
           <div className='context-menu' style={{ left: contextMenu.position.x, top: contextMenu.position.y }}>
