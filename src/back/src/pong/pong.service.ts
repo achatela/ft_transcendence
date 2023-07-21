@@ -37,7 +37,7 @@ export class PongService {
   }
 
   async createClassic(username: string, opponentUsername: string, usernameId: number, opponentUsernameId: number) {
-    this.gameStates.push({ id1: usernameId, id2: opponentUsernameId, socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false, onOff: false, started: false, speedMultiplier: 10, statsAttributed: false });
+    this.gameStates.push({ mode: "classic", id1: usernameId, id2: opponentUsernameId, socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false, onOff: false, started: false, speedMultiplier: 10, statsAttributed: false });
 
     await this.prismaService.user.update({ where: { id: usernameId }, data: { status: 'playing classic' } });
     await this.prismaService.user.update({ where: { id: opponentUsernameId }, data: { status: 'playing classic' } });
@@ -74,7 +74,7 @@ export class PongService {
             this.gameStates.splice(index, 1);
             console.log('game removed once?')
           }
-        }, 10000);
+        }, 10800);
       }
       else {
         this.gameStates[index].socketRight = 0;
@@ -85,7 +85,7 @@ export class PongService {
             this.gameStates.splice(index, 1);
             console.log('game removed once?')
           }
-        }, 10000);
+        }, 10800);
       }
     }
     this.map1.delete(socketId);
@@ -152,6 +152,141 @@ export class PongService {
       return true;
     }
     return false;
+  }
+
+  async gameLogicCustom(index: any, io: any) {
+    let gameState = this.gameStates[index];
+
+    if (gameState.socketLeft == 0 || gameState.socketRight == 0) {
+      return;
+    }
+
+    if (gameState.leftScore == 11 || gameState.rightScore == 11) {
+      if (gameState.statsAttributed == false) {
+        gameState.statsAttributed = true;
+        let historyWinnerString = "";
+        let historyLoserString = "";
+        if (gameState.leftScore == 11) {
+          await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { wins: { increment: 1 }, xpBar: { increment: 100 } } });
+          await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { losses: { increment: 1 }, xpBar: { increment: 50 } } });
+          const user1 = await this.prismaService.user.findUnique({ where: { id: gameState.id1 } });
+          const user2 = await this.prismaService.user.findUnique({ where: { id: gameState.id2 } });
+          if (user1.xpBar >= user1.ladderLevel * 100) {
+            await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { ladderLevel: { increment: 1 } } });
+            await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { xpBar: { decrement: user1.ladderLevel * 100 } } });
+          }
+          if (user2.xpBar >= user2.ladderLevel * 100) {
+            await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { ladderLevel: { increment: 1 } } });
+            await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { xpBar: { decrement: user2.ladderLevel * 100 } } });
+          }
+          historyWinnerString = 'W:' + user1.username + ' L:' + user2.username + ' ' + gameState.leftScore + ' - ' + gameState.rightScore;
+          historyLoserString = 'L:' + user1.username + ' W:' + user2.username + ' ' + gameState.rightScore + ' - ' + gameState.leftScore;
+          await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { matchHistory: { push: historyWinnerString } } });
+          await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { matchHistory: { push: historyLoserString } } });
+        }
+        else {
+          await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { losses: { increment: 1 }, xpBar: { increment: 50 } } });
+          await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { wins: { increment: 1 }, xpBar: { increment: 100 } } });
+          const user1 = await this.prismaService.user.findUnique({ where: { id: gameState.id1 } });
+          const user2 = await this.prismaService.user.findUnique({ where: { id: gameState.id2 } });
+          if (user1.xpBar >= user1.ladderLevel * 100) {
+            await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { ladderLevel: { increment: 1 } } });
+            await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { xpBar: { decrement: user1.ladderLevel * 100 } } });
+          }
+          if (user2.xpBar >= user2.ladderLevel * 100) {
+            await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { ladderLevel: { increment: 1 } } });
+            await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { xpBar: { decrement: user2.ladderLevel * 100 } } });
+          }
+          historyWinnerString = 'W:' + user2.username + ' L:' + user1.username + ' ' + gameState.rightScore + ' - ' + gameState.leftScore;
+          historyLoserString = 'L:' + user2.username + ' W:' + user1.username + ' ' + gameState.leftScore + ' - ' + gameState.rightScore;
+          await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { matchHistory: { push: historyLoserString } } });
+          await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { matchHistory: { push: historyWinnerString } } });
+        }
+        const user1 = await this.prismaService.user.findUnique({ where: { id: gameState.id1 } });
+        const user2 = await this.prismaService.user.findUnique({ where: { id: gameState.id2 } });
+        if (gameState.leftScore == 11) {
+          io.to(this.gameStates[index].socketLeft).emit('gameOver', { message: "You won " + this.gameStates[index].leftScore + " - " + this.gameStates[index].rightScore + " against " + user2.username });
+          io.to(this.gameStates[index].socketRight).emit('gameOver', { message: "You lost " + this.gameStates[index].leftScore + " - " + this.gameStates[index].rightScore + " against " + user1.username });
+        }
+        else {
+          io.to(this.gameStates[index].socketLeft).emit('gameOver', { message: "You lost " + this.gameStates[index].leftScore + " - " + this.gameStates[index].rightScore + " against " + user2.username });
+          io.to(this.gameStates[index].socketRight).emit('gameOver', { message: "You won " + this.gameStates[index].leftScore + " - " + this.gameStates[index].rightScore + " against " + user1.username });
+        }
+        await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { status: "online" } });
+        await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { status: "online" } });
+
+        this.gameStates.splice(index, 1);
+        return;
+      }
+    }
+
+    const newX = gameState.x + gameState.dx * this.gameStates[index].speedMultiplier;
+    const newY = gameState.y + gameState.dy * this.gameStates[index].speedMultiplier;
+    const lpc = this.checkPaddleCollision(newX, newY, paddleGap, gameState.paddleLeft);
+    const rpc = this.checkPaddleCollision(newX, newY, widthGameboard - paddleGap - paddleWidth, gameState.paddleRight);
+    if (lpc == true && gameState.prevLpc == false) {
+      const dirX = -gameState.dx;
+      let dirY = (gameState.y + squareSize / 2 - gameState.paddleLeft - paddleMid) / paddleMid;
+      if (dirY / dirX > 2)
+        dirY = 2 * dirX;
+      else if (dirY / dirX < -2)
+        dirY = -2 * dirX;
+      this.gameStates[index].speedMultiplier += 10;
+      const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
+      gameState.dx = dirX / magnitude;
+      gameState.dy = dirY / magnitude;
+    }
+    else if (rpc == true && gameState.prevRpc == false) {
+      const dirX = -gameState.dx;
+      let dirY = (gameState.y + squareSize / 2 - gameState.paddleRight - paddleMid) / paddleMid;
+      if (dirY / dirX > 2)
+        dirY = 2 * dirX;
+      else if (dirY / dirX < -2)
+        dirY = -2 * dirX;
+      this.gameStates[index].speedMultiplier += 10;
+      const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
+      gameState.dx = dirX / magnitude;
+      gameState.dy = dirY / magnitude;
+    }
+    else if (newY < 0 || newY + squareSize > heightGameboard) {
+      gameState.dy = -gameState.dy;
+    }
+    else if (newX < 0) {
+      this.gameStates[index].speedMultiplier = 10;
+      const dirX = Math.random() * 2 - 1;
+      let dirY = Math.random() * 2 - 1;
+      if (dirY / dirX > 2)
+        dirY = 2 * dirX;
+      else if (dirY / dirX < -2)
+        dirY = -2 * dirX;
+      const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
+      gameState.rightScore++;
+      gameState.x = widthGameboardMid - midSquare;
+      gameState.y = heightGameboardMid - midSquare;
+      gameState.dx = dirX / magnitude;
+      gameState.dy = dirY / magnitude;
+    }
+    else if (newX + squareSize > widthGameboard) {
+      this.gameStates[index].speedMultiplier = 10;
+      const dirX = Math.random() * 2 - 1;
+      let dirY = Math.random() * 2 - 1;
+      if (dirY / dirX > 2)
+        dirY = 2 * dirX;
+      else if (dirY / dirX < -2)
+        dirY = -2 * dirX;
+      const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
+      gameState.leftScore++;
+      gameState.x = widthGameboardMid - midSquare;
+      gameState.y = heightGameboardMid - midSquare;
+      gameState.dx = dirX / magnitude;
+      gameState.dy = dirY / magnitude;
+    }
+    else {
+      gameState.x = newX;
+      gameState.y = newY;
+    }
+    gameState.prevLpc = lpc;
+    gameState.prevRpc = rpc;
   }
 
   async gameLogicClassic(index: number, io: any) {
@@ -299,7 +434,10 @@ export class PongService {
       if (index !== undefined) {
         if (this.gameStates[index].onOff === false) {
           this.gameStates[index].onOff = true;
-          this.gameLogicClassic(index, io);
+          if (this.gameStates[index].mode === "classic")
+            this.gameLogicClassic(index, io);
+          else
+            this.gameLogicCustom(index, io);
         }
         else
           this.gameStates[index].onOff = false;
@@ -327,6 +465,75 @@ export class PongService {
     gameState.paddleLeft = heightGameboardMid - paddleMid;
     gameState.paddleRight = heightGameboardMid - paddleMid;
   }
+
+
+  async changeSocketCustom(id: any, login: any, io: any) {
+    try {
+      const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: login } });
+      const index = this.gameStates.findIndex((gameState) => gameState.id1 === user.id || gameState.id2 === user.id);
+      if (index !== -1) {
+        if (this.gameStates[index].id1 === user.id && this.gameStates[index].socketLeft === 0) {
+          this.gameStates[index].socketLeft = id;
+          this.map1.set(id, index);
+          if (this.gameStates[index].socketRight !== 0 && this.gameStates[index].socketLeft !== 0) {
+            const username1 = await this.prismaService.user.findUnique({ where: { id: this.gameStates[index].id1 } });
+            const username2 = await this.prismaService.user.findUnique({ where: { id: this.gameStates[index].id2 } });
+            io.to('').emit('usernames', { leftUser: username1.username, rightUser: username2.username });
+            io.to(this.gameStates[index].socketLeft).emit('usernames', { leftUser: username1.username, rightUser: username2.username });
+            io.to(this.gameStates[index].socketRight).emit('usernames', { leftUser: username1.username, rightUser: username2.username });
+            if (this.gameStates[index].started === false) {
+              this.gameStartCustom(index);
+              this.gameStates[index].started = true;
+            }
+            else {
+              io.to(this.gameStates[index].socketRight).emit('opponentReconnected', {});
+            }
+          }
+        }
+        else {
+          this.gameStates[index].socketRight = id;
+          this.map1.set(id, index);
+          if (this.gameStates[index].socketRight !== 0 && this.gameStates[index].socketLeft !== 0) {
+            const username1 = await this.prismaService.user.findUnique({ where: { id: this.gameStates[index].id1 } });
+            const username2 = await this.prismaService.user.findUnique({ where: { id: this.gameStates[index].id2 } });
+            io.to(this.gameStates[index].socketLeft).emit('usernames', { leftUser: username1.username, rightUser: username2.username });
+            io.to(this.gameStates[index].socketRight).emit('usernames', { leftUser: username1.username, rightUser: username2.username });
+            if (this.gameStates[index].started === false) {
+              this.gameStartCustom(index);
+              this.gameStates[index].started = true;
+            }
+            else {
+              io.to(this.gameStates[index].socketLeft).emit('opponentReconnected', {});
+            }
+          }
+        }
+        console.log('gameStates in classic', this.gameStates);
+        return { success: true };
+      }
+    } catch (e) {
+      console.log(e);
+    }
+    return { success: false };
+  }
+  async gameStartCustom(index: number) {
+    let gameState = this.gameStates[index];
+    gameState.x = widthGameboardMid - (squareSize / 2);
+    gameState.y = heightGameboardMid - (squareSize / 2);
+    gameState.dx = Math.random() * 2 - 1;
+    gameState.dy = Math.random() * 2 - 1;
+    if (gameState.dy / gameState.dx > 2)
+      gameState.dy = 2 * gameState.dx;
+    else if (gameState.dy / gameState.dx < -2)
+      gameState.dy = -2 * gameState.dx;
+    let magnitude = Math.sqrt(gameState.dx ** 2) + Math.sqrt(gameState.dy ** 2);
+    gameState.dx /= magnitude;
+    gameState.dy /= magnitude;
+    gameState.paddleLeft = heightGameboardMid - paddleMid;
+    gameState.paddleRight = heightGameboardMid - paddleMid;
+    gameState.secondPaddleLeft = heightGameboardMid - paddleMid;
+    gameState.secondPaddleRight = heightGameboardMid - paddleMid;
+  }
+
 
   async changeSocketClassic(socketId: number, username: string, io: any): Promise<{ success: boolean }> {
     try {
@@ -398,7 +605,7 @@ export class PongService {
       if (this.queueCustom.length >= 2) {
         const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueCustom[0] } });
         const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueCustom[1] } });
-        this.gameStates.push({ statsAttributed: false, started: false, id1: this.queueClassic[0], id2: this.queueClassic[1], socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false, onOff: false, speedMultiplier: 10 });
+        this.gameStates.push({ mode: "custom", secondPaddleLeft: 0, secondPaddleRight: 0, statsAttributed: false, started: false, id1: this.queueCustom[0], id2: this.queueCustom[1], socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false, onOff: false, speedMultiplier: 10 });
         this.queueCustom.splice(0, 2);
         console.log('gameStates in custom', this.gameStates);
         await this.prismaService.user.update({ where: { id: user1.id }, data: { status: 'playing custom' } });
@@ -465,7 +672,7 @@ export class PongService {
       if (this.queueClassic.length >= 2) {
         const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueClassic[0] } });
         const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueClassic[1] } });
-        this.gameStates.push({ statsAttributed: false, started: false, id1: this.queueClassic[0], id2: this.queueClassic[1], socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false, onOff: false, speedMultiplier: 10 });
+        this.gameStates.push({ mode: "classic", statsAttributed: false, started: false, id1: this.queueClassic[0], id2: this.queueClassic[1], socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false, onOff: false, speedMultiplier: 10 });
         this.queueClassic.splice(0, 2);
         console.log('gameStates in classic', this.gameStates);
         await this.prismaService.user.update({ where: { id: user1.id }, data: { status: 'playing classic' } });

@@ -112,10 +112,19 @@ class GameBoard extends Component<IProps, IState> {
             socket: io("http://localhost:3131/"),
         }));
         this.sleep(175).then(() => {
-            this.state.socket.emit("connectGameClassic", {
-                socketId: this.state.socket.id,
-                login: sessionStorage.getItem("username"),
-            });
+            if (sessionStorage.getItem('gameMode') === "classic") {
+                this.state.socket.emit("connectGameClassic", {
+                    socketId: this.state.socket.id,
+                    login: sessionStorage.getItem("username"),
+                });
+            }
+            else if (sessionStorage.getItem('gameMode') === "custom") {
+                console.log('custom sent')
+                this.state.socket.emit("connectGameCustom", {
+                    socketId: this.state.socket.id,
+                    login: sessionStorage.getItem("username"),
+                });
+            }
             this.state.socket.on("gameState", (data: any) => {
                 console.log("server response")
             });
@@ -138,9 +147,10 @@ class GameBoard extends Component<IProps, IState> {
                     this.setState((prevState) => ({
                         secondsLeft: prevState.secondsLeft - 1,
                     }))
-                }, 1000);
+                }, 980);
                 this.sleep(10000).then(() => {
-                    window.location.href = "/profile";
+                    if (this.state.secondsLeft <= 0)
+                        window.location.href = "/profile";
                 })
             })
             this.state.socket.on('opponentReconnected', (data: any) => {

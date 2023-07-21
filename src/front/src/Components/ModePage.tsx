@@ -42,6 +42,7 @@ class ModePage extends Component<IProps, IState> {
                     sessionStorage.setItem('refreshToken', response.data.refreshToken);
                     if (response.data.queueStatus === "found") {
                         sessionStorage.setItem("queueing", "");
+                        sessionStorage.setItem("gameMode", "classic")
                         window.location.href = "/game";
                     }
                 }
@@ -66,6 +67,7 @@ class ModePage extends Component<IProps, IState> {
                     sessionStorage.setItem('refreshToken', response.data.refreshToken);
                     if (response.data.queueStatus === "found") {
                         sessionStorage.setItem("queueing", "");
+                        sessionStorage.setItem("gameMode", "custom")
                         window.location.href = "/game";
                     }
                 }

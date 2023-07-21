@@ -24,6 +24,9 @@ export class PongGateway {
       socket.on('connectGameClassic', (data) => {
         this.pongService.changeSocketClassic(socket.id, data.login, io);
       });
+      socket.on('connectGameCustom', (data) => {
+        this.pongService.changeSocketCustom(socket.id, data.login, io);
+      })
       socket.on('moveUp', () => {
         this.pongService.moveUp(socket.id);
       });
