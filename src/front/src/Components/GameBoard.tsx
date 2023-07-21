@@ -21,6 +21,8 @@ interface IState {
     rightPlayerScore: number;
     leftPaddleY: number;
     rightPaddleY: number;
+    secondLeftPaddleY: number;
+    secondRightPaddleY: number;
     canvasContext: CanvasRenderingContext2D | null;
     socket: any;
     gameEnded: boolean;
@@ -49,6 +51,8 @@ class GameBoard extends Component<IProps, IState> {
             socket: null,
             leftPaddleY: 0,
             rightPaddleY: 0,
+            secondLeftPaddleY: -1,
+            secondRightPaddleY: -1,
             ballDirectionX: dirX / magnitude,
             ballDirectionY: dirY / magnitude,
             leftPlayerScore: 0,
@@ -92,17 +96,41 @@ class GameBoard extends Component<IProps, IState> {
     }
 
     displayGame(data: any) {
-        if (data.success == true)
-            this.setState((prevState) => ({
-                leftPaddleY: data.gameState.paddleLeft * this.magicHeightRatio,
-                rightPaddleY: data.gameState.paddleRight * this.magicHeightRatio,
-                ballX: data.gameState.x * this.magicWidthRatio,
-                ballY: data.gameState.y * this.magicHeightRatio,
-                leftPlayerScore: data.gameState.leftScore,
-                rightPlayerScore: data.gameState.rightScore,
-            }));
-        let leftPaddle = document.querySelector('.leftPaddle') as HTMLElement
-        let rightPaddle = document.querySelector('.rightPaddle') as HTMLElement
+        if (data.success == true) {
+            if (sessionStorage.getItem('gameMode') === ('classic'))
+                this.setState((prevState) => ({
+                    leftPaddleY: data.gameState.paddleLeft * this.magicHeightRatio,
+                    rightPaddleY: data.gameState.paddleRight * this.magicHeightRatio,
+                    ballX: data.gameState.x * this.magicWidthRatio,
+                    ballY: data.gameState.y * this.magicHeightRatio,
+                    leftPlayerScore: data.gameState.leftScore,
+                    rightPlayerScore: data.gameState.rightScore,
+                }));
+            else if (sessionStorage.getItem('gameMode') === ('custom')) {
+                this.setState((prevState) => ({
+                    leftPaddleY: data.gameState.paddleLeft * this.magicHeightRatio,
+                    rightPaddleY: data.gameState.paddleRight * this.magicHeightRatio,
+                    secondLeftPaddleY: data.gameState.secondPaddleLeft * this.magicHeightRatio,
+                    secondRightPaddleY: data.gameState.secondPaddleRight * this.magicHeightRatio,
+                    ballX: data.gameState.x * this.magicWidthRatio,
+                    ballY: data.gameState.y * this.magicHeightRatio,
+                    leftPlayerScore: data.gameState.leftScore,
+                    rightPlayerScore: data.gameState.rightScore,
+                }));
+
+                let secondLeftPaddle = document.querySelectorAll('.leftPaddle')[1] as HTMLElement
+                let secondRightPaddle = document.querySelectorAll('.rightPaddle')[1] as HTMLElement
+
+                secondLeftPaddle.style.width = 20 / 1000 * this.rect!.width + "px";
+                secondLeftPaddle.style.height = 100 / 600 * this.rect!.height + "px";
+                secondLeftPaddle.style.marginLeft = 275 / 1000 * this.rect!.width + "px";
+                secondRightPaddle.style.width = 20 / 1000 * this.rect!.width + "px";
+                secondRightPaddle.style.height = 100 / 600 * this.rect!.height + "px";
+                secondRightPaddle.style.marginRight = 275 / 1000 * this.rect!.width + "px";
+            }
+        }
+        let leftPaddle = document.querySelectorAll('.leftPaddle')[0] as HTMLElement
+        let rightPaddle = document.querySelectorAll('.rightPaddle')[0] as HTMLElement
         leftPaddle.style.top = this.state.leftPaddleY + "px";
         rightPaddle.style.top = this.state.rightPaddleY + "px";
     }
@@ -183,8 +211,6 @@ class GameBoard extends Component<IProps, IState> {
         middleBoard.style.height = 600 / 600 * this.rect!.height + "px";
         points.forEach((point) => {
             point.style.width = 100 + "%";
-            // point.style.height = 3 / 600 * this.rect!.height + "px";
-            // point.style.marginBottom = (600 / 600 * this.rect!.height) / 12 + "px";
             point.style.height = 100 + "%";
             point.style.marginBottom = 100 / 11 + "px";
         })
@@ -193,17 +219,39 @@ class GameBoard extends Component<IProps, IState> {
         ball.style.height = 20 / 600 * this.rect!.height + "px";
         window.addEventListener('resize', this.handleResize)
 
+        const keysPressed: { [key: number]: boolean } = {};
+
         document.addEventListener('keydown', (event) => {
-            if (event.keyCode === upArrow)
-                this.state.socket.emit("moveUp");
-            else if (event.keyCode === downArrow)
-                this.state.socket.emit("moveDown");
-            else if (event.keyCode === zKey)
-                this.state.socket.emit("moveUp");
-            else if (event.keyCode === sKey)
-                this.state.socket.emit("moveDown");
-        }
-        );
+            keysPressed[event.keyCode] = true;
+            if (keysPressed[upArrow] && keysPressed[zKey]) {
+                this.state.socket.emit("moveUp", { key: "up" });
+                this.state.socket.emit("moveUp", { key: "Z" });
+            }
+            else if (keysPressed[downArrow] && keysPressed[zKey]) {
+                this.state.socket.emit("moveDown", { key: "down" });
+                this.state.socket.emit("moveUp", { key: "Z" });
+            }
+            else if (keysPressed[upArrow] && keysPressed[sKey]) {
+                this.state.socket.emit("moveUp", { key: "up" });
+                this.state.socket.emit("moveDown", { key: "S" });
+            }
+            else if (keysPressed[downArrow] && keysPressed[sKey]) {
+                this.state.socket.emit("moveDown", { key: "down" });
+                this.state.socket.emit("moveDown", { key: "S" });
+            }
+            else if (keysPressed[upArrow])
+                this.state.socket.emit("moveUp", { key: "up" });
+            else if (keysPressed[downArrow])
+                this.state.socket.emit("moveDown", { key: "down" });
+            else if (keysPressed[zKey])
+                this.state.socket.emit("moveUp", { key: "Z" });
+            else if (keysPressed[sKey])
+                this.state.socket.emit("moveDown", { key: "S" });
+        });
+
+        document.addEventListener('keyup', (event) => {
+            delete keysPressed[event.keyCode];
+        });
     }
 
     componentWillUnmount() {
@@ -256,8 +304,10 @@ class GameBoard extends Component<IProps, IState> {
                         <p className="leftScore">{this.state.leftPlayerScore}</p>
                         <p className="rightScore">{this.state.rightPlayerScore}</p>
                         <div className="leftPaddle" style={{ top: this.state.leftPaddleY }}></div>
+                        {this.state.secondLeftPaddleY != -1 ? <div className="leftPaddle" style={{ top: this.state.secondLeftPaddleY }}></div> : null}
                         <div className="ball" style={{ left: this.state.ballX, top: this.state.ballY }}></div>
                         <div className="rightPaddle" style={{ top: this.state.rightPaddleY }}></div>
+                        {this.state.secondRightPaddleY != -1 ? <div className="rightPaddle" style={{ top: this.state.secondRightPaddleY }}></div> : null}
                     </div>
                 </div >
             ) :
@@ -287,8 +337,10 @@ class GameBoard extends Component<IProps, IState> {
                             <p className="leftScore">{this.state.leftPlayerScore}</p>
                             <p className="rightScore">{this.state.rightPlayerScore}</p>
                             <div className="leftPaddle" style={{ top: this.state.leftPaddleY }}></div>
+                            {this.state.secondLeftPaddleY != -1 ? <div className="leftPaddle" style={{ top: this.state.secondLeftPaddleY }}></div> : null}
                             <div className="ball" style={{ left: this.state.ballX, top: this.state.ballY }}></div>
                             <div className="rightPaddle" style={{ top: this.state.rightPaddleY }}></div>
+                            {this.state.secondRightPaddleY != -1 ? <div className="rightPaddle" style={{ top: this.state.secondRightPaddleY }}></div> : null}
                         </div>
                     </div>
                 </>

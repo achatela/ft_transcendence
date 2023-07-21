@@ -27,11 +27,11 @@ export class PongGateway {
       socket.on('connectGameCustom', (data) => {
         this.pongService.changeSocketCustom(socket.id, data.login, io);
       })
-      socket.on('moveUp', () => {
-        this.pongService.moveUp(socket.id);
+      socket.on('moveUp', (data) => {
+        this.pongService.moveUp(socket.id, data.key);
       });
-      socket.on('moveDown', () => {
-        this.pongService.moveDown(socket.id);
+      socket.on('moveDown', (data) => {
+        this.pongService.moveDown(socket.id, data.key);
       });
       socket.on('update', (data) => {
         // need to move the setInterval, so we check before if the player is already in a game

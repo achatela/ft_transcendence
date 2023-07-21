@@ -92,21 +92,53 @@ export class PongService {
     console.log('deleted', + socketId)
   }
 
-  moveUp(socketId: number) {
+  moveUp(socketId: number, key: string) {
     try {
       const index = this.map1.get(socketId);
       if (index !== undefined) {
-        if (this.gameStates[index].socketLeft === socketId) {
-          if (this.gameStates[index].paddleLeft - paddleStep < 0)
-            this.gameStates[index].paddleLeft = 0;
-          else
-            this.gameStates[index].paddleLeft -= paddleStep;
+        if (this.gameStates[index].mode == "classic") {
+          if (this.gameStates[index].socketLeft === socketId) {
+            if (this.gameStates[index].paddleLeft - paddleStep < 0)
+              this.gameStates[index].paddleLeft = 0;
+            else
+              this.gameStates[index].paddleLeft -= paddleStep;
+          }
+          else {
+            if (this.gameStates[index].paddleRight - paddleStep < 0)
+              this.gameStates[index].paddleRight = 0;
+            else
+              this.gameStates[index].paddleRight -= paddleStep;
+          }
         }
-        else {
-          if (this.gameStates[index].paddleRight - paddleStep < 0)
-            this.gameStates[index].paddleRight = 0;
-          else
-            this.gameStates[index].paddleRight -= paddleStep;
+        else if (this.gameStates[index].mode == "custom") {
+          if (this.gameStates[index].socketLeft === socketId) {
+            if (key == "Z") {
+              if (this.gameStates[index].secondPaddleLeft - paddleStep < 0)
+                this.gameStates[index].secondPaddleLeft = 0;
+              else
+                this.gameStates[index].secondPaddleLeft -= paddleStep;
+            }
+            else if (key == "up") {
+              if (this.gameStates[index].paddleLeft - paddleStep < 0)
+                this.gameStates[index].paddleLeft = 0;
+              else
+                this.gameStates[index].paddleLeft -= paddleStep;
+            }
+          }
+          else {
+            if (key == "Z") {
+              if (this.gameStates[index].secondPaddleRight - paddleStep < 0)
+                this.gameStates[index].secondPaddleRight = 0;
+              else
+                this.gameStates[index].secondPaddleRight -= paddleStep;
+            }
+            else if (key == "up") {
+              if (this.gameStates[index].paddleRight - paddleStep < 0)
+                this.gameStates[index].paddleRight = 0;
+              else
+                this.gameStates[index].paddleRight -= paddleStep;
+            }
+          }
         }
       }
     } catch (e) {
@@ -114,22 +146,54 @@ export class PongService {
     }
   }
 
-  moveDown(socketId: number) {
+  moveDown(socketId: number, key: string) {
     try {
       const index = this.map1.get(socketId);
       if (index !== undefined) {
-        if (this.gameStates[index].socketLeft === socketId) {
-          if (this.gameStates[index].paddleLeft + paddleHeight + paddleStep > heightGameboard)
-            this.gameStates[index].paddleLeft = heightGameboard - paddleHeight;
-          else
-            this.gameStates[index].paddleLeft += paddleStep;
+        if (this.gameStates[index].mode == "classic") {
+          if (this.gameStates[index].socketLeft === socketId) {
+            if (this.gameStates[index].paddleLeft + paddleHeight + paddleStep > heightGameboard)
+              this.gameStates[index].paddleLeft = heightGameboard - paddleHeight;
+            else
+              this.gameStates[index].paddleLeft += paddleStep;
+          }
+          else {
+            if (this.gameStates[index].paddleRight + paddleHeight + paddleStep > heightGameboard)
+              this.gameStates[index].paddleRight = heightGameboard - paddleHeight;
+            else
+              this.gameStates[index].paddleRight += paddleStep;
+          }
+        } else if (this.gameStates[index].mode == "custom") {
+          if (this.gameStates[index].socketLeft === socketId) {
+            if (key == "S") {
+              if (this.gameStates[index].secondPaddleLeft + paddleHeight + paddleStep > heightGameboard)
+                this.gameStates[index].secondPaddleLeft = heightGameboard - paddleHeight;
+              else
+                this.gameStates[index].secondPaddleLeft += paddleStep;
+            }
+            else if (key == "down") {
+              if (this.gameStates[index].paddleLeft + paddleHeight + paddleStep > heightGameboard)
+                this.gameStates[index].paddleLeft = heightGameboard - paddleHeight;
+              else
+                this.gameStates[index].paddleLeft += paddleStep;
+            }
+          }
+          else {
+            if (key == "S") {
+              if (this.gameStates[index].secondPaddleRight + paddleHeight + paddleStep > heightGameboard)
+                this.gameStates[index].secondPaddleRight = heightGameboard - paddleHeight;
+              else
+                this.gameStates[index].secondPaddleRight += paddleStep;
+            }
+            else if (key == "down") {
+              if (this.gameStates[index].paddleRight + paddleHeight + paddleStep > heightGameboard)
+                this.gameStates[index].paddleRight = heightGameboard - paddleHeight;
+              else
+                this.gameStates[index].paddleRight += paddleStep;
+            }
+          }
         }
-        else {
-          if (this.gameStates[index].paddleRight + paddleHeight + paddleStep > heightGameboard)
-            this.gameStates[index].paddleRight = heightGameboard - paddleHeight;
-          else
-            this.gameStates[index].paddleRight += paddleStep;
-        }
+
       }
     } catch (e) {
       console.log(e);
@@ -224,26 +288,28 @@ export class PongService {
     const newY = gameState.y + gameState.dy * this.gameStates[index].speedMultiplier;
     const lpc = this.checkPaddleCollision(newX, newY, paddleGap, gameState.paddleLeft);
     const rpc = this.checkPaddleCollision(newX, newY, widthGameboard - paddleGap - paddleWidth, gameState.paddleRight);
-    if (lpc == true && gameState.prevLpc == false) {
+    const lpc2 = this.checkPaddleCollision(newX, newY, paddleGap + (275 - (paddleWidth * 2)), gameState.secondPaddleLeft);
+    const rpc2 = this.checkPaddleCollision(newX, newY, widthGameboard - paddleGap - paddleWidth - (275 - (2 * paddleWidth)), gameState.secondPaddleRight);
+    if ((lpc == true || lpc2 == true) && gameState.prevLpc == false) {
       const dirX = -gameState.dx;
       let dirY = (gameState.y + squareSize / 2 - gameState.paddleLeft - paddleMid) / paddleMid;
       if (dirY / dirX > 2)
         dirY = 2 * dirX;
       else if (dirY / dirX < -2)
         dirY = -2 * dirX;
-      this.gameStates[index].speedMultiplier += 10;
+      this.gameStates[index].speedMultiplier += 1;
       const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
       gameState.dx = dirX / magnitude;
       gameState.dy = dirY / magnitude;
     }
-    else if (rpc == true && gameState.prevRpc == false) {
+    else if ((rpc == true || rpc2 == true) && gameState.prevRpc == false) {
       const dirX = -gameState.dx;
       let dirY = (gameState.y + squareSize / 2 - gameState.paddleRight - paddleMid) / paddleMid;
       if (dirY / dirX > 2)
         dirY = 2 * dirX;
       else if (dirY / dirX < -2)
         dirY = -2 * dirX;
-      this.gameStates[index].speedMultiplier += 10;
+      this.gameStates[index].speedMultiplier += 1;
       const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
       gameState.dx = dirX / magnitude;
       gameState.dy = dirY / magnitude;
@@ -424,7 +490,7 @@ export class PongService {
     gameState.prevRpc = rpc;
   }
 
-  getGameState(socketId: number, io: any): { success: boolean, gameState?: { x: number, y: number, dx: number, dy: number, paddleLeft: number, paddleRight: number, leftScore: number, rightScore: number } } {
+  getGameState(socketId: number, io: any): { success: boolean, gameState?: { x: number, y: number, dx: number, dy: number, paddleLeft: number, paddleRight: number, secondPaddleLeft?: number, secondPaddleRight?: number, leftScore: number, rightScore: number } } {
     try {
       const index = this.map1.get(socketId);
       if (this.gameStates[index]?.socketLeft === 0 || this.gameStates[index]?.socketRight === 0) {
@@ -441,7 +507,10 @@ export class PongService {
         }
         else
           this.gameStates[index].onOff = false;
-        return { success: true, gameState: { x: this.gameStates[index].x, y: this.gameStates[index].y, dx: this.gameStates[index].dx, dy: this.gameStates[index].dy, paddleLeft: this.gameStates[index].paddleLeft, paddleRight: this.gameStates[index].paddleRight, leftScore: this.gameStates[index].leftScore, rightScore: this.gameStates[index].rightScore } };
+        if (this.gameStates[index].mode === "classic")
+          return { success: true, gameState: { x: this.gameStates[index].x, y: this.gameStates[index].y, dx: this.gameStates[index].dx, dy: this.gameStates[index].dy, paddleLeft: this.gameStates[index].paddleLeft, paddleRight: this.gameStates[index].paddleRight, leftScore: this.gameStates[index].leftScore, rightScore: this.gameStates[index].rightScore } };
+        else
+          return { success: true, gameState: { x: this.gameStates[index].x, y: this.gameStates[index].y, dx: this.gameStates[index].dx, dy: this.gameStates[index].dy, paddleLeft: this.gameStates[index].paddleLeft, paddleRight: this.gameStates[index].paddleRight, secondPaddleLeft: this.gameStates[index].secondPaddleLeft, secondPaddleRight: this.gameStates[index].secondPaddleRight, leftScore: this.gameStates[index].leftScore, rightScore: this.gameStates[index].rightScore } };
       }
     } catch (e) {
       console.log(e);
