@@ -175,7 +175,7 @@ class GameBoard extends Component<IProps, IState> {
                     this.setState((prevState) => ({
                         secondsLeft: prevState.secondsLeft - 1,
                     }))
-                }, 980);
+                }, 975);
                 this.sleep(10000).then(() => {
                     if (this.state.secondsLeft <= 0)
                         window.location.href = "/profile";
@@ -260,18 +260,9 @@ class GameBoard extends Component<IProps, IState> {
         this.state.socket.on('disconnect', () => {
             console.log('disconnected');
         });
-        window.removeEventListener('resize', this.handleResize)
-        window.removeEventListener('keydown', (event) => {
-            if (event.keyCode === upArrow)
-                this.state.socket.emit("moveUp", { socketId: this.state.socket.id });
-            else if (event.keyCode === downArrow)
-                this.state.socket.emit("moveDown", { socketId: this.state.socket.id });
-            else if (event.keyCode === zKey)
-                this.state.socket.emit("moveUp", { socketId: this.state.socket.id });
-            else if (event.keyCode === sKey)
-                this.state.socket.emit("moveDown", { socketId: this.state.socket.id });
-        })
-        // Needs to remove event listener 
+        window.removeEventListener('resize', this.handleResize);
+        window.removeEventListener('keydown', () => { });
+        window.removeEventListener('keyup', () => { });
     }
 
     render(): JSX.Element {

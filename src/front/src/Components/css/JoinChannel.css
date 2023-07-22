@@ -65,7 +65,7 @@
 .join-channel-div {
     display: flex;
     flex-direction: row;
-    height: 85vh;
+    height: 100%;
     border: 3px solid white;
 }
 
@@ -162,10 +162,11 @@
 
 .channels-invite {
     position: absolute;
-    border: 1px solid white;
-    top: 60%;
-    height: calc(40%);
-    width: 30%;
+    border: 3px solid white;
+    margin-left: -3px;
+    top: calc(60% + 6px);
+    height: calc(40% - 6px);
+    width: calc(30%);
     overflow-y: auto;
 }
 
