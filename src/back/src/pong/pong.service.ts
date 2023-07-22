@@ -36,6 +36,25 @@ export class PongService {
     }, 1000);
   }
 
+
+  async userIngame(username: string, refreshToken: string, accessToken: string) {
+    const user = await this.prismaService.user.findUnique({ where: { username: username } });
+    if (!user) {
+      return ({ success: false, message: "User not found" });
+    }
+    const ret = await this.authService.checkToken(user, refreshToken, accessToken);
+    if (ret.success == false) {
+      return ({ success: false, message: "Invalid token" });
+    }
+    // check in gameStates if user.id is equals to id1 or id2
+    for (let i = 0; i < this.gameStates.length; i++) {
+      if (this.gameStates[i].id1 == user.id || this.gameStates[i].id2 == user.id) {
+        return ({ success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken, inGame: true });
+      }
+    }
+    return ({ success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken, inGame: false });
+  }
+
   async createClassic(username: string, opponentUsername: string, usernameId: number, opponentUsernameId: number) {
     this.gameStates.push({ mode: "classic", id1: usernameId, id2: opponentUsernameId, socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false, onOff: false, started: false, speedMultiplier: 10, statsAttributed: false });
 

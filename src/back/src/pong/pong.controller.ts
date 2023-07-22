@@ -42,4 +42,9 @@ export class PongController {
     async createClassic(@Body() userInput: { username: string, opponentUsername: string, usernameId: number, opponentUsernameId: number }): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
         return await this.pongService.createClassic(userInput.username, userInput.opponentUsername, userInput.usernameId, userInput.opponentUsernameId);
     }
+
+    @Post('user_ingame')
+    async userIngame(@Body() userInput: { username: string, refreshToken: string, accessToken: string }) {
+        return await this.pongService.userIngame(userInput.username, userInput.refreshToken, userInput.accessToken);
+    }
 }
