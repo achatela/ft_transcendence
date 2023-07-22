@@ -103,6 +103,9 @@ export class AuthService {
 
     async checkToken(user: User, refreshToken: string, accessToken: string): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
         if (user.accessToken === accessToken) {
+            const userTmp = await this.prismaService.user.findUnique({ where: { id: user.id } });
+            if (userTmp.status == "offline" || userTmp.status == "online")
+                await this.prismaService.user.update({ where: { id: user.id }, data: { status: "online" } });
             try {
                 await this.jwtService.verify(accessToken, { secret: process.env.JWT_ACCESS_SECRET });
             }
@@ -117,12 +120,27 @@ export class AuthService {
                     catch {
                         refreshToken = this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
                         await this.prismaService.user.update({ where: { id: user.id }, data: { refreshToken: refreshToken } });
+                        setTimeout(async () => {
+                            const userTmp = await this.prismaService.user.findUnique({ where: { id: payload.id } });
+                            if (accessToken == userTmp.accessToken && userTmp.status == "online")
+                                await this.prismaService.user.update({ where: { id: payload.id }, data: { status: "offline" } });
+                            // 5 minutes
+                        }, 300000);
                         return { success: true, refreshToken: refreshToken, accessToken: accessToken };
                     }
+                    setTimeout(async () => {
+                        if (accessToken == userTmp.accessToken && userTmp.status == "online")
+                            await this.prismaService.user.update({ where: { id: payload.id }, data: { status: "offline" } });
+                    }, 300000);
                     return { success: true, refreshToken: refreshToken, accessToken: accessToken };
                 }
                 return { success: false };
             }
+            setTimeout(async () => {
+                const userTmp = await this.prismaService.user.findUnique({ where: { id: user.id } });
+                if (accessToken == userTmp.accessToken && userTmp.status == "online")
+                    await this.prismaService.user.update({ where: { id: user.id }, data: { status: "offline" } });
+            }, 300000);
             return { success: true, refreshToken: refreshToken, accessToken: accessToken };
         }
         return { success: false };

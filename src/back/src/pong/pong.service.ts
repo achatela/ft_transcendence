@@ -62,34 +62,36 @@ export class PongService {
   }
 
   async disconnectSocket(socketId: any, io: any) {
-    console.log("in disconnect socket function, socket = ", socketId)
     const index = this.map1.get(socketId);
     if (index !== undefined) {
       if (this.gameStates[index]?.socketLeft === socketId) {
         this.gameStates[index].socketLeft = 0;
         io.to(this.gameStates[index].socketRight).emit('opponentDisconnected', { message: "Your opponent disconnected" });
-        setTimeout(() => {
-          if (this.gameStates[index]?.socketLeft === 0 && this.gameStates[index]?.socketRight === 0) {
-            // set to online
-            this.gameStates.splice(index, 1);
-            console.log('game removed once?')
+        setTimeout(async () => {
+          if (this.gameStates[index]) {
+            if (this.gameStates[index]?.socketLeft === 0 && this.gameStates[index]?.socketRight === 0) {
+              await this.prismaService.user.update({ where: { id: this.gameStates[index].id1 }, data: { status: "online" } });
+              await this.prismaService.user.update({ where: { id: this.gameStates[index].id2 }, data: { status: "online" } });
+              this.gameStates.splice(index, 1);
+            }
           }
         }, 10800);
       }
       else {
         this.gameStates[index].socketRight = 0;
         io.to(this.gameStates[index].socketLeft).emit('opponentDisconnected', { message: "Your opponent disconnected" });
-        setTimeout(() => {
-          if (this.gameStates[index]?.socketRight === 0 && this.gameStates[index]?.socketLeft === 0) {
-            // set to online
-            this.gameStates.splice(index, 1);
-            console.log('game removed once?')
+        setTimeout(async () => {
+          if (this.gameStates[index]) {
+            if (this.gameStates[index]?.socketRight === 0 && this.gameStates[index]?.socketLeft === 0) {
+              await this.prismaService.user.update({ where: { id: this.gameStates[index].id1 }, data: { status: "online" } });
+              await this.prismaService.user.update({ where: { id: this.gameStates[index].id2 }, data: { status: "online" } });
+              this.gameStates.splice(index, 1);
+            }
           }
         }, 10800);
       }
     }
     this.map1.delete(socketId);
-    console.log('deleted', + socketId)
   }
 
   moveUp(socketId: number, key: string) {
