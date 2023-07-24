@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import "./css/SocialPage.css";
+// import "./css/SocialPage.css";
 import FriendRequests from "./FriendRequests";
 import Chat from "./Chat";
 import { promises } from "dns";
@@ -27,6 +27,7 @@ interface IState {
   isError: boolean;
   addFriend: boolean;
   blockUser: boolean;
+  section: string;
 }
 
 export default class SocialPage extends Component<IProps, IState> {
@@ -48,6 +49,7 @@ export default class SocialPage extends Component<IProps, IState> {
       isError: false,
       addFriend: false,
       blockUser: false,
+      section: "friends",
     };
   }
 
@@ -400,85 +402,107 @@ export default class SocialPage extends Component<IProps, IState> {
             <p className="error-message">{this.state.errorMessage}</p>
           ) : null
         }
-        {
-          this.state.friends ? (
-            <div className="friends">
-              <p className='friends-p'>Friends</p>
-              {this.state.friends.map((username) => (
-                <div key={username} className="friends-friend" style={this.state.selectedChat === username ? { backgroundColor: 'grey' } : {}}
-                  onClick={async () => {
-                    const chat = await this.getFriendChat(username);
-                    this.setState({ selectedChat: username, isError: false, isChannel: false })
-                    this.setState({ chat: chat });
-                  }
-                  } onContextMenu={
-                    (e) => {
-                      e.preventDefault();
-                      this.setState({ contextMenu: { username: username, position: { x: e.pageX, y: e.pageY } }, isError: false });
-                    }}>
-                  <div className="friend-avatar" style={{ backgroundImage: `url(${avatarUrls.get(username)})` }}></div>
-                  <div className="friend-name" data-name={username}>{username}</div>
-                  <div className="friend-status">{status.get(username)}</div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="friends">Loading...</div>
-          )
-        }
-        {
-          this.state.contextMenu && (
-            <div className="friend-context" style={{ top: this.state.contextMenu.position.y, left: this.state.contextMenu.position.x }}>
-              <button className="friend-profile" onClick={this.seeProfile} data-name={this.state.contextMenu.username}>see profile</button>
-              <button className="friend-remove" onClick={this.removeFriend} data-name={this.state.contextMenu.username}>remove friend</button>
-            </div>
-          )
-        }
-        <div className="add-friend">
-          {this.state.addFriend === true || this.state.blockUser === true ? (
-            <button className="reset-states" onClick={() => { this.setState({ addFriend: false, blockUser: false }) }}>X</button>
-          ) : <>
-            <button className="display-add" onClick={() => { this.setState({ addFriend: true }) }}>Add friend</button>
-            <button className="display-block" onClick={() => { this.setState({ blockUser: true }) }}>Block user</button>
-          </>}
-          {this.state.addFriend === true ? (<>
-            <p className="add-friend-text">Add Friend</p>
-            <input className="add-friend-input" type="text" onKeyUp={(e) => { if (e.key === 'Enter') { this.sendFriendRequestEnter() } }} />
-            <button className="add-friend-button" onClick={this.sendFriendRequest}>Send</button>
-          </>
-          ) : null}
-          {this.state.blockUser === true ? (<>
-            <p className="block-user-text">Block User</p>
-            <input className="block-user-input" type="text" onKeyUp={(e) => { if (e.key === 'Enter') { this.blockUserEnter() } }} />
-            <button className="block-user-button" onClick={this.blockUser}>Block</button>
-          </>
-          ) : null}
+        <div className="friends" style={this.state.section === "friends" ? {color: 'white', left: '84vw', top: '1vh', position: 'absolute', border: '3px solid white', fontSize: '2rem', textAlign: 'center', width: '8vw'}: {backgroundColor: 'black', color: 'white', opacity: '0.5'}}
+            onClick={async () => {
+              this.setState({ section: "friends" });
+            }
+          }
+        >
+        Friends
         </div>
-        {
-          this.state.friendRequests ? (
-            <FriendRequests friendRequests={this.state.friendRequests} />
-          ) : (
-            <div className="friend-requests">Loading...</div>
-          )
-        }
+        <div className="channels" style={this.state.section === "channels" ? {color: 'white', left: '80%', top: '2%', position: 'absolute', border: '3px solid white', fontSize: '2rem', textAlign: 'center', padding: '1rem', width: '8vw'}: {color: 'white', left: '92vw', top: '1vh', position: 'absolute', border: '3px solid white', fontSize: '2rem', textAlign: 'center', width: '8vw'}}
+            onClick={async () => {
+              this.setState({ section: "channels" });
+            }
+          }
+        >
+        Channels
+        </div>
+        {this.state.section === "friends" ? (
+          <div className="friends-section">
+          {
+            this.state.friends ? (
+              <div className="friends-list">
+                {/* <p className='friends-p'>Friends</p> */}
+                {this.state.friends.map((username) => (
+                  <div key={username} className="friends-friend" style={this.state.selectedChat === username ? { backgroundColor: 'grey' } : {}}
+                    onClick={async () => {
+                      const chat = await this.getFriendChat(username);
+                      this.setState({ selectedChat: username, isError: false, isChannel: false })
+                      this.setState({ chat: chat });
+                    }
+                    } onContextMenu={
+                      (e) => {
+                        e.preventDefault();
+                        this.setState({ contextMenu: { username: username, position: { x: e.pageX, y: e.pageY } }, isError: false });
+                      }}>
+                    <div className="friend-avatar" style={{ backgroundImage: `url(${avatarUrls.get(username)})` }}></div>
+                    <div className="friend-name" data-name={username}>{username}</div>
+                    <div className="friend-status">{status.get(username)}</div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="friends">Loading...</div>
+            )
+          }
+          {
+            this.state.contextMenu && (
+              <div className="friend-context" style={{ top: this.state.contextMenu.position.y, left: this.state.contextMenu.position.x }}>
+                <button className="friend-profile" onClick={this.seeProfile} data-name={this.state.contextMenu.username}>see profile</button>
+                <button className="friend-remove" onClick={this.removeFriend} data-name={this.state.contextMenu.username}>remove friend</button>
+              </div>
+            )
+          }
+          {
+            this.state.friendRequests ? (
+              <FriendRequests friendRequests={this.state.friendRequests} />
+            ) : (
+              <div className="friend-requests">Loading...</div>
+            )
+          }
+          <div className="add-friend">
+            {this.state.addFriend === true || this.state.blockUser === true ? (
+              <button className="reset-states" onClick={() => { this.setState({ addFriend: false, blockUser: false }) }}>X</button>
+            ) : <>
+              <button className="display-add" onClick={() => { this.setState({ addFriend: true }) }}>Add friend</button>
+              <button className="display-block" onClick={() => { this.setState({ blockUser: true }) }}>Block user</button>
+            </>}
+            {this.state.addFriend === true ? (<>
+              <p className="add-friend-text">Add Friend</p>
+              <input className="add-friend-input" type="text" onKeyUp={(e) => { if (e.key === 'Enter') { this.sendFriendRequestEnter() } }} />
+              <button className="add-friend-button" onClick={this.sendFriendRequest}>Send</button>
+            </>
+            ) : null}
+            {this.state.blockUser === true ? (<>
+              <p className="block-user-text">Block User</p>
+              <input className="block-user-input" type="text" onKeyUp={(e) => { if (e.key === 'Enter') { this.blockUserEnter() } }} />
+              <button className="block-user-button" onClick={this.blockUser}>Block</button>
+            </>
+            ) : null}
+            </div>
+          </div>
+        ): (
+          <div className="channels">
+            {this.state.createChannel === false && this.state.joinChannel === false ? (
+              <>
+                <button className="create-channel" onClick={() => { this.setState({ createChannel: true, isError: false }) }}>Create a channel</button>
+                <button className="join-channel" onClick={() => { this.setState({ joinChannel: true, isError: false }) }} >Join a channel</button>
+              </>
+            ) : (
+              this.state.createChannel === true ? (
+                <CreateChannel />
+              ) : (
+                <JoinChannel handleChannelClick={this.handleChannelClick.bind(this)} />
+              )
+            )}
+          </div>
+        )}
         {
           this.state.chat ? (
             <Chat isChannel={this.state.isChannel} chat={this.state.chat} isSelected={this.state.selectedChat} blockedIds={this.state.blockedIds} />
           ) : (
-            <div className="channels">
-              {this.state.createChannel === false && this.state.joinChannel === false ? (
-                <>
-                  <button className="create-channel" onClick={() => { this.setState({ createChannel: true, isError: false }) }}>Create a channel</button>
-                  <button className="join-channel" onClick={() => { this.setState({ joinChannel: true, isError: false }) }} >Join a channel</button>
-                </>
-              ) : (
-                this.state.createChannel === true ? (
-                  <CreateChannel />
-                ) : (
-                  <JoinChannel handleChannelClick={this.handleChannelClick.bind(this)} />
-                )
-              )}
-            </div>
+            <></>
           )
         }
 

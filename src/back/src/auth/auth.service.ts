@@ -4,15 +4,81 @@ import { User } from '@prisma/client';
 import axios from 'axios';
 import { PrismaService } from 'src/prisma/prisma.service';
 const jwt = require('jsonwebtoken');
+var bcrypt = require('bcryptjs');
 
 
 @Injectable()
 export class AuthService {
+    
     tokenApp: string;
     countdown: number;
 
     constructor(private prismaService: PrismaService, private jwtService: JwtService) {
         this.init();
+    }
+
+    async getVerifySignUp(username: string, password: string) {
+        try {
+            const user = await this.prismaService.createUser({ username: username });
+            const payload = { id: user.id };
+            const accessToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '5m' });
+            const refreshToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
+            await this.prismaService.user.update({ where: { username: username }, data: {avatar: 'http://localhost:3133/defaultPfp.png', hashedPassword: password, refreshToken: refreshToken, accessToken: accessToken } });
+            return {success: true, username: username, accessToken: accessToken, refreshToken: refreshToken};
+        }
+        catch {
+            return ({success: false, error: "user already exist"});
+        }
+    }
+
+    async getVerifySignIn(username: string, password: string) {
+        const user = await this.prismaService.user.findUnique({ where: {username: username} });
+        if (!user)
+            return ({success: false, error: "user doesn't exist"});
+        if (!(await bcrypt.compare(password, user.hashedPassword)))
+            return { success: false, error: "incorrect password" };
+        return {success: true, username: username, accessToken: user.accessToken, refreshToken: user.refreshToken};
+    }
+
+    async getRedirectFortyTwo() {
+        return {url: this.redirectUrl()};
+    }
+
+    async verifySignIn(code: string) {
+        const personnal42Token = await this.getUserToken(code);
+        if (personnal42Token.success === false)
+            return { success: false, error: "getUserToken failure" };
+        const request = await axios.get("https://api.intra.42.fr/v2/me", { headers: { Authorization: `Bearer ${personnal42Token.access_token}` } });
+        const user = await this.prismaService.user.findUnique({ where: { login: request.data.login } });
+        if (!user) {
+            let username = request.data.login;
+            if (await this.prismaService.user.findUnique({ where: { username: username } })) {
+                let i = 1;
+                while (await this.prismaService.user.findUnique({ where: { username: username + String(i) } }))
+                    i++;
+                username = username + String(i);
+            }
+            const user = await this.prismaService.createUser({ username: username, login: request.data.login, avatar: request.data.image.versions.small, personnal42Token: personnal42Token.access_token });
+            const payload = { id: user.id };
+            const accessToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '5m' });
+            const refreshToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
+            await this.prismaService.user.update({ where: { username: username } , data: { accessToken: accessToken, refreshToken: refreshToken } });
+            return {
+                success: true,
+                refreshToken: user.refreshToken,
+                accessToken: user.accessToken,
+                username: user.username,
+                twoFa: user.enabled2FA,
+            };
+        }
+        await this.prismaService.user.update({ where: { login: request.data.login }, data: { personnal42Token: personnal42Token.access_token } });
+        return {
+            success: true,
+            refreshToken: user.refreshToken,
+            accessToken: user.accessToken,
+            username: user.username,
+            twoFa: user.enabled2FA,
+        };
     }
 
     async init() {

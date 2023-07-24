@@ -58,7 +58,7 @@ export default function HomePage(props: any) {
     if (sessionStorage.getItem('sign in') === 'true') {
       sessionStorage.setItem('sign in', 'false');
       if (code) {
-        const request = await axios.post('http://localhost:3333/auth/verify_sign_in', JSON.stringify({ code: code }), { headers: { 'Content-Type': 'application/json' } });
+        const request = await axios.post('http://localhost:3333/auth/verify_sign_in_42/', JSON.stringify({ code: code }), { headers: { 'Content-Type': 'application/json' } });
         if (request.data.success == true) {
           sessionStorage.removeItem('accessToken')
           sessionStorage.setItem("accessToken", request.data.accessToken);
@@ -80,23 +80,6 @@ export default function HomePage(props: any) {
         ;
       return;
     }
-    if (code) {
-      const username = sessionStorage.getItem('username');
-      const request = await axios.post('http://localhost:3333/auth/get_code', JSON.stringify({ code: code, username: username }), { headers: { 'Content-Type': 'application/json' } });
-      if (request.data.success == true) {
-        sessionStorage.setItem("accessToken", request.data.accessToken);
-        sessionStorage.setItem("username", request.data.username);
-        sessionStorage.setItem("refreshToken", request.data.refreshToken);
-        window.location.href = 'http://localhost:3133/profile';
-      }
-      else {
-        console.error(request.data.error);
-        sessionStorage.removeItem('username')
-        setShowErrorUser(false);
-        setShowErrorNot(false);
-        setShowErrorUnique(true);
-      }
-    }
   }
 
 
@@ -105,49 +88,9 @@ export default function HomePage(props: any) {
   }, []);
 
   async function redirectFortyTwo(): Promise<void> {
-    const loginInput = document.querySelector(".login-input");
-    // @ts-ignore: Object is possibly 'null'.
-    if (loginInput.value === "") {
-      return;
-    }
-    // @ts-ignore: Object is possibly 'null'.
-    sessionStorage.setItem('username', loginInput.value);
-
-    const response = await fetch('http://localhost:3333/auth/redirect',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        // @ts-ignore: Object is possibly 'null'.
-        body: JSON.stringify({ username: loginInput.value }),
-      });
-    const answer = await response.json();
-    if (answer.success === true) {
-      window.location.href = answer.url;
-    }
-    else if (answer.success === false) {
-      // @ts-ignore: Object is possibly 'null'.
-      console.log(answer.error);
-      setShowErrorUnique(false)
-      setShowErrorNot(false)
-      setShowErrorUser(true);
-    }
-  }
-
-  async function redirectSignIn(): Promise<void> {
     sessionStorage.setItem('sign in', 'true');
-    const response = await axios.post('http://localhost:3333/auth/redirect', JSON.stringify({ username: undefined }), { headers: { 'Content-Type': 'application/json' } });
-    if (response.data.success === true) {
+    const response = await axios.get('http://localhost:3333/auth/redirect_forty_two');
       window.location.href = response.data.url;
-    }
-    else if (response.data.success === false) {
-      // @ts-ignore: Object is possibly 'null'.
-      console.log(answer.error);
-      setShowErrorUnique(false)
-      setShowErrorNot(false)
-      setShowErrorUser(true);
-    }
   }
 
 
@@ -155,18 +98,12 @@ export default function HomePage(props: any) {
     <div id="tmp">
       <SpeedSlider onSpeedChange={setSpeed} />
       <h1 className="transcendence-title">PONG</h1>
-      <div ref={loginDivRef} className="login-div" id="login-div-id">
-        <div className="password-wrapper">
-          <input className="login-input" type="text" placeholder="Login" />
-        </div>
-        <div className="remember-me-wrapper">
-        </div>
         {showErrorUser && usernameAlreadyExists()}
         {showErrorUnique && loginNotUnique()}
         {showErrorNot && loginNot()}
-        <button className="sign-up-button" type="button" onClick={redirectFortyTwo}>Sign Up</button>
-        <button className="sign-in-button" type="button" onClick={redirectSignIn}>Sign In</button>
-      </div>
+      <button className="signup-button" type="button" onClick={() => { window.location.href = "/sign_up" }}>Sign Up</button>
+      <button className="signin-button" type="button" onClick={() => { window.location.href = "/sign_in" }}>Sign In</button>
+      <button className="signin42-button" type="button" onClick={redirectFortyTwo}>Sign In 42</button>
       {balls.map((ball, index) => (
         <BouncingBall key={index} loginDiv={loginDivRef} speed={speed} />
       ))}

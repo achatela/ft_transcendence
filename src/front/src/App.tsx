@@ -10,6 +10,8 @@ import TwoFa from './Components/TwoFa'
 import NavBar from './Components/NavBar'
 import MatchHistory from './Components/MatchHistory'
 import PageNotFound from './Components/PageNotFound'
+import SignUp from './Components/SignUp'
+import SignIn from './Components/SignIn'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 function App() {
@@ -29,6 +31,8 @@ function App() {
             <Route path="/history/:profileId" element={<MatchHistory />} />
           </>
         )}
+        <Route path="/sign_up" element={<SignUp />} />
+        <Route path="/sign_in" element={<SignIn />} />
         <Route path="/" element={<HomePage />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>

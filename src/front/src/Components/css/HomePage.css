@@ -99,43 +99,61 @@
     text-align: center;
 }
 
-.sign-up-button {
-    width: 7vw;
+.signup-button {
+    position: absolute;
     background-color: black;
     border: white 2px solid;
     color: white;
-    padding-top: 1vh;
-    padding-bottom: 1vh;
+    padding: 0.5rem;
+    width: 11vw;
     text-align: center;
-    text-decoration: none;
-    font-size: 3vh;
-    margin-top: 1.5vh;
-    margin-left: 7.5vw;
+    font-size: 2.5rem;
+    top: 50vh;
+    left: 33vw;
     cursor: pointer;
 }
 
-.sign-up-button:hover {
+.signup-button:hover {
     color: black;
     background-color: white;
     cursor: pointer;
 }
 
-.sign-in-button {
-    width: 7vw;
+.signin-button {
+    position: absolute;
     background-color: black;
     border: white 2px solid;
     color: white;
-    padding-top: 1vh;
-    padding-bottom: 1vh;
+    padding: 0.5rem;
+    width: 11vw;
     text-align: center;
-    text-decoration: none;
-    font-size: 3vh;
-    margin-top: 1.5vh;
-    margin-left: 1vw;
+    font-size: 2.5rem;
+    top: 50vh;
+    left: 45vw;
     cursor: pointer;
 }
 
-.sign-in-button:hover {
+.signin-button:hover {
+    color: black;
+    background-color: white;
+    cursor: pointer;
+}
+
+.signin42-button {
+    position: absolute;
+    background-color: black;
+    border: white 2px solid;
+    color: white;
+    padding: 0.5rem;
+    width: 11vw;
+    text-align: center;
+    font-size: 2.5rem;
+    top: 50vh;
+    left: 57vw;
+    cursor: pointer;
+}
+
+.signin42-button:hover {
     color: black;
     background-color: white;
     cursor: pointer;
