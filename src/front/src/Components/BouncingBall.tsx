@@ -8,21 +8,17 @@ interface State {
   speedValue: number;
 }
 
-class BouncingBall extends Component<{ speed: number, signupButton: any, signinButton: any, signin42Button: any }, State> {
+class BouncingBall extends Component<{ speed: number, queryType: number }, State> {
   animationRef: number;
   lastFrameTime: number;
   speed: number;
   squareSize: number;
   intervalId: any;
-  signUpButton: HTMLElement | null;
-  signInButton: HTMLElement | null;
-  signIn42Button: HTMLElement | null;
-  addedDiv: HTMLElement | null;
-  removeDiv: HTMLElement | null;
   magnitude: number;
   normalizedSpeedX: number;
   normalizedSpeedY: number;
-  constructor(props: { speed: number, signupButton: any, signinButton: any, signin42Button: any }) {
+  elements: Array<any>;
+  constructor(props: { speed: number, queryType: number }) {
     super(props);
     this.state = {
       start: 0,
@@ -34,14 +30,10 @@ class BouncingBall extends Component<{ speed: number, signupButton: any, signinB
     this.lastFrameTime = performance.now();
     this.speed = 3;
     this.squareSize = 30;
-    this.signUpButton = null;
-    this.signInButton = null;
-    this.signIn42Button = null;
-    this.addedDiv = null;
-    this.removeDiv = null;
     this.magnitude = Math.sqrt(this.state.direction.dx ** 2 + this.state.direction.dy ** 2);
     this.normalizedSpeedX = this.state.direction.dx / this.magnitude;
     this.normalizedSpeedY = this.state.direction.dy / this.magnitude;
+    this.elements =  Array<any>(null);
   }
 
   handleSpeedChange = () => {
@@ -61,16 +53,8 @@ class BouncingBall extends Component<{ speed: number, signupButton: any, signinB
       return false;
     }
 
-    const elements = [
-      document.querySelector(".signup-button"),
-      document.querySelector(".signin-button"),
-      document.querySelector(".signin42-button"),
-      document.querySelector(".addBallButton"),
-      document.querySelector(".removeBallButton"),
-    ];
-
     // Check if the position overlaps with any of the elements
-    for (const element of elements) {
+    for (const element of this.elements) {
       if (element) {
         const rect = element.getBoundingClientRect();
         if (
@@ -98,12 +82,12 @@ class BouncingBall extends Component<{ speed: number, signupButton: any, signinB
   };
 
   checkCollision = (newX: number, newY: number, squareSize: number, element: HTMLElement) => {
-    const rect = element.getBoundingClientRect();
+    const rect = element?.getBoundingClientRect();
     return (
-      newX < rect.right &&
-      newX + squareSize > rect.left &&
-      newY < rect.bottom &&
-      newY + squareSize > rect.top
+      newX < rect?.right &&
+      newX + squareSize > rect?.left &&
+      newY < rect?.bottom &&
+      newY + squareSize > rect?.top
     );
   };
 
@@ -114,11 +98,10 @@ class BouncingBall extends Component<{ speed: number, signupButton: any, signinB
 
     newX += this.normalizedSpeedX * speedValue * this.speed;
     newY += this.normalizedSpeedY * speedValue * this.speed;
-    const elements = [this.signUpButton, this.signInButton, this.signIn42Button, this.addedDiv, this.removeDiv].filter(el => el !== null) as HTMLElement[];
 
     if (newX > window.innerWidth - (12 + this.squareSize)
       || newX < 12
-      || this.checkCollisions(newX, position.y, this.squareSize, elements)) {
+      || this.checkCollisions(newX, position.y, this.squareSize, this.elements)) {
       this.setState((prevState) => ({
         direction: { ...prevState.direction, dx: -prevState.direction.dx },
       }));
@@ -126,7 +109,7 @@ class BouncingBall extends Component<{ speed: number, signupButton: any, signinB
       this.normalizedSpeedX = this.state.direction.dx / this.magnitude;
     }
     else if (newY > window.innerHeight - (12 + this.squareSize)
-      || newY < 12 || this.checkCollisions(position.x, newY, this.squareSize, elements)) {
+      || newY < 12 || this.checkCollisions(position.x, newY, this.squareSize, this.elements)) {
       this.setState((prevState) => ({
         direction: { ...prevState.direction, dy: -prevState.direction.dy },
       }));
@@ -151,6 +134,19 @@ class BouncingBall extends Component<{ speed: number, signupButton: any, signinB
   };
 
   componentDidMount() {
+    this.elements.push(document.querySelector('.addBallButton'))
+    this.elements.push(document.querySelector('.removeBallButton'))
+    if (this.props.queryType == 1){
+      this.elements.push(document.querySelector('.signup-button'));
+      this.elements.push(document.querySelector('.signin-button'));
+      this.elements.push(document.querySelector('.signin42-button'));
+    }
+    else if (this.props.queryType == 2) {
+      this.elements.push(document.querySelector('.signup-div'));
+    }
+    else {
+      this.elements.push(document.querySelector('.signin-div'));
+    }
     let newPosition = this.state.position;
     const speedSlider = document.getElementById('myRange');
 
@@ -165,11 +161,6 @@ class BouncingBall extends Component<{ speed: number, signupButton: any, signinB
     this.animationRef = requestAnimationFrame(this.updatePosition);
     this.intervalId = setInterval(() => {
     }, 10);
-    this.signUpButton = document.querySelector('.signup-button');
-    this.signInButton = document.querySelector('.signin-button');
-    this.signIn42Button = document.querySelector('.signin42-button');
-    this.addedDiv = document.querySelector('.addBallButton');
-    this.removeDiv = document.querySelector('.removeBallButton');
     // @ts-ignore: Object is possibly 'null'.
     speedSlider.addEventListener('input', this.handleSpeedChange);
     this.handleSpeedChange();

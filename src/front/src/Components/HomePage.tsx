@@ -26,9 +26,6 @@ const loginNot = () => {
 }
 
 export default function HomePage(props: any) {
-  const signupButtonRef = useRef(null);
-  const signinButtonRef = useRef(null);
-  const signin42ButtonRef = useRef(null);
   const [speed, setSpeed] = useState(1);
   const [balls, setBalls] = useState([{ x: 900, y: 100 }]);
   const [showErrorUser, setShowErrorUser] = useState(false);
@@ -114,7 +111,7 @@ export default function HomePage(props: any) {
         }
       </button>
       {balls.map((ball, index) => (
-        <BouncingBall key={index} signupButton={signupButtonRef} signinButton={signinButtonRef} signin42Button={signin42ButtonRef} speed={speed} />
+        <BouncingBall key={index} speed={speed} queryType={1}/>
       ))}
       <AddBallButton onAddBall={addBall} />
       <RemoveBallButton onRemoveBall={removeBall} />

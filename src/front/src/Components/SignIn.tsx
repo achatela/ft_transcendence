@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import './css/SignIn.css';
+import BouncingBall from './BouncingBall';
+import SpeedSlider from './SpeedSlider';
+import AddBallButton from './AddBallButton';
+import RemoveBallButton from './RemoveBallButton';
 import axios from 'axios';
 var bcrypt = require('bcryptjs');
 
@@ -7,12 +11,19 @@ interface IProps {
 }
 
 interface IState {
+    speed: number;
+    balls: { x: number, y: number }[];
 }
 
 export default class SignIn extends Component<IProps, IState> {
     constructor(props: IProps) {
         super(props);
-        this.state = {}
+        this.state = {
+            speed: 1,
+            balls: [{ x: 900, y: 100 }],
+        }
+        this.addBall = this.addBall.bind(this);
+        this.removeBall = this.removeBall.bind(this);
     }
 
     async redirectSignIn(): Promise<void> {
@@ -33,13 +44,40 @@ export default class SignIn extends Component<IProps, IState> {
         return;
     }
 
+    addBall() {
+        this.setState((prevState) => ({
+            balls: [
+                ...prevState.balls,
+                { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight },
+            ],
+        }));
+    }
+
+    removeBall() {
+        this.setState((prevState) => {
+            if (prevState.balls.length > 0) {
+                return { balls: prevState.balls.slice(0, -1) };
+            } else {
+                return { balls: prevState.balls };
+            }
+        });
+    }
+
     render() {
         return (
-         <div className='signin-div'>
-            <input type="text" placeholder='username' className='signin-username-input'/>
-            <input type="password" placeholder='password' className='signin-password-input'/>
-            <button className='signin-signin-button' onClick={this.redirectSignIn}>Sign In</button>
-         </div>
+        <>
+            <SpeedSlider onSpeedChange={() => {this.setState({speed: this.state.speed})}} />
+            <div className='signin-div'>
+                <input type="text" placeholder='username' className='signin-username-input'/>
+                <input type="password" placeholder='password' className='signin-password-input'/>
+                <button className='signin-signin-button' onClick={this.redirectSignIn}>Sign In</button>
+            </div>
+            {this.state.balls.map((ball, index) => (
+            <BouncingBall key={index} speed={this.state.speed} queryType={3} />
+            ))}
+            <AddBallButton onAddBall={this.addBall} />
+            <RemoveBallButton onRemoveBall={this.removeBall} />
+        </>
         )
     }
 }
