@@ -52,6 +52,7 @@ export class ProfileService {
   }
 
   async getUserInfo(username: string, refreshToken: string, accessToken: string): Promise<{ userInfo: { username: string, wins: number, losses: number, avatar: string, ladderLevel: number, xp: number }, refreshToken: string, accessToken: string }> {
+    console.log(username)
     const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: username } });
     const ret = await this.authService.checkToken(user, refreshToken, accessToken);
     if (ret.success == true)

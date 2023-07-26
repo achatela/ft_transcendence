@@ -61,7 +61,7 @@ export default function HomePage(props: any) {
     if (sessionStorage.getItem('sign in') === 'true') {
       sessionStorage.setItem('sign in', 'false');
       if (code) {
-        const request = await axios.post('http://localhost:3333/auth/verify_sign_in_42/', JSON.stringify({ code: code }), { headers: { 'Content-Type': 'application/json' } });
+          const request = await axios.post('http://localhost:3333/auth/verify_sign_in_42/', JSON.stringify({ code: code }), { headers: { 'Content-Type': 'application/json' } });
         if (request.data.success == true) {
           sessionStorage.removeItem('accessToken')
           sessionStorage.setItem("accessToken", request.data.accessToken);

@@ -49,7 +49,7 @@ export class AuthService {
         if (personnal42Token.success === false)
             return { success: false, error: "getUserToken failure" };
         const request = await axios.get("https://api.intra.42.fr/v2/me", { headers: { Authorization: `Bearer ${personnal42Token.access_token}` } });
-        const user = await this.prismaService.user.findUnique({ where: { login: request.data.login } });
+        let user = await this.prismaService.user.findUnique({ where: { login: request.data.login } });
         if (!user) {
             let username = request.data.login;
             if (await this.prismaService.user.findUnique({ where: { username: username } })) {
@@ -58,11 +58,13 @@ export class AuthService {
                     i++;
                 username = username + String(i);
             }
-            const user = await this.prismaService.createUser({ username: username, login: request.data.login, avatar: request.data.image.versions.small, personnal42Token: personnal42Token.access_token });
+            let user = await this.prismaService.createUser({ username: username, login: request.data.login, avatar: request.data.image.versions.small, personnal42Token: personnal42Token.access_token });
             const payload = { id: user.id };
             const accessToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '5m' });
             const refreshToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
-            await this.prismaService.user.update({ where: { username: username } , data: { accessToken: accessToken, refreshToken: refreshToken } });
+            user = await this.prismaService.user.update({ where: { username: username } , data: { accessToken: accessToken, refreshToken: refreshToken } });
+            // while (!user.username)
+            //     user = await this.prismaService.user.findUnique({ where: { username: username } });
             return {
                 success: true,
                 refreshToken: user.refreshToken,
@@ -71,7 +73,7 @@ export class AuthService {
                 twoFa: user.enabled2FA,
             };
         }
-        await this.prismaService.user.update({ where: { login: request.data.login }, data: { personnal42Token: personnal42Token.access_token } });
+        user = await this.prismaService.user.update({ where: { login: request.data.login }, data: { personnal42Token: personnal42Token.access_token } });
         return {
             success: true,
             refreshToken: user.refreshToken,
