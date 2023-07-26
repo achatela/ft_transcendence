@@ -26,12 +26,15 @@ const loginNot = () => {
 }
 
 export default function HomePage(props: any) {
-  const loginDivRef = useRef(null);
+  const signupButtonRef = useRef(null);
+  const signinButtonRef = useRef(null);
+  const signin42ButtonRef = useRef(null);
   const [speed, setSpeed] = useState(1);
   const [balls, setBalls] = useState([{ x: 900, y: 100 }]);
   const [showErrorUser, setShowErrorUser] = useState(false);
   const [showErrorUnique, setShowErrorUnique] = useState(false);
   const [showErrorNot, setShowErrorNot] = useState(false);
+  const [hover42, setHover42] = useState(false);
 
   function addBall() {
     setBalls((prevBalls) => [
@@ -103,9 +106,15 @@ export default function HomePage(props: any) {
         {showErrorNot && loginNot()}
       <button className="signup-button" type="button" onClick={() => { window.location.href = "/sign_up" }}>Sign Up</button>
       <button className="signin-button" type="button" onClick={() => { window.location.href = "/sign_in" }}>Sign In</button>
-      <button className="signin42-button" type="button" onClick={redirectFortyTwo}>Sign In 42</button>
+      <button className="signin42-button" type="button" onClick={redirectFortyTwo} onMouseEnter={() => {setHover42(true)}} onMouseLeave={() => {setHover42(false)}}>
+        Sign In
+        {
+          hover42 ? (<img src={'http://localhost:3133/black42logo.png'} alt="Image" className="logo42" style={{width: '2.33vw', marginLeft: '0.25vw'}}/>)
+          :(<img src={'http://localhost:3133/white42logo.png'} alt="Image" className="logo42" style={{width: '2.33vw', marginLeft: '0.25vw'}}/>)
+        }
+      </button>
       {balls.map((ball, index) => (
-        <BouncingBall key={index} loginDiv={loginDivRef} speed={speed} />
+        <BouncingBall key={index} signupButton={signupButtonRef} signinButton={signinButtonRef} signin42Button={signin42ButtonRef} speed={speed} />
       ))}
       <AddBallButton onAddBall={addBall} />
       <RemoveBallButton onRemoveBall={removeBall} />

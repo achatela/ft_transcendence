@@ -106,6 +106,7 @@
     color: white;
     padding: 0.5rem;
     width: 11vw;
+    height: 6vh;
     text-align: center;
     font-size: 2.5rem;
     top: 50vh;
@@ -126,6 +127,7 @@
     color: white;
     padding: 0.5rem;
     width: 11vw;
+    height: 6vh;
     text-align: center;
     font-size: 2.5rem;
     top: 50vh;
@@ -146,11 +148,20 @@
     color: white;
     padding: 0.5rem;
     width: 11vw;
-    text-align: center;
+    height: 6vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* text-align: center; */
     font-size: 2.5rem;
     top: 50vh;
     left: 57vw;
     cursor: pointer;
+}
+
+.logo42 {
+    width: 2.33vw;
+    margin-left: 0.25vw;
 }
 
 .signin42-button:hover {

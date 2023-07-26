@@ -8,19 +8,21 @@ interface State {
   speedValue: number;
 }
 
-class BouncingBall extends Component<{ speed: number, loginDiv: any }, State> {
+class BouncingBall extends Component<{ speed: number, signupButton: any, signinButton: any, signin42Button: any }, State> {
   animationRef: number;
   lastFrameTime: number;
   speed: number;
   squareSize: number;
   intervalId: any;
-  loginDiv: HTMLElement | null;
+  signUpButton: HTMLElement | null;
+  signInButton: HTMLElement | null;
+  signIn42Button: HTMLElement | null;
   addedDiv: HTMLElement | null;
   removeDiv: HTMLElement | null;
   magnitude: number;
   normalizedSpeedX: number;
   normalizedSpeedY: number;
-  constructor(props: { speed: number, loginDiv: any }) {
+  constructor(props: { speed: number, signupButton: any, signinButton: any, signin42Button: any }) {
     super(props);
     this.state = {
       start: 0,
@@ -32,7 +34,9 @@ class BouncingBall extends Component<{ speed: number, loginDiv: any }, State> {
     this.lastFrameTime = performance.now();
     this.speed = 3;
     this.squareSize = 30;
-    this.loginDiv = null;
+    this.signUpButton = null;
+    this.signInButton = null;
+    this.signIn42Button = null;
     this.addedDiv = null;
     this.removeDiv = null;
     this.magnitude = Math.sqrt(this.state.direction.dx ** 2 + this.state.direction.dy ** 2);
@@ -58,7 +62,9 @@ class BouncingBall extends Component<{ speed: number, loginDiv: any }, State> {
     }
 
     const elements = [
-      document.querySelector(".login-div"),
+      document.querySelector(".signup-button"),
+      document.querySelector(".signin-button"),
+      document.querySelector(".signin42-button"),
       document.querySelector(".addBallButton"),
       document.querySelector(".removeBallButton"),
     ];
@@ -108,7 +114,7 @@ class BouncingBall extends Component<{ speed: number, loginDiv: any }, State> {
 
     newX += this.normalizedSpeedX * speedValue * this.speed;
     newY += this.normalizedSpeedY * speedValue * this.speed;
-    const elements = [this.loginDiv, this.addedDiv, this.removeDiv].filter(el => el !== null) as HTMLElement[];
+    const elements = [this.signUpButton, this.signInButton, this.signIn42Button, this.addedDiv, this.removeDiv].filter(el => el !== null) as HTMLElement[];
 
     if (newX > window.innerWidth - (12 + this.squareSize)
       || newX < 12
@@ -159,7 +165,9 @@ class BouncingBall extends Component<{ speed: number, loginDiv: any }, State> {
     this.animationRef = requestAnimationFrame(this.updatePosition);
     this.intervalId = setInterval(() => {
     }, 10);
-    this.loginDiv = document.querySelector('.login-div');
+    this.signUpButton = document.querySelector('.signup-button');
+    this.signInButton = document.querySelector('.signin-button');
+    this.signIn42Button = document.querySelector('.signin42-button');
     this.addedDiv = document.querySelector('.addBallButton');
     this.removeDiv = document.querySelector('.removeBallButton');
     // @ts-ignore: Object is possibly 'null'.
