@@ -18,7 +18,7 @@
 .username-input[type='text'] {
     font-size: xx-large;
     padding-left: 1em;
-    
+    /* padding-right */
 }
 
 .username-input {

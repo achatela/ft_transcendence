@@ -27,10 +27,10 @@ function useChatScroll<T>(dep: T): React.MutableRefObject<HTMLDivElement> {
 const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<any[]>([]);
-  const [isError, setError] = useState(false);
+  const [isError, setError] = useState(true);
   const [showInvite, setShowInvite] = useState(false);
   const [fromUsername, setFromUsername] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('COUHZAUODHZAOUDJAZOIDJAZOIDJAZODIAZJDOIZJDOIAZJDOIAZJOIJ');
   const messagesRef = useChatScroll(messages);
   const socket = io('http://localhost:3333');
   const ref = useRef(null);
@@ -465,7 +465,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
           </div> : null
         }
         {isError === true ? <div className='error-message-chat'>{errorMessage}</div> : null}
-        <h1 className="chat-title">{channelName}</h1>
+        {/* <h1 className="chat-title">{channelName}</h1> */}
         {
           isChannel === true ?
             <>

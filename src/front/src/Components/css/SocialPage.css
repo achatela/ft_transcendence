@@ -1,23 +1,51 @@
-/* .friends {
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
-  width: calc(100% - 6px);
-  text-align: center;
-  border: 3px solid white;
-  padding-top: 1rem;
-  padding-bottom: 1vh;
+.friends {
+  right: calc(0.8rem + 0.65vw);
+  width: 100%;
+  height: 100%;
+  -ms-overflow-style: none;
   font-size: 2rem;
-} */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid white;
+}
+
+.channels {
+  height: 100%;
+  font-size: 2rem;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-left: 1px solid white;
+}
+
+.friend-channel-div {
+  position: absolute;
+  border: solid 6px white;
+  border-bottom: solid white 3px;
+  left: calc(0.8rem + 0.65vw);
+  width: 19vw;
+  height: 5vh;
+  top: 1vh;
+  margin-top: 1.2rem;
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  display: flex;
+}
 
 .friends-list {
   position: absolute;
-  border: 3px solid white;
-  right: calc(0.8rem + 0.65vw);
+  border: 6px solid white;
+  border-top: 3px solid white;
+  border-bottom: 3px solid white;
+  left: calc(0.8rem + 0.65vw);
   width: 19vw;
-  height: calc(100vh - 9.9rem - 8.4rem - 10.8rem);
-  margin-top: 19.2rem;
+  top: calc(6vh + 4.5px);
+  height: calc(100vh - 9.9rem - 8.4rem - 10.8rem - 4rem);
   overflow-y: auto;
+  margin-top: 1.2rem;
 }
 
 .friends-friend:hover {
@@ -41,14 +69,19 @@
   height: calc(100vh - 2.7rem);
 }
 
+
+
 .friend-requests {
   position: absolute;
-  border: 3px solid white;
-  right: calc(0.8rem + 0.65vw);
+  border: 6px solid white;
+  border-top: 2px solid white;
+  border-bottom: 3px solid white;
+  left: calc(0.8rem + 0.65vw);
+  top: calc(6vh + 6px);
   width: 19vw;
   height: calc(100vh - (100vh - 9.6rem) + 8.1rem);
-  margin-top: 1.2rem;
   overflow-y: auto;
+  margin-top: calc(100vh - 9.9rem - 8.4rem - 10.8rem + 1.2rem + 3px - 4rem);
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
@@ -57,14 +90,14 @@
   display: none;
 }
 
-/* .friend-requests-p {
-  width: calc(100% - 6px);
+.friend-requests-p {
+  width: calc(100%);
   text-align: center;
-  border: 3px solid white;
+  border-bottom: 3px solid white;
   padding-top: 1rem;
   padding-bottom: 1vh;
   font-size: 2rem;
-} */
+}
 
 /* .friend-requests-p.sticky .invisible-div-fix {
   display: block;
@@ -133,13 +166,13 @@
 
 .add-friend {
   position: absolute;
-  border: 3px solid white;
-  right: calc(0.8rem + 0.65vw);
+  border: 6px solid white;
+  border-top: 3px solid white;
+  left: calc(0.8rem + 0.65vw);
   width: 19vw;
-  height: 8.4rem;
-  margin-top: 12rem;
+  height: 8.0rem;
   text-align: center;
-  bottom: 1.1em;
+  bottom: 1.5em;
 }
 
 .add-friend-text {
@@ -277,14 +310,6 @@
   cursor: pointer;
 }
 
-.channels {
-  position: absolute;
-  height: 100%;
-  margin-left: calc(8px + 2vw);
-  width: calc(100vw - 16px - 25vw);
-  height: calc(100vh - 8.3rem);
-  margin-top: 5rem;
-}
 
 .create-channel {
   background-color: black;

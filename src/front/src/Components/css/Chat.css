@@ -1,4 +1,4 @@
-.chat-title {
+/* .chat-title {
     position: absolute;
     font-size: 50px;
     margin-top: 5vh;
@@ -6,7 +6,7 @@
     font-weight: bold;
     text-align: center;
     color: grey
-}
+} */
 
 .chat-messages::-webkit-scrollbar {
     display: none;
@@ -14,12 +14,13 @@
 
 .chat-messages {
     position: absolute;
-    margin-top: 10vh;
+    top: 1vh;
+    margin-top: 1.2rem;
     background-color: black;
+    right: 3vh;
     color: white;
-    margin-left: 2.2vw;
     width: calc(75.5vw);
-    height: calc(75vh);
+    height: calc(78.5vh);
     border: 3px white solid;
     overflow-y: auto;
     -ms-overflow-style: none;
@@ -39,14 +40,21 @@
 }
 
 .chat-input {
-    width: calc(75.5vw);
+    position: absolute;
+    width: calc(75.5vw - 1em);
     height: 6vh;
+    right: 3vh;
     font-size: 1.5em;
-    margin-left: 2.2vw;
-    margin-top: calc(88.5vh);
+    margin-top: calc(90vh);
     color: white;
     background-color: black;
     border: 3px white solid;
+}
+
+.chat-input[type='text'] {
+    font-size: 1.5em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
 }
 
 .chat-message-content {
@@ -158,11 +166,11 @@
 }
 
 .error-message-chat {
-    margin-top: 5vh;
-    margin-left: 46vw;
+    position: absolute;
+    margin-left: 23vw;
     color: red;
     font-size: 3rem;
-    position: absolute;
+    bottom: 11.7vh;
 }
 
 .invite-div {
