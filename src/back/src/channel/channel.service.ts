@@ -157,6 +157,7 @@ export class ChannelService {
     }
 
     async createChannel(body: { username: string, accessToken: string, refreshToken: string, channelName: string, hasPassword: boolean, password?: string, isPrivate: boolean }) {
+        console.log(body);
         const { username, accessToken, refreshToken, channelName, hasPassword, password, isPrivate } = body;
         const user = await this.prismaService.user.findUnique({ where: { username: username } });
         if (!user) {

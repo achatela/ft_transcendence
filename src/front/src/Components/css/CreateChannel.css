@@ -1,20 +1,23 @@
 .create-channel-div {
+    position: absolute;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-top: 30vh;
     height: 25vh;
+    width: 60vw;
+    margin-left: 55vw;
+    margin-top: -45vh;
     width: auto;
 }
 
 .channel-error {
-    font-size: 3em;
+    font-size: 30em;
     color: red;
 }
 
 .channel-created {
-    font-size: 3em;
+    font-size: 30em;
     color: greenyellow;
 }
 
@@ -44,7 +47,7 @@
 } */
 
 .create-channel-div input[type="text"] {
-    width: 26%;
+    width: 200%;
     height: 2vh;
     margin-bottom: 2vh;
     background-color: black;
@@ -57,7 +60,7 @@
 }
 
 .create-channel-div input[type="password"] {
-    width: 26%;
+    width: 200%;
     height: 2vh;
     margin-bottom: 2vh;
     background-color: black;

@@ -2,6 +2,7 @@ import React from 'react';
 import { Component } from 'react';
 import './css/JoinChannel.css';
 import axios from 'axios';
+import CreateChannel from './CreateChannel';
 
 interface IProps {
     handleChannelClick: (channelName: string) => void;
@@ -11,6 +12,8 @@ interface IState {
     channels: [{ channelName: string, users: number, hasPassword: boolean, owner: string }] | null;
     yourChannels: [{ channelName: string }] | null;
     channelInvites: [{ channelName: string }] | null;
+    createChannel: boolean;
+    joinChannel: boolean;
 }
 
 export default class JoinChannel extends Component<IProps, IState> {
@@ -20,7 +23,9 @@ export default class JoinChannel extends Component<IProps, IState> {
         this.state = {
             channels: null,
             yourChannels: null,
-            channelInvites: null
+            channelInvites: null,
+            createChannel: true,
+            joinChannel: false,
         }
         this.handleChannelClick = props.handleChannelClick;
     }
@@ -127,11 +132,8 @@ export default class JoinChannel extends Component<IProps, IState> {
 
     render() {
         return (
-            <div className='join-channel-div'>
+            <div >
                 <div className='your-channels-div'>
-                    <div className='your-channels-header'>
-                        <p className='your-channels-p'>Your channels</p>
-                    </div>
                     <div className='your-channels-list'>
                         {this.state.yourChannels !== null ? this.state.yourChannels.map((channel, index) => {
                             return (
@@ -162,7 +164,74 @@ export default class JoinChannel extends Component<IProps, IState> {
                         }, this) : null}
                     </div>
                 </div>
-                <div className='channels-list-div'>
+                <div className='channels-join-create-div'>
+                    {this.state.joinChannel === true || this.state.createChannel === true ? (
+                        <button className="reset-states-channel" onClick={() => { this.setState({ createChannel: false, joinChannel: false }) }}>X</button>
+                    ) : <>
+                        <button className="display-join" onClick={() => { this.setState({ joinChannel: true }); console.log(this.state.joinChannel) }}>Join</button>
+                        <button className="display-create" onClick={() => {
+                            this.setState({ createChannel: true });
+                        }}>Create</button>
+                    </>}
+                    {this.state.createChannel === true ?
+                        (
+                            <>
+                                <CreateChannel></CreateChannel>
+                            </>
+                        )
+                        :
+                        null}
+                    {/* {this.state.joinChannel === true ? (
+                        <div className='channels-list-div'>
+                            <div className='channels-list-header'>
+                                <p className='channels-list-p'>Channels list</p>
+                            </div>
+                            <div className='channel-list'>
+                                <div className='channel-list-item-header'>
+                                    <p className='channel-list-item-name-h'>Channel name</p>
+                                    <p className='channel-list-item-number-h'>Users</p>
+                                    <p className='channel-list-item-owner-h'>Owner</p>
+                                    <p className='channel-list-item-private-h'>Password</p>
+                                </div>
+                                {this.state.channels !== null ? this.state.channels.map((channel, index) => {
+                                    return (
+                                        <div onClick={() => {
+                                            if (channel.hasPassword === true) {
+                                                for (let yourChannel of this.state.yourChannels) {
+                                                    if (yourChannel.channelName === channel.channelName) {
+                                                        this.handleChannelClick(channel.channelName)
+                                                        return;
+                                                    }
+                                                }
+                                                const password = prompt("Enter password for channel " + channel.channelName)
+                                                if (password !== null) {
+                                                    this.handleChannelClick(channel.channelName, password)
+                                                }
+                                                return;
+                                            }
+                                            this.handleChannelClick(channel.channelName)
+                                        }
+                                        } className='channel-list-item' key={index}>
+                                            <div>
+                                                <p className='channel-list-item-name'>{channel.channelName}</p>
+                                            </div>
+                                            <div>
+                                                <p className='channel-list-item-number'>{channel.users}</p>
+                                            </div>
+                                            <div>
+                                                <p className='channel-list-item-owner'>{channel.owner}</p>
+                                            </div>
+                                            <div>
+                                                <p className='channel-list-item-private'>{channel.hasPassword ? "Yes" : "No"}</p>
+                                            </div>
+                                        </div>
+                                    )
+                                }
+                                ) : null}
+                            </div>
+                        </div>) : null} */}
+                </div>
+                {/* <div className='channels-list-div'>
                     <div className='channels-list-header'>
                         <p className='channels-list-p'>Channels list</p>
                     </div>
@@ -209,7 +278,7 @@ export default class JoinChannel extends Component<IProps, IState> {
                         }
                         ) : null}
                     </div>
-                </div>
+                </div> */}
             </div>)
     }
 }

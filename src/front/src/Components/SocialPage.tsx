@@ -185,6 +185,8 @@ export default class SocialPage extends Component<IProps, IState> {
       this.setState({ joinChannel: true });
       sessionStorage.setItem("refresh", "false");
     }
+    const elem = document.querySelector('.friends') as HTMLElement
+    elem.style.backgroundColor = "grey";
   }
 
   async sendFriendRequestEnter(): Promise<void> {
@@ -492,7 +494,8 @@ export default class SocialPage extends Component<IProps, IState> {
             </div>
           ) : (
             <div className="channels">
-              {this.state.createChannel === false && this.state.joinChannel === false ? (
+              <JoinChannel handleChannelClick={this.handleChannelClick.bind(this)} />
+              {/* {this.state.createChannel === false && this.state.joinChannel === false ? (
                 <>
                   <button className="create-channel" onClick={() => { this.setState({ createChannel: true, isError: false }) }}>Create a channel</button>
                   <button className="join-channel" onClick={() => { this.setState({ joinChannel: true, isError: false }) }} >Join a channel</button>
@@ -503,7 +506,7 @@ export default class SocialPage extends Component<IProps, IState> {
                 ) : (
                   <JoinChannel handleChannelClick={this.handleChannelClick.bind(this)} />
                 )
-              )}
+              )} */}
             </div>
           )
         }

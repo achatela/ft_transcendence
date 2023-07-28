@@ -29,6 +29,9 @@ export default class CreateChannel extends Component<IProps, IState> {
         const channelPasswordInput = document.querySelector('.input-password-create') as HTMLInputElement;
         const privateCheckbox = document.querySelector('.private-checkbox-create') as HTMLInputElement;
         const hasPassword = channelPasswordInput.value.length > 0 ? true : false;
+        console.log(sessionStorage.getItem("username"))
+        console.log(sessionStorage.getItem("accessToken"))
+        console.log(sessionStorage.getItem("refreshToken"))
         const request = await axios.post('http://localhost:3333/channel/create/',
             JSON.stringify({
                 username: sessionStorage.getItem("username"),
