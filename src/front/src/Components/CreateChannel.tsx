@@ -5,6 +5,7 @@ import axios from 'axios';
 var bcrypt = require('bcryptjs');
 
 interface IProps {
+    refetchChannels: () => void,
 }
 
 interface IState {
@@ -14,6 +15,7 @@ interface IState {
 }
 
 export default class CreateChannel extends Component<IProps, IState> {
+    refetchChannels: () => void;
     constructor(props: IProps) {
         super(props);
         this.state = {
@@ -22,6 +24,7 @@ export default class CreateChannel extends Component<IProps, IState> {
             errorMessage: "",
         }
         this.createChannel = this.createChannel.bind(this);
+        this.refetchChannels = props.refetchChannels;
     }
 
     async createChannel() {
@@ -46,8 +49,8 @@ export default class CreateChannel extends Component<IProps, IState> {
         if (request.data.success === true) {
             sessionStorage.setItem("refreshToken", request.data.refreshToken);
             sessionStorage.setItem("accessToken", request.data.accessToken);
-            console.log("channel created")
             this.setState({ channelCreated: true, channelError: false })
+            this.refetchChannels();
             return;
         }
         else {

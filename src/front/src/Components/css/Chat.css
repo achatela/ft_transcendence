@@ -14,13 +14,13 @@
 
 .chat-messages {
     position: absolute;
-    top: 1vh;
+    top: 6vh;
     margin-top: 1.2rem;
     background-color: black;
     right: 3vh;
     color: white;
     width: calc(75.5vw);
-    height: calc(78.5vh);
+    height: calc(73.5vh);
     border: 3px white solid;
     overflow-y: auto;
     -ms-overflow-style: none;
@@ -104,7 +104,7 @@
     position: absolute;
     border: 3px solid white;
     top: 1.4em;
-    left: 10em;
+    left: 25vw;
     height: 60px;
     width: 60px;
     font-size: 1.1em;
@@ -116,7 +116,7 @@
     font-size: 1.1em;
     border: 3px solid white;
     top: 1.4em;
-    left: 24em;
+    left: 30vw;
     height: 60px;
     width: 60px;
     background-color: black;
@@ -127,7 +127,7 @@
     font-size: 1.1em;
     border: 3px solid white;
     top: 1.4em;
-    left: 17em;
+    left: 35vw;
     height: 60px;
     width: 60px;
     background-color: black;

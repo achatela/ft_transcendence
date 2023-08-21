@@ -392,6 +392,10 @@ export default class SocialPage extends Component<IProps, IState> {
   }
 
 
+  handleButtonsClick() {
+    this.setState({ createChannel: false, joinChannel: false, chat: null, selectedChat: null })
+  }
+
   render(): JSX.Element {
     return (
       < div onClick={() => {
@@ -494,7 +498,7 @@ export default class SocialPage extends Component<IProps, IState> {
             </div>
           ) : (
             <div className="channels">
-              <JoinChannel handleChannelClick={this.handleChannelClick.bind(this)} />
+              <JoinChannel handleChannelClick={this.handleChannelClick.bind(this)} handleButtonsClick={this.handleButtonsClick.bind(this)} />
               {/* {this.state.createChannel === false && this.state.joinChannel === false ? (
                 <>
                   <button className="create-channel" onClick={() => { this.setState({ createChannel: true, isError: false }) }}>Create a channel</button>
