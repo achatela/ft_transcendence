@@ -411,7 +411,7 @@ export default class SocialPage extends Component<IProps, IState> {
               const elem2 = document.querySelector('.channels') as HTMLElement
               elem.style.backgroundColor = 'grey';
               elem2.style.backgroundColor = 'black';
-              this.setState({ section: "friends" });
+              this.setState({ section: "friends", chat: null, selectedChat: null });
             }
             }
           >
@@ -423,7 +423,7 @@ export default class SocialPage extends Component<IProps, IState> {
               const elem2 = document.querySelector('.channels') as HTMLElement
               elem.style.backgroundColor = 'black';
               elem2.style.backgroundColor = 'grey';
-              this.setState({ section: "channels" });
+              this.setState({ section: "channels", chat: null, selectedChat: null });
             }
             }
           >
