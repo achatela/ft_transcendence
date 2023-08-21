@@ -104,10 +104,10 @@ export default function HomePage(props: any) {
       <button className="signup-button" type="button" onClick={() => { window.location.href = "/sign_up" }}>Sign Up</button>
       <button className="signin-button" type="button" onClick={() => { window.location.href = "/sign_in" }}>Sign In</button>
       <button className="signin42-button" type="button" onClick={redirectFortyTwo} onMouseEnter={() => {setHover42(true)}} onMouseLeave={() => {setHover42(false)}}>
-        Sign In
+        Sign
         {
-          hover42 ? (<img src={'http://localhost:3133/black42logo.png'} alt="Image" className="logo42" style={{width: '2.33vw', marginLeft: '0.25vw'}}/>)
-          :(<img src={'http://localhost:3133/white42logo.png'} alt="Image" className="logo42" style={{width: '2.33vw', marginLeft: '0.25vw'}}/>)
+          hover42 ? (<img src={'http://localhost:3133/black42logo.png'} alt="Image" className="logo42" style={{width: '17.5%', marginLeft: '0.25vw'}}/>)
+          :(<img src={'http://localhost:3133/white42logo.png'} alt="Image" className="logo42" style={{width: '17.5%', marginLeft: '0.25vw'}}/>)
         }
       </button>
       {balls.map((ball, index) => (

@@ -6,7 +6,7 @@
 .transcendence-title {
     font-weight: 500;
     color: white;
-    font-size: 140px;
+    font-size: 1500%;
     text-align: center;
     margin-top: 10vh;
 }
@@ -105,12 +105,13 @@
     border: white 2px solid;
     color: white;
     padding: 0.5rem;
-    width: 11vw;
-    height: 6vh;
+    width: 15vw;
+    height: 7vh;
     text-align: center;
-    font-size: 2.5rem;
-    top: 50vh;
-    left: 33vw;
+    font-size: 3.5rem;
+    top: 42vh;
+    left: 50vw;
+    transform: translate(-50%, -50%);
     cursor: pointer;
 }
 
@@ -126,12 +127,13 @@
     border: white 2px solid;
     color: white;
     padding: 0.5rem;
-    width: 11vw;
-    height: 6vh;
+    width: 15vw;
+    height: 7vh;
     text-align: center;
-    font-size: 2.5rem;
+    font-size: 3.5rem;
     top: 50vh;
-    left: 45vw;
+    left: 50vw;
+    transform: translate(-50%, -50%);
     cursor: pointer;
 }
 
@@ -147,15 +149,16 @@
     border: white 2px solid;
     color: white;
     padding: 0.5rem;
-    width: 11vw;
-    height: 6vh;
+    width: 15vw;
+    height: 7vh;
     display: flex;
     align-items: center;
     justify-content: center;
     /* text-align: center; */
-    font-size: 2.5rem;
-    top: 50vh;
-    left: 57vw;
+    font-size: 3.5rem;
+    top: 58vh;
+    left: 50vw;
+    transform: translate(-50%, -50%);
     cursor: pointer;
 }
 
