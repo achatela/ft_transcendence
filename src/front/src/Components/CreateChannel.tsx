@@ -42,7 +42,7 @@ export default class CreateChannel extends Component<IProps, IState> {
                 password: bcrypt.hashSync(channelPasswordInput.value, 10),
                 isPrivate: privateCheckbox.checked
             }),
-            { headers: { "Contenxt-Type": "application/json" } })
+            { headers: { "Content-Type": "application/json" } })
         if (request.data.success === true) {
             sessionStorage.setItem("refreshToken", request.data.refreshToken);
             sessionStorage.setItem("accessToken", request.data.accessToken);
