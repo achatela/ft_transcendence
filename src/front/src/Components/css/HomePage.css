@@ -4,26 +4,13 @@
 }
 
 .transcendence-title {
-    font-weight: 500;
+    position: absolute;
+    font-weight: 550;
     color: white;
     font-size: 15vw;
-    text-align: center;
-    margin-top: 5vh;
-}
-
-.login-div {
-    font-size: 1rem;
-    position: absolute;
-    top: 50vh;
-    left: 50vw;
+    left: 50%;
     transform: translate(-50%, -50%);
-    /* display: flex; */
-    flex-direction: column;
-    align-items: center;
-    height: 15vh;
-    width: 30vw;
-    padding: 2em;
-    border: white 5px solid;
+    top: 15%;
 }
 
 .login-input[type="text"] {
@@ -55,75 +42,27 @@
     outline: none;
 }
 
-
-.login-input {
-    height: 2vh;
-    width: 20vw;
-    padding: 0.5em;
-    margin-bottom: 1em;
-    margin-left: calc(5vw - 0.5em);
-    border: 3px solid white;
-    font-size: 1em;
-    outline: none;
-    flex-grow: 1;
-}
-
-.remember-me-wrapper {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1vh;
-}
-
-.remember-me-checkbox {
-    margin-right: 0.5em;
-}
-
-.alreadyExists {
-    color: red;
-    font-size: 2vw;
-    margin-top: -2.5vh;
-    text-align: center;
-}
-
-.loginNotUnique {
-    color: red;
-    font-size: 2vw;
-    margin-top: -2.5vh;
-    text-align: center;
-}
-
-.loginNot {
-    color: red;
-    font-size: 2vw;
-    margin-top: -2.5vh;
-    text-align: center;
-}
-
 .sign-div {
-    width: 15%;
+    width: 17.5%;
     position: absolute;
-    top: 55%;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 1vh;
+    gap: 2vh;
     align-items: center;
 }
 
 .signup-button {
     background-color: black;
-    border: white 0.2vw solid;
-    color: white;
+    border: white 0.1em solid;
     text-align: center;
     font-size: 3vw;
-    /* width: 100%;
-    display: block; */
     width: 100%;
     height: 100%;
     padding-block: 0.25em;
-    padding-inline: 1em;
     white-space: nowrap;
 }
 
@@ -135,17 +74,12 @@
 
 .signin-button {
     background-color: black;
-    border: white 0.2vw solid;
-    color: white;
+    border: white 0.1em solid;
     text-align: center;
-    display: block;
     width: 100%;
     height: 100%;
     font-size: 3vw;
-    /* width: 100%;
-    display: block; */
     padding-block: 0.25em;
-    padding-inline: 1em;
     white-space: nowrap;
 }
 
@@ -157,10 +91,8 @@
 
 .signin42-button {
     background-color: black;
-    border: white 0.2vw solid;
-    color: white;
+    border: white 0.1em solid;
     padding-block: 0.2em;
-    padding-inline: 1em;
     width: 100%;
     height: 100%;
     display: flex;
@@ -181,78 +113,4 @@
     color: black;
     background-color: white;
     cursor: pointer;
-}
-
-.addBallButton {
-    background-color: black;
-    border: white 0.2vw solid;
-    color: white;
-    text-align: center;
-    font-size: 2vw;
-    padding-inline: 1em;
-    padding-block: 0.25em;
-    cursor: pointer;
-    position: absolute;
-    top: 5vh;
-    left: calc(89vw - 5vh);
-}
-
-.addBallButton:hover {
-    color: black;
-    background-color: white;
-    cursor: pointer;
-}
-
-.removeBallButton {
-    background-color: black;
-    border: white 0.2vw solid;
-    color: white;
-    text-align: center;
-    font-size: 2vw;
-    padding-inline: 1em;
-    padding-block: 0.25em;
-    cursor: pointer;
-    position: absolute;
-    top: 11vh;
-    left: calc(89vw - 5vh);
-}
-
-.removeBallButton:hover {
-    color: black;
-    background-color: white;
-    cursor: pointer;
-}
-
-input[type="range"] {
-    -webkit-appearance: none;
-    width: 74%;
-    height: 0.6vh;
-    background-color: white;
-    outline: none;
-    margin: 0;
-    padding: 0;
-}
-  
-input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 1.5vw;
-    height: 2.6vh;
-    background-color: white;
-    border-radius: 0;
-    box-sizing: border-box;
-}
-
-.speed {
-    color: white;
-    font-size: 2.5em;
-    margin-bottom: 1.75vh;
-}
-
-.slide-container {
-    width: 11vw;
-    height: 5vh;
-    position: absolute;
-    top: 18.5vh;
-    left: calc(89vw - 5vh);
-    text-align: center;
 }

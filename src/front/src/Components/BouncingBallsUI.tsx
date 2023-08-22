@@ -40,18 +40,16 @@ export default function BouncingBallsUI(props: BouncingBallsUIProps) {
             } else {
               return prevBalls;
             }
-          });
+        });
     }
 
     return (
         <>
-        <div>
+        <div className="bouncing-balls-buttons">
             <button className="addBallButton" type="button" onClick={addBall}>Add Ball</button>
             <button className="removeBallButton" type="button" onClick={removeBall}>Remove Ball</button>
-            <div className="slide-container">
-                <p className="speed">Speed: {speed}</p>
-                <input defaultValue={startingSpeed} type="range" min="0" max="10" className="slider" id="myRange" />
-            </div>
+            <input defaultValue={startingSpeed} type="range" min="0" max="10" className="slider" id="myRange" />
+            <p className="speed">Speed: <b>{speed}</b></p>
         </div>
         {balls.map((ball, index) => (
             <BouncingBall key={index} speed={speed} queryType={props.queryType}/>
