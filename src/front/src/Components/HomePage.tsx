@@ -4,6 +4,9 @@ import axios from 'axios';
 import './css/HomePage.css';
 import './css/BouncingBallsUI.css';
 
+const currentUrl = window.location.href;
+const url = new URL(currentUrl);
+const domain = url.hostname;
 
 export default function HomePage(props: any) {
   const [hover42, setHover42] = useState(false);
@@ -15,16 +18,16 @@ export default function HomePage(props: any) {
     if (sessionStorage.getItem('sign in') === 'true') {
       sessionStorage.setItem('sign in', 'false');
       if (code) {
-          const request = await axios.post('http://localhost:3333/auth/verify_sign_in_42/', JSON.stringify({ code: code }), { headers: { 'Content-Type': 'application/json' } });
+          const request = await axios.post('http://' + domain + ':3333/auth/verify_sign_in_42/', JSON.stringify({ code: code }), { headers: { 'Content-Type': 'application/json' } });
         if (request.data.success == true) {
           sessionStorage.removeItem('accessToken')
           sessionStorage.setItem("accessToken", request.data.accessToken);
           sessionStorage.setItem("username", request.data.username);
           sessionStorage.setItem("refreshToken", request.data.refreshToken);
           if (request.data.twoFa === false)
-            window.location.href = 'http://localhost:3133/profile';
+            window.location.href = '/profile';
           else
-            window.location.href = 'http://localhost:3133/two_fa';
+            window.location.href = '/two_fa';
         }
         else {
           console.error(request.data.error);
@@ -39,7 +42,7 @@ export default function HomePage(props: any) {
 
   async function redirectFortyTwo(): Promise<void> {
     sessionStorage.setItem('sign in', 'true');
-    const response = await axios.get('http://localhost:3333/auth/redirect_forty_two');
+    const response = await axios.get('http://' + domain + ':3333/auth/redirect_forty_two');
       window.location.href = response.data.url;
   }
 

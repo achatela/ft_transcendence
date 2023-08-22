@@ -3,6 +3,10 @@ import './css/GameBoard.css';
 import axios from 'axios';
 import { isNullOrUndefined } from 'util';
 
+const currentUrl = window.location.href;
+const url = new URL(currentUrl);
+const domain = url.hostname;
+
 const io = require("socket.io-client");
 
 const upArrow: number = 38;
@@ -137,7 +141,7 @@ class GameBoard extends Component<IProps, IState> {
 
     setSocket() {
         this.setState((prevState) => ({
-            socket: io("http://localhost:3131/"),
+            socket: io("http://" + domain + ":3131/"),
         }));
         this.sleep(175).then(() => {
             if (sessionStorage.getItem('gameMode') === "classic") {
@@ -193,7 +197,7 @@ class GameBoard extends Component<IProps, IState> {
     }
 
     async componentDidMount(): Promise<void> {
-        const request = await axios.post('http://localhost:3333/pong/user_ingame/',
+        const request = await axios.post('http://' + domain + ':3333/pong/user_ingame/',
             JSON.stringify({
                 username: sessionStorage.getItem('username'),
                 accessToken: sessionStorage.getItem("accessToken"),

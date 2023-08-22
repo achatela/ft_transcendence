@@ -5,6 +5,10 @@ import axios from 'axios';
 
 let bcrypt = require('bcryptjs')
 
+const currentUrl = window.location.href;
+const url = new URL(currentUrl);
+const domain = url.hostname;
+
 interface FriendsProps {
   chat: { room: string, messages: [{ senderId: string, text: string, time: string, username: string, avatar: string }] }
   isChannel: boolean;
@@ -30,9 +34,9 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
   const [isError, setError] = useState(true);
   const [showInvite, setShowInvite] = useState(false);
   const [fromUsername, setFromUsername] = useState('');
-  const [errorMessage, setErrorMessage] = useState('COUHZAUODHZAOUDJAZOIDJAZOIDJAZODIAZJDOIZJDOIAZJDOIAZJOIJ');
+  const [errorMessage, setErrorMessage] = useState('');
   const messagesRef = useChatScroll(messages);
-  const socket = io('http://localhost:3333');
+  const socket = io('http://' + domain + ':3333');
   const ref = useRef(null);
   const channelName = isSelected;
   const [contextMenu, setContextMenu] = useState({ show: false, username: '', position: { x: 0, y: 0 } });
@@ -45,7 +49,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
         setMessages(messages => [...messages, { senderId: chat.messages[i].senderId, text: chat.messages[i].text, time: chat.messages[i].time, username: chat.messages[i].username, avatar: chat.messages[i].avatar }]);
       }
       element.addEventListener('keypress', handleSendMessage);
-      // const socket = io('http://localhost:3333');
+      // const socket = io('http://' + domain + ':3333');
       socket.on('connect', () => {
         console.log(socket.id, 'connected to the server');
         socket.emit('joinRoom', { room: chat.room });
@@ -107,7 +111,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
       socket.on('receiveAcceptClassic', async (message: { fromUsername: string, toUsername: string, fromId: number, toId: number }) => {
         console.log(message)
         if (message.toUsername === sessionStorage.getItem("username")) {
-          const request = await axios.post('http://localhost:3333/pong/create_classic/', JSON.stringify({
+          const request = await axios.post('http://' + domain + ':3333/pong/create_classic/', JSON.stringify({
             username: message.fromUsername,
             opponentUsername: message.toUsername,
             usernameId: message.fromId,
@@ -163,7 +167,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
 
   async function goToProfile(event: React.MouseEvent<HTMLDivElement>): Promise<void> {
     const request = await axios.post(
-      "http://localhost:3333/social/get_friend_id/",
+      'http://' + domain + ':3333/social/get_friend_id/',
       JSON.stringify({
         username: sessionStorage.getItem("username"),
         friendUsername: sessionStorage.getItem('tmpUsername'),
@@ -174,7 +178,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
     );
     if (request.data.success === true) {
       sessionStorage.removeItem('tmpUsername');
-      window.location.href = "http://localhost:3133/profile/" + request.data.id;
+      window.location.href = "/profile/" + request.data.id;
     }
     else {
       sessionStorage.removeItem('tmpUsername');
@@ -184,7 +188,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
 
   async function deleteChat() {
     const request = await axios.post(
-      "http://localhost:3333/channel/quit_channel/",
+      'http://' + domain + ':3333/channel/quit_channel/',
       JSON.stringify({
         username: sessionStorage.getItem("username"),
         accessToken: sessionStorage.getItem("accessToken"),
@@ -196,7 +200,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
     if (request.data.success === true) {
       sessionStorage.setItem('accessToken', request.data.accessToken);
       sessionStorage.setItem('refreshToken', request.data.refreshToken);
-      window.location.href = "http://localhost:3133/social";
+      window.location.href = "/social";
     }
     else {
       console.error("failed to quit chat");
@@ -205,7 +209,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
 
   async function kickUserChannel() {
     const response = await axios.post(
-      "http://localhost:3333/channel/kick_user_channel/",
+      'http://' + domain + ':3333/channel/kick_user_channel/',
       JSON.stringify({
         username: sessionStorage.getItem("username"),
         accessToken: sessionStorage.getItem("accessToken"),
@@ -219,7 +223,6 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
       sessionStorage.removeItem('tmpUsername');
       sessionStorage.setItem('accessToken', response.data.accessToken);
       sessionStorage.setItem('refreshToken', response.data.refreshToken);
-      // window.location.href = "http://localhost:3133/social";
     }
     else {
       setError(true);
@@ -230,7 +233,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
 
   async function banUserChannel() {
     const response = await axios.post(
-      "http://localhost:3333/channel/ban_user_channel/",
+      'http://' + domain + ':3333/channel/ban_user_channel/',
       JSON.stringify({
         username: sessionStorage.getItem("username"),
         accessToken: sessionStorage.getItem("accessToken"),
@@ -255,7 +258,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
   async function muteUserChannel() {
     const duration = prompt("Select a time duration (seconds)")
     const response = await axios.post(
-      "http://localhost:3333/channel/mute_user_channel/",
+      'http://' + domain + ':3333/channel/mute_user_channel/',
       JSON.stringify({
         username: sessionStorage.getItem("username"),
         accessToken: sessionStorage.getItem("accessToken"),
@@ -281,7 +284,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
 
   async function blockUserPrivate() {
     const request = await axios.post(
-      "http://localhost:3333/social/block_user/",
+      'http://' + domain + ':3333/social/block_user/',
       JSON.stringify({
         username: sessionStorage.getItem("username"),
         blockedUsername: sessionStorage.getItem("tmpUsername"),
@@ -302,7 +305,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
 
   async function removeUserPrivate() {
     const request = await axios.post(
-      "http://localhost:3333/social/remove_friend",
+      'http://' + domain + ':3333/social/remove_friend',
       JSON.stringify({
         removerUsername: sessionStorage.getItem("username"),
         removedUsername: sessionStorage.getItem("tmpUsername"),
@@ -319,7 +322,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
     else {
       console.log("failed to remove")
     }
-    window.location.href = "http://localhost:3133/social/";
+    window.location.href = "/social/";
     return;
   }
 
@@ -329,7 +332,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
       return;
     }
     const request = await axios.post(
-      "http://localhost:3333/channel/change_password_channel",
+    'http://' + domain + ':3333/channel/change_password_channel',
       JSON.stringify({
         username: sessionStorage.getItem("username"),
         newPassword: bcrypt.hashSync(newPassword, 10),
@@ -355,7 +358,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
   async function inviteUser() {
     const user = prompt("Enter username");
     const request = await axios.post(
-      "http://localhost:3333/channel/invite_user_channel",
+      'http://' + domain + ':3333/channel/invite_user_channel',
       JSON.stringify({
         username: sessionStorage.getItem("username"),
         accessToken: sessionStorage.getItem("accessToken"),
@@ -380,7 +383,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
 
   async function promoteUserChannel() {
     const response = await axios.post(
-      "http://localhost:3333/channel/promote_user_channel/",
+      'http://' + domain + ':3333/channel/promote_user_channel/',
       JSON.stringify({
         username: sessionStorage.getItem("username"),
         accessToken: sessionStorage.getItem("accessToken"),
@@ -405,7 +408,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
 
   async function demoteUserChannel() {
     const response = await axios.post(
-      "http://localhost:3333/channel/demote_user_channel/",
+      'http://' + domain + ':3333/channel/demote_user_channel/',
       JSON.stringify({
         username: sessionStorage.getItem("username"),
         accessToken: sessionStorage.getItem("accessToken"),

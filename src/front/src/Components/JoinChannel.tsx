@@ -4,6 +4,10 @@ import './css/JoinChannel.css';
 import axios from 'axios';
 import CreateChannel from './CreateChannel';
 
+const currentUrl = window.location.href;
+const url = new URL(currentUrl);
+const domain = url.hostname;
+
 interface IProps {
     handleChannelClick: (channelName: string) => void;
     handleButtonsClick: () => void;
@@ -34,7 +38,7 @@ export default class JoinChannel extends Component<IProps, IState> {
     }
 
     async reFetchChannels() {
-        const request = await axios.post('http://localhost:3333/channel/get_channels/',
+        const request = await axios.post('http://' + domain + ':3333/channel/get_channels/',
             JSON.stringify({
                 username: sessionStorage.getItem("username"),
                 accessToken: sessionStorage.getItem("accessToken"),
@@ -55,7 +59,7 @@ export default class JoinChannel extends Component<IProps, IState> {
     }
 
     async componentDidMount() {
-        const request = await axios.post('http://localhost:3333/channel/get_channels/',
+        const request = await axios.post('http://' + domain + ':3333/channel/get_channels/',
             JSON.stringify({
                 username: sessionStorage.getItem("username"),
                 accessToken: sessionStorage.getItem("accessToken"),
@@ -72,7 +76,7 @@ export default class JoinChannel extends Component<IProps, IState> {
             console.log("failed to get channels")
             console.log(request.data.error)
         }
-        const request2 = await axios.post('http://localhost:3333/channel/get_your_channels/',
+        const request2 = await axios.post('http://' + domain + ':3333/channel/get_your_channels/',
             JSON.stringify({
                 username: sessionStorage.getItem("username"),
                 accessToken: sessionStorage.getItem("accessToken"),
@@ -89,7 +93,7 @@ export default class JoinChannel extends Component<IProps, IState> {
             console.log("failed to get your channels")
             console.log(request2.data.error)
         }
-        const request3 = await axios.post('http://localhost:3333/channel/get_channel_invites/',
+        const request3 = await axios.post('http://' + domain + ':3333/channel/get_channel_invites/',
             JSON.stringify({
                 username: sessionStorage.getItem("username"),
                 accessToken: sessionStorage.getItem("accessToken"),
@@ -110,7 +114,7 @@ export default class JoinChannel extends Component<IProps, IState> {
     }
 
     async acceptChannelInvite(channelName: string) {
-        const request = await axios.post('http://localhost:3333/channel/accept_channel_invite/',
+        const request = await axios.post('http://' + domain + ':3333/channel/accept_channel_invite/',
             JSON.stringify({
                 username: sessionStorage.getItem("username"),
                 accessToken: sessionStorage.getItem("accessToken"),
@@ -132,7 +136,7 @@ export default class JoinChannel extends Component<IProps, IState> {
     }
 
     async declineChannelInvite(channelName: string) {
-        const request = await axios.post('http://localhost:3333/channel/decline_channel_invite/',
+        const request = await axios.post('http://' + domain + ':3333/channel/decline_channel_invite/',
             JSON.stringify({
                 username: sessionStorage.getItem("username"),
                 accessToken: sessionStorage.getItem("accessToken"),
@@ -265,54 +269,6 @@ export default class JoinChannel extends Component<IProps, IState> {
                             </div>) : null
                     }
                 </div>
-                {/* <div className='channels-list-div'>
-                    <div className='channels-list-header'>
-                        <p className='channels-list-p'>Channels list</p>
-                    </div>
-                    <div className='channel-list'>
-                        <div className='channel-list-item-header'>
-                            <p className='channel-list-item-name-h'>Channel name</p>
-                            <p className='channel-list-item-number-h'>Users</p>
-                            <p className='channel-list-item-owner-h'>Owner</p>
-                            <p className='channel-list-item-private-h'>Password</p>
-                        </div>
-                        {this.state.channels !== null ? this.state.channels.map((channel, index) => {
-                            return (
-                                <div onClick={() => {
-                                    if (channel.hasPassword === true) {
-                                        for (let yourChannel of this.state.yourChannels) {
-                                            if (yourChannel.channelName === channel.channelName) {
-                                                this.handleChannelClick(channel.channelName)
-                                                return;
-                                            }
-                                        }
-                                        const password = prompt("Enter password for channel " + channel.channelName)
-                                        if (password !== null) {
-                                            this.handleChannelClick(channel.channelName, password)
-                                        }
-                                        return;
-                                    }
-                                    this.handleChannelClick(channel.channelName)
-                                }
-                                } className='channel-list-item' key={index}>
-                                    <div>
-                                        <p className='channel-list-item-name'>{channel.channelName}</p>
-                                    </div>
-                                    <div>
-                                        <p className='channel-list-item-number'>{channel.users}</p>
-                                    </div>
-                                    <div>
-                                        <p className='channel-list-item-owner'>{channel.owner}</p>
-                                    </div>
-                                    <div>
-                                        <p className='channel-list-item-private'>{channel.hasPassword ? "Yes" : "No"}</p>
-                                    </div>
-                                </div>
-                            )
-                        }
-                        ) : null}
-                    </div>
-                </div> */}
             </div>)
     }
 }

@@ -1,9 +1,13 @@
 import React from 'react';
 import axios from 'axios'
 
+const currentUrl = window.location.href;
+const url = new URL(currentUrl);
+const domain = url.hostname;
+
 async function acceptFunction(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
   const request = await axios.post(
-    "http://localhost:3333/social/accept_friend_request/",
+    'http://' + domain + ':3333/social/accept_friend_request/',
     JSON.stringify({
       accepterUsername: sessionStorage.getItem("username"),
       acceptedUsername: event.currentTarget.dataset.name,
@@ -20,13 +24,13 @@ async function acceptFunction(event: React.MouseEvent<HTMLButtonElement>): Promi
   else {
     console.log("failed to accept")
   }
-  window.location.href = "http://localhost:3133/social/";
+  window.location.href = "/social/";
 }
 
 
 async function declineFunction(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
   const request = await axios.post(
-    "http://localhost:3333/social/decline_friend_request/",
+    'http://' + domain + ':3333/social/decline_friend_request/',
     JSON.stringify({
       declinerUsername: sessionStorage.getItem("username"),
       declinedUsername: event.currentTarget.dataset.name,
@@ -43,7 +47,7 @@ async function declineFunction(event: React.MouseEvent<HTMLButtonElement>): Prom
   else {
     console.log("failed to decline")
   }
-  window.location.href = "http://localhost:3133/social/";
+  window.location.href = "/social/";
 }
 
 interface FriendRequestsProps {
