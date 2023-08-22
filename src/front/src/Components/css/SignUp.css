@@ -1,6 +1,5 @@
 ::placeholder {
-    /* opacity: 0.7; */
-    color: gray;
+    opacity: 0.6;
 }
 
 .signup-div {
@@ -19,7 +18,7 @@
 }
 
 .username-input[type='text'] {
-    font-size: 2.5vw;
+    font-size: 2.25vw;
     text-align: left;
 }
 
@@ -27,7 +26,7 @@
     background-color: black;
     border: white 0.2rem solid;
     text-align: center;
-    width: 100%;
+    width: 92.5%;
     height: 100%;
     white-space: nowrap;
     padding: 0.33em;
@@ -35,7 +34,7 @@
 }
 
 .password-input[type='password'] {
-    font-size: 2.5vw;
+    font-size: 2.25vw;
     text-align: left;
 }
 
@@ -43,7 +42,7 @@
     background-color: black;
     border: white 0.2rem solid;
     text-align: center;
-    width: 100%;
+    width: 92.5%;
     height: 100%;
     white-space: nowrap;
     padding: 0.33em;
@@ -52,7 +51,7 @@
 
 .signup-signup-button {
     background-color: black;
-    border: white 0.3rem solid;
+    border: white 0.25rem solid;
     font-size: 3vw;
     text-align: center;
     width: 40%;

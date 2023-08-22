@@ -1,61 +1,64 @@
 ::placeholder {
-    opacity: 0.7;
+    opacity: 0.6;
 }
 
 .signin-div {
+    width: 25%;
     position: absolute;
-    border: white 5px solid;
-    width: 35vw;
-    height: 27vh;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
-
+    justify-content: space-between;
+    gap: 2vh;
+    padding: 2.5%;
+    align-items: center;
+    border: white 0.5rem solid;
 }
 
 .signin-username-input[type='text'] {
-    font-size: xx-large;
-    padding-left: 1em;
-    
+    font-size: 2.25vw;
+    text-align: left;
 }
 
 .signin-username-input {
-    height: 50%;
-    margin-left: 3rem;
-    margin-right: 3rem;
-    margin-top: 2rem;
-    border: white 3px solid;
     background-color: black;
+    border: white 0.2rem solid;
+    text-align: center;
+    width: 92.5%;
+    height: 100%;
+    white-space: nowrap;
+    padding: 0.33em;
     outline: none;
 }
 
 .signin-password-input[type='password'] {
-    font-size: xx-large;
-    padding-left: 1em;
-    padding-right: 1em;
+    font-size: 2.25vw;
+    text-align: left;
 }
 
 .signin-password-input {
-    height: 50%;
-    margin-left: 3rem;
-    margin-right: 3rem;
-    margin-top: 1rem;
-    border: white 3px solid;
     background-color: black;
+    border: white 0.2rem solid;
+    text-align: center;
+    width: 92.5%;
+    height: 100%;
+    white-space: nowrap;
+    padding: 0.33em;
     outline: none;
 }
 
 .signin-signin-button {
-    height: 50%;
-    margin-left: 10rem;
-    margin-right: 10rem;
-    margin-top: 1.5rem;
-    margin-bottom: 2rem;
-    border: white 3px solid;
     background-color: black;
-    font-size: xx-large;
+    border: white 0.25rem solid;
+    font-size: 3vw;
+    text-align: center;
+    width: 40%;
+    height: 100%;
+    white-space: nowrap;
+    padding-block: 0.20em;
+    margin-top: 1vh;
 }
 
 .signin-signin-button:hover {
