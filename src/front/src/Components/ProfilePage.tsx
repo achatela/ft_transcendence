@@ -63,7 +63,7 @@ class ProfilePage extends Component<IProps, IState> {
         sessionStorage.setItem("refreshToken", request.data.refreshToken);
         sessionStorage.setItem("accessToken", request.data.accessToken);
         if (request.data.success === false)
-            window.location.href = 'http://localhost:3133/profile/';
+            window.location.href = '/profile/';
         return request.data.userInfo;
     }
 
@@ -188,7 +188,7 @@ class ProfilePage extends Component<IProps, IState> {
     async checkUserExists() {
         const request = await axios.post('http://localhost:3333/profile/user_check/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken"), id: this.state.profileId }), { headers: { 'Content-Type': 'application/json' } });
         if (request.data.success === false)
-            window.location.href = 'http://localhost:3133/profile/';
+            window.location.href = '/profile/';
         sessionStorage.setItem("refreshToken", request.data.refreshToken);
         sessionStorage.setItem("accessToken", request.data.accessToken);
     }
@@ -214,7 +214,7 @@ class ProfilePage extends Component<IProps, IState> {
             sessionStorage.setItem("refreshToken", request.data.refreshToken);
             sessionStorage.setItem("accessToken", request.data.accessToken);
         }
-        window.location.href = 'http://localhost:3133/profile/';
+        window.location.href = '/profile/';
     };
 
     async disable2FA() {
@@ -222,7 +222,7 @@ class ProfilePage extends Component<IProps, IState> {
         if (request.data.success === true) {
             sessionStorage.setItem("refreshToken", request.data.refreshToken);
             sessionStorage.setItem("accessToken", request.data.accessToken);
-            window.location.href = 'http://localhost:3133/profile/';
+            window.location.href = '/profile/';
         }
     }
 
@@ -231,7 +231,7 @@ class ProfilePage extends Component<IProps, IState> {
         if (request.data.success === true) {
             sessionStorage.setItem("refreshToken", request.data.refreshToken);
             sessionStorage.setItem("accessToken", request.data.accessToken);
-            window.location.href = 'http://localhost:3133/profile/';
+            window.location.href = '/profile/';
         }
     }
 

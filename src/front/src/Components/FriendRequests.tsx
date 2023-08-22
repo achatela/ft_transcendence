@@ -20,7 +20,7 @@ async function acceptFunction(event: React.MouseEvent<HTMLButtonElement>): Promi
   else {
     console.log("failed to accept")
   }
-  window.location.href = "http://localhost:3133/social/";
+  window.location.href = "/social/";
 }
 
 
@@ -43,7 +43,7 @@ async function declineFunction(event: React.MouseEvent<HTMLButtonElement>): Prom
   else {
     console.log("failed to decline")
   }
-  window.location.href = "http://localhost:3133/social/";
+  window.location.href = "/social/";
 }
 
 interface FriendRequestsProps {

@@ -264,7 +264,7 @@ export default class SocialPage extends Component<IProps, IState> {
     else {
       console.log("failed to remove")
     }
-    window.location.href = "http://localhost:3133/social/";
+    window.location.href = "/social/";
     return;
   }
 
@@ -299,7 +299,7 @@ export default class SocialPage extends Component<IProps, IState> {
       { headers: { "Content-Type": "application/json" } }
     );
     if (request.data.success === true) {
-      window.location.href = "http://localhost:3133/profile/" + request.data.id;
+      window.location.href = "/profile/" + request.data.id;
     }
     else {
       console.error("failed to get friend id");

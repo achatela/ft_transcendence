@@ -35,7 +35,7 @@ class TwoFa extends Component<IProps, IState> {
 		if (request.data.success === true) {
 			sessionStorage.setItem('accessToken', request.data.accessToken);
 			sessionStorage.setItem('refreshToken', request.data.refreshToken);
-			window.location.href = 'http://localhost:3133/profile';
+			window.location.href = '/profile';
 		}
 		else {
 			this.setState({ success: false });

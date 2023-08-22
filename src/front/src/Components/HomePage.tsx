@@ -62,9 +62,9 @@ export default function HomePage(props: any) {
           sessionStorage.setItem("username", request.data.username);
           sessionStorage.setItem("refreshToken", request.data.refreshToken);
           if (request.data.twoFa === false)
-            window.location.href = 'http://localhost:3133/profile';
+            window.location.href = '/profile';
           else
-            window.location.href = 'http://localhost:3133/two_fa';
+            window.location.href = '/two_fa';
         }
         else {
           setShowErrorUnique(false)

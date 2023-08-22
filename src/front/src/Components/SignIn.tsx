@@ -62,14 +62,14 @@ export default class SignIn extends Component<IProps, IState> {
 
     render() {
         return (
-        <>
-        <div className='signin-div'>
-            <input type="text" placeholder='username' className='signin-username-input'/>
-            <input type="password" placeholder='password' className='signin-password-input'/>
-            <button className='signin-signin-button' onClick={this.redirectSignIn}>Sign In</button>
-        </div>
-        <BouncingBallsUI queryType={3}/>
-        </>
+            <>
+                <div className='signin-div'>
+                    <input type="text" placeholder='username' className='signin-username-input' />
+                    <input type="password" placeholder='password' className='signin-password-input' />
+                    <button className='signin-signin-button' onClick={this.redirectSignIn}>Sign In</button>
+                </div>
+                <BouncingBallsUI queryType={3} />
+            </>
         )
     }
 }

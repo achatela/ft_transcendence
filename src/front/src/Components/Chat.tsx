@@ -174,7 +174,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
     );
     if (request.data.success === true) {
       sessionStorage.removeItem('tmpUsername');
-      window.location.href = "http://localhost:3133/profile/" + request.data.id;
+      window.location.href = "/profile/" + request.data.id;
     }
     else {
       sessionStorage.removeItem('tmpUsername');
@@ -196,7 +196,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
     if (request.data.success === true) {
       sessionStorage.setItem('accessToken', request.data.accessToken);
       sessionStorage.setItem('refreshToken', request.data.refreshToken);
-      window.location.href = "http://localhost:3133/social";
+      window.location.href = "/social";
     }
     else {
       console.error("failed to quit chat");
@@ -219,7 +219,6 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
       sessionStorage.removeItem('tmpUsername');
       sessionStorage.setItem('accessToken', response.data.accessToken);
       sessionStorage.setItem('refreshToken', response.data.refreshToken);
-      // window.location.href = "http://localhost:3133/social";
     }
     else {
       setError(true);
@@ -319,7 +318,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
     else {
       console.log("failed to remove")
     }
-    window.location.href = "http://localhost:3133/social/";
+    window.location.href = "/social/";
     return;
   }
 
