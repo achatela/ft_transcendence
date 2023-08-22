@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import './css/SignIn.css';
-import BouncingBall from './BouncingBall';
-import SpeedSlider from './SpeedSlider';
-import AddBallButton from './AddBallButton';
-import RemoveBallButton from './RemoveBallButton';
+import BouncingBallsUI from './BouncingBallsUI';
 import axios from 'axios';
 var bcrypt = require('bcryptjs');
 
@@ -66,17 +63,12 @@ export default class SignIn extends Component<IProps, IState> {
     render() {
         return (
         <>
-            <SpeedSlider onSpeedChange={() => {this.setState({speed: this.state.speed})}} />
-            <div className='signin-div'>
-                <input type="text" placeholder='username' className='signin-username-input'/>
-                <input type="password" placeholder='password' className='signin-password-input'/>
-                <button className='signin-signin-button' onClick={this.redirectSignIn}>Sign In</button>
-            </div>
-            {this.state.balls.map((ball, index) => (
-            <BouncingBall key={index} speed={this.state.speed} queryType={3} />
-            ))}
-            <AddBallButton onAddBall={this.addBall} />
-            <RemoveBallButton onRemoveBall={this.removeBall} />
+        <div className='signin-div'>
+            <input type="text" placeholder='username' className='signin-username-input'/>
+            <input type="password" placeholder='password' className='signin-password-input'/>
+            <button className='signin-signin-button' onClick={this.redirectSignIn}>Sign In</button>
+        </div>
+        <BouncingBallsUI queryType={3}/>
         </>
         )
     }

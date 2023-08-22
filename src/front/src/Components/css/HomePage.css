@@ -6,9 +6,9 @@
 .transcendence-title {
     font-weight: 500;
     color: white;
-    font-size: 140px;
+    font-size: 15vw;
     text-align: center;
-    margin-top: 10vh;
+    margin-top: 5vh;
 }
 
 .login-div {
@@ -99,19 +99,32 @@
     text-align: center;
 }
 
-.signup-button {
+.sign-div {
+    width: 15%;
     position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1vh;
+    align-items: center;
+}
+
+.signup-button {
     background-color: black;
-    border: white 2px solid;
+    border: white 0.2vw solid;
     color: white;
-    padding: 0.5rem;
-    width: 11vw;
-    height: 6vh;
     text-align: center;
-    font-size: 2.5rem;
-    top: 50vh;
-    left: 33vw;
-    cursor: pointer;
+    font-size: 3vw;
+    /* width: 100%;
+    display: block; */
+    width: 100%;
+    height: 100%;
+    padding-block: 0.25em;
+    padding-inline: 1em;
+    white-space: nowrap;
 }
 
 .signup-button:hover {
@@ -121,18 +134,19 @@
 }
 
 .signin-button {
-    position: absolute;
     background-color: black;
-    border: white 2px solid;
+    border: white 0.2vw solid;
     color: white;
-    padding: 0.5rem;
-    width: 11vw;
-    height: 6vh;
     text-align: center;
-    font-size: 2.5rem;
-    top: 50vh;
-    left: 45vw;
-    cursor: pointer;
+    display: block;
+    width: 100%;
+    height: 100%;
+    font-size: 3vw;
+    /* width: 100%;
+    display: block; */
+    padding-block: 0.25em;
+    padding-inline: 1em;
+    white-space: nowrap;
 }
 
 .signin-button:hover {
@@ -142,21 +156,20 @@
 }
 
 .signin42-button {
-    position: absolute;
     background-color: black;
-    border: white 2px solid;
+    border: white 0.2vw solid;
     color: white;
-    padding: 0.5rem;
-    width: 11vw;
-    height: 6vh;
+    padding-block: 0.2em;
+    padding-inline: 1em;
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    /* text-align: center; */
-    font-size: 2.5rem;
-    top: 50vh;
-    left: 57vw;
+    text-align: center;
+    font-size: 3vw;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 .logo42 {
@@ -172,18 +185,16 @@
 
 .addBallButton {
     background-color: black;
-    border: white 2px solid;
+    border: white 0.2vw solid;
     color: white;
     text-align: center;
-    text-decoration: none;
-    font-size: 2.5vw;
+    font-size: 2vw;
+    padding-inline: 1em;
+    padding-block: 0.25em;
     cursor: pointer;
     position: absolute;
-    display: block;
     top: 5vh;
     left: calc(89vw - 5vh);
-    width: 11vw;
-    height: 5vh;
 }
 
 .addBallButton:hover {
@@ -194,22 +205,54 @@
 
 .removeBallButton {
     background-color: black;
-    border: white 2px solid;
+    border: white 0.2vw solid;
     color: white;
     text-align: center;
-    text-decoration: none;
-    font-size: 2.5vw;
+    font-size: 2vw;
+    padding-inline: 1em;
+    padding-block: 0.25em;
     cursor: pointer;
     position: absolute;
-    display: block;
     top: 11vh;
     left: calc(89vw - 5vh);
-    width: 11vw;
-    height: 5vh;
 }
 
 .removeBallButton:hover {
     color: black;
     background-color: white;
     cursor: pointer;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 74%;
+    height: 0.6vh;
+    background-color: white;
+    outline: none;
+    margin: 0;
+    padding: 0;
+}
+  
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 1.5vw;
+    height: 2.6vh;
+    background-color: white;
+    border-radius: 0;
+    box-sizing: border-box;
+}
+
+.speed {
+    color: white;
+    font-size: 2.5em;
+    margin-bottom: 1.75vh;
+}
+
+.slide-container {
+    width: 11vw;
+    height: 5vh;
+    position: absolute;
+    top: 18.5vh;
+    left: calc(89vw - 5vh);
+    text-align: center;
 }

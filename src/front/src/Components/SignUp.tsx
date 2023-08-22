@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './css/SignUp.css';
-import BouncingBall from './BouncingBall';
-import SpeedSlider from './SpeedSlider';
+import BouncingBallsUI from './BouncingBallsUI';
 import axios from 'axios';
 var bcrypt = require('bcryptjs');
 
@@ -64,21 +63,12 @@ export default class SignUp extends Component<IProps, IState> {
     render() {
         return (
             <>
-                <SpeedSlider onSpeedChange={() => {this.setState({speed: this.state.speed})}} />
-                <div className='signup-div'>
+            <div className='signup-div'>
                 <input type="text" placeholder='username' className='username-input'/>
                 <input type="password" placeholder='password' className='password-input'/>
                 <button className='signup-signup-button' onClick={this.redirectSignUp}>Sign Up</button>
-                </div>
-                {this.state.balls.map((ball, index) => (
-                <BouncingBall key={index} speed={this.state.speed} queryType={2} />
-                ))}
-                <button className="addBallButton" type="button" onClick={this.addBall}>
-                    Add Ball
-                </button>
-                <button className="removeBallButton" type="button" onClick={this.removeBall}>
-                    Remove Ball
-                </button>
+            </div>
+            <BouncingBallsUI queryType={2}/>
             </>
         )
     }

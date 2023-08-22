@@ -4,20 +4,20 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 25vh;
-    width: 24vw;
-    margin-left: 47vw;
-    margin-top: -45vh;
+    height: 35vh;
+    width: 60vw;
+    margin-left: 55vw;
+    margin-top: -47vh;
+    width: auto;
 }
 
 .channel-error {
-    font-size: 1em;
+    font-size: 2em;
     color: red;
 }
 
 .channel-created {
-    font-size: 1em;
-    width: 100%;
+    font-size: 2em;
     color: greenyellow;
 }
 

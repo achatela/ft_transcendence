@@ -1,8 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import BouncingBall from './BouncingBall';
-import SpeedSlider from './SpeedSlider';
-import AddBallButton from './AddBallButton';
-import RemoveBallButton from './RemoveBallButton';
+import BouncingBallsUI from './BouncingBallsUI';
 import axios from 'axios';
 import './css/HomePage.css';
 import { promises } from 'dns';
@@ -96,25 +93,22 @@ export default function HomePage(props: any) {
 
   return (
     <div id="tmp">
-      <SpeedSlider onSpeedChange={setSpeed} />
       <h1 className="transcendence-title">PONG</h1>
         {showErrorUser && usernameAlreadyExists()}
         {showErrorUnique && loginNotUnique()}
         {showErrorNot && loginNot()}
-      <button className="signup-button" type="button" onClick={() => { window.location.href = "/sign_up" }}>Sign Up</button>
-      <button className="signin-button" type="button" onClick={() => { window.location.href = "/sign_in" }}>Sign In</button>
-      <button className="signin42-button" type="button" onClick={redirectFortyTwo} onMouseEnter={() => {setHover42(true)}} onMouseLeave={() => {setHover42(false)}}>
-        Sign In
-        {
-          hover42 ? (<img src={'http://localhost:3133/black42logo.png'} alt="Image" className="logo42" style={{width: '2.33vw', marginLeft: '0.25vw'}}/>)
-          :(<img src={'http://localhost:3133/white42logo.png'} alt="Image" className="logo42" style={{width: '2.33vw', marginLeft: '0.25vw'}}/>)
-        }
-      </button>
-      {balls.map((ball, index) => (
-        <BouncingBall key={index} speed={speed} queryType={1}/>
-      ))}
-      <AddBallButton onAddBall={addBall} />
-      <RemoveBallButton onRemoveBall={removeBall} />
+      <div className="sign-div">
+        <button className="signup-button" type="button" onClick={() => { window.location.href = "/sign_up" }}>Sign Up</button>
+        <button className="signin-button" type="button" onClick={() => { window.location.href = "/sign_in" }}>Sign In</button>
+        <button className="signin42-button" type="button" onClick={redirectFortyTwo} onMouseEnter={() => {setHover42(true)}} onMouseLeave={() => {setHover42(false)}}>
+          Sign
+          {
+            hover42 ? (<img src={'http://localhost:3133/black42logo.png'} alt="Image" className="logo42" style={{width: '2.5vw', marginLeft: '0.25vw'}}/>)
+            :(<img src={'http://localhost:3133/white42logo.png'} alt="Image" className="logo42" style={{width: '2.5vw', marginLeft: '0.25vw'}}/>)
+          }
+        </button>
+      </div>
+      <BouncingBallsUI queryType={1}/>
     </div>
   );
 }
