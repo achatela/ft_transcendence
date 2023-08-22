@@ -1,14 +1,13 @@
-from node:18.15.0-alpine3.16
+FROM node:lts
 
-WORKDIR /app
+RUN apt-get update
 
-COPY package.json package-lock.json /app
+WORKDIR /transcendence/front
 
-RUN npm install -g npm@9.5.0
+COPY . .
+
 RUN npm install
-
-COPY . /app
 
 EXPOSE 3133
 
-CMD [ "npm", "start" ]
+ENTRYPOINT ["npm", "start"]
