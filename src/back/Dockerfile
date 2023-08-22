@@ -2,7 +2,7 @@ FROM node:lts
 
 EXPOSE 3333 3133
 
-WORKDIR /transcendence/back
+WORKDIR ~/transcendence/back
 COPY package*.json .
 COPY . .
 

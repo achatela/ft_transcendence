@@ -2,10 +2,10 @@ FROM node:lts
 
 RUN apt-get update
 
-WORKDIR /transcendence/front
+WORKDIR ~/transcendence/front
 
+COPY package*.json .
 COPY . .
-
 RUN npm install
 
 EXPOSE 3133

@@ -265,54 +265,6 @@ export default class JoinChannel extends Component<IProps, IState> {
                             </div>) : null
                     }
                 </div>
-                {/* <div className='channels-list-div'>
-                    <div className='channels-list-header'>
-                        <p className='channels-list-p'>Channels list</p>
-                    </div>
-                    <div className='channel-list'>
-                        <div className='channel-list-item-header'>
-                            <p className='channel-list-item-name-h'>Channel name</p>
-                            <p className='channel-list-item-number-h'>Users</p>
-                            <p className='channel-list-item-owner-h'>Owner</p>
-                            <p className='channel-list-item-private-h'>Password</p>
-                        </div>
-                        {this.state.channels !== null ? this.state.channels.map((channel, index) => {
-                            return (
-                                <div onClick={() => {
-                                    if (channel.hasPassword === true) {
-                                        for (let yourChannel of this.state.yourChannels) {
-                                            if (yourChannel.channelName === channel.channelName) {
-                                                this.handleChannelClick(channel.channelName)
-                                                return;
-                                            }
-                                        }
-                                        const password = prompt("Enter password for channel " + channel.channelName)
-                                        if (password !== null) {
-                                            this.handleChannelClick(channel.channelName, password)
-                                        }
-                                        return;
-                                    }
-                                    this.handleChannelClick(channel.channelName)
-                                }
-                                } className='channel-list-item' key={index}>
-                                    <div>
-                                        <p className='channel-list-item-name'>{channel.channelName}</p>
-                                    </div>
-                                    <div>
-                                        <p className='channel-list-item-number'>{channel.users}</p>
-                                    </div>
-                                    <div>
-                                        <p className='channel-list-item-owner'>{channel.owner}</p>
-                                    </div>
-                                    <div>
-                                        <p className='channel-list-item-private'>{channel.hasPassword ? "Yes" : "No"}</p>
-                                    </div>
-                                </div>
-                            )
-                        }
-                        ) : null}
-                    </div>
-                </div> */}
             </div>)
     }
 }
