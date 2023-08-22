@@ -17,7 +17,9 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 function App() {
   return (
     <BrowserRouter>
-      <NavBar />
+      {sessionStorage.getItem('username') !== null && (<>
+        <NavBar />
+      </>)}
       <Routes>
         {sessionStorage.getItem('username') !== null && (
           <>
