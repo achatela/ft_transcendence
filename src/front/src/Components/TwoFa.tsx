@@ -2,6 +2,10 @@ import { Component, useState } from "react";
 import axios from "axios";
 import './css/TwoFa.css';
 
+const currentUrl = window.location.href;
+const url = new URL(currentUrl);
+const domain = url.hostname;
+
 interface IProps {
 
 }
@@ -24,7 +28,7 @@ class TwoFa extends Component<IProps, IState> {
 			this.setState({ success: false })
 			return;
 		}
-		const request = await axios.post("http://localhost:3333/2fa/verify",
+		const request = await axios.post('http://' + domain + ':3333/2fa/verify',
 			JSON.stringify({
 				token: token,
 				username: sessionStorage.getItem('username'),
@@ -45,7 +49,7 @@ class TwoFa extends Component<IProps, IState> {
 	}
 
 	componentDidMount = async () => {
-		const request = await axios.post("http://localhost:3333/2fa/get_qr",
+		const request = await axios.post("http://' + domain + ':3333/2fa/get_qr",
 			JSON.stringify({
 				username: sessionStorage.getItem('username'),
 				refreshToken: sessionStorage.getItem('refreshToken'),

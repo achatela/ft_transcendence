@@ -4,6 +4,10 @@ import BouncingBallsUI from './BouncingBallsUI';
 import axios from 'axios';
 var bcrypt = require('bcryptjs');
 
+const currentUrl = window.location.href;
+const url = new URL(currentUrl);
+const domain = url.hostname;
+
 interface IProps {
 }
 
@@ -28,7 +32,7 @@ export default class SignUp extends Component<IProps, IState> {
         const password = document.querySelector('.password-input') as HTMLInputElement;
         if (username.value == '' || password.value == '')
             return;
-        const request = await axios.post('http://localhost:3333/auth/verify_sign_up', JSON.stringify({ username: username.value, password: bcrypt.hashSync(password.value, 10) }), { headers: { 'Content-Type': 'application/json' } });
+        const request = await axios.post('http://' + domain + ':3333/auth/verify_sign_up', JSON.stringify({ username: username.value, password: bcrypt.hashSync(password.value, 10) }), { headers: { 'Content-Type': 'application/json' } });
         if (request.data.success) {
             sessionStorage.setItem("username", request.data.username);
             sessionStorage.setItem("accessToken", request.data.accessToken);
@@ -63,12 +67,12 @@ export default class SignUp extends Component<IProps, IState> {
     render() {
         return (
             <>
-            <div className='signup-div'>
-                <input type="text" placeholder='username' className='username-input'/>
-                <input type="password" placeholder='password' className='password-input'/>
-                <button className='signup-signup-button' onClick={this.redirectSignUp}>Sign Up</button>
-            </div>
-            <BouncingBallsUI queryType={2}/>
+                <div className='signup-div'>
+                    <input type="text" placeholder='username' className='username-input' />
+                    <input type="password" placeholder='password' className='password-input' />
+                    <button className='signup-signup-button' onClick={this.redirectSignUp}>Sign Up</button>
+                </div>
+                <BouncingBallsUI queryType={2} />
             </>
         )
     }

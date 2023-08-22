@@ -4,6 +4,10 @@ import './css/JoinChannel.css';
 import axios from 'axios';
 import CreateChannel from './CreateChannel';
 
+const currentUrl = window.location.href;
+const url = new URL(currentUrl);
+const domain = url.hostname;
+
 interface IProps {
     handleChannelClick: (channelName: string) => void;
     handleButtonsClick: () => void;
@@ -34,7 +38,7 @@ export default class JoinChannel extends Component<IProps, IState> {
     }
 
     async reFetchChannels() {
-        const request = await axios.post('http://localhost:3333/channel/get_channels/',
+        const request = await axios.post('http://' + domain + ':3333/channel/get_channels/',
             JSON.stringify({
                 username: sessionStorage.getItem("username"),
                 accessToken: sessionStorage.getItem("accessToken"),
@@ -55,7 +59,7 @@ export default class JoinChannel extends Component<IProps, IState> {
     }
 
     async componentDidMount() {
-        const request = await axios.post('http://localhost:3333/channel/get_channels/',
+        const request = await axios.post('http://' + domain + ':3333/channel/get_channels/',
             JSON.stringify({
                 username: sessionStorage.getItem("username"),
                 accessToken: sessionStorage.getItem("accessToken"),
@@ -72,7 +76,7 @@ export default class JoinChannel extends Component<IProps, IState> {
             console.log("failed to get channels")
             console.log(request.data.error)
         }
-        const request2 = await axios.post('http://localhost:3333/channel/get_your_channels/',
+        const request2 = await axios.post('http://' + domain + ':3333/channel/get_your_channels/',
             JSON.stringify({
                 username: sessionStorage.getItem("username"),
                 accessToken: sessionStorage.getItem("accessToken"),
@@ -89,7 +93,7 @@ export default class JoinChannel extends Component<IProps, IState> {
             console.log("failed to get your channels")
             console.log(request2.data.error)
         }
-        const request3 = await axios.post('http://localhost:3333/channel/get_channel_invites/',
+        const request3 = await axios.post('http://' + domain + ':3333/channel/get_channel_invites/',
             JSON.stringify({
                 username: sessionStorage.getItem("username"),
                 accessToken: sessionStorage.getItem("accessToken"),
@@ -110,7 +114,7 @@ export default class JoinChannel extends Component<IProps, IState> {
     }
 
     async acceptChannelInvite(channelName: string) {
-        const request = await axios.post('http://localhost:3333/channel/accept_channel_invite/',
+        const request = await axios.post('http://' + domain + ':3333/channel/accept_channel_invite/',
             JSON.stringify({
                 username: sessionStorage.getItem("username"),
                 accessToken: sessionStorage.getItem("accessToken"),
@@ -132,7 +136,7 @@ export default class JoinChannel extends Component<IProps, IState> {
     }
 
     async declineChannelInvite(channelName: string) {
-        const request = await axios.post('http://localhost:3333/channel/decline_channel_invite/',
+        const request = await axios.post('http://' + domain + ':3333/channel/decline_channel_invite/',
             JSON.stringify({
                 username: sessionStorage.getItem("username"),
                 accessToken: sessionStorage.getItem("accessToken"),

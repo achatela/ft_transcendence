@@ -4,6 +4,10 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { match } from 'assert';
 
+const currentUrl = window.location.href;
+const url = new URL(currentUrl);
+const domain = url.hostname;
+
 function withParams(WrappedComponent: React.ComponentType<any>) {
     return (props: any) => {
         const { profileId } = useParams<{ profileId: string }>();
@@ -36,7 +40,7 @@ class MatchHistory extends Component<IProps, IState> {
         else
             profileId = this.state.profileId;
 
-        const response = await axios.post('http://localhost:3333/profile/match_history/',
+        const response = await axios.post('http://' + domain + ':3333/profile/match_history/',
             JSON.stringify({
                 username: sessionStorage.getItem("username"),
                 accessToken: sessionStorage.getItem("accessToken"),

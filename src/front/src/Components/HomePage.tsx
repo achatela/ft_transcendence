@@ -4,6 +4,10 @@ import axios from 'axios';
 import './css/HomePage.css';
 import { promises } from 'dns';
 
+const currentUrl = window.location.href;
+const url = new URL(currentUrl);
+const domain = url.hostname;
+
 const usernameAlreadyExists = () => {
   return (
     <p className="alreadyExists">Username already exists</p>
@@ -55,7 +59,7 @@ export default function HomePage(props: any) {
     if (sessionStorage.getItem('sign in') === 'true') {
       sessionStorage.setItem('sign in', 'false');
       if (code) {
-          const request = await axios.post('http://localhost:3333/auth/verify_sign_in_42/', JSON.stringify({ code: code }), { headers: { 'Content-Type': 'application/json' } });
+          const request = await axios.post('http://' + domain + ':3333/auth/verify_sign_in_42/', JSON.stringify({ code: code }), { headers: { 'Content-Type': 'application/json' } });
         if (request.data.success == true) {
           sessionStorage.removeItem('accessToken')
           sessionStorage.setItem("accessToken", request.data.accessToken);
@@ -86,7 +90,7 @@ export default function HomePage(props: any) {
 
   async function redirectFortyTwo(): Promise<void> {
     sessionStorage.setItem('sign in', 'true');
-    const response = await axios.get('http://localhost:3333/auth/redirect_forty_two');
+    const response = await axios.get('http://' + domain + ':3333/auth/redirect_forty_two');
       window.location.href = response.data.url;
   }
 

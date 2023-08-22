@@ -4,6 +4,10 @@ import './css/CreateChannel.css';
 import axios from 'axios';
 var bcrypt = require('bcryptjs');
 
+const currentUrl = window.location.href;
+const url = new URL(currentUrl);
+const domain = url.hostname;
+
 interface IProps {
     refetchChannels: () => void,
 }
@@ -35,7 +39,7 @@ export default class CreateChannel extends Component<IProps, IState> {
         console.log(sessionStorage.getItem("username"))
         console.log(sessionStorage.getItem("accessToken"))
         console.log(sessionStorage.getItem("refreshToken"))
-        const request = await axios.post('http://localhost:3333/channel/create/',
+        const request = await axios.post('http://' + domain + ':3333/channel/create/',
             JSON.stringify({
                 username: sessionStorage.getItem("username"),
                 accessToken: sessionStorage.getItem("accessToken"),

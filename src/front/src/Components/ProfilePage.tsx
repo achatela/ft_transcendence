@@ -4,6 +4,10 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { isButtonElement } from 'react-router-dom/dist/dom';
 
+const currentUrl = window.location.href;
+const url = new URL(currentUrl);
+const domain = url.hostname;
+
 function withParams(WrappedComponent: React.ComponentType<any>) {
     return (props: any) => {
         const { profileId } = useParams<{ profileId: string }>();
@@ -51,7 +55,7 @@ class ProfilePage extends Component<IProps, IState> {
 
     getUserInfoId = async () => {
         const request = await axios.post(
-            `http://localhost:3333/profile/${this.state.profileId}/`,
+            'http://' + domain + `:3333/profile/${this.state.profileId}/`,
             JSON.stringify({
                 username: sessionStorage.getItem('username'),
                 refreshToken: sessionStorage.getItem("refreshToken"),
@@ -68,56 +72,56 @@ class ProfilePage extends Component<IProps, IState> {
     }
 
     getUserInfo = async () => {
-        const response = await axios.post("http://localhost:3333/profile/user_info/", JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+        const response = await axios.post('http://' + domain + ':3333/profile/user_info/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
         sessionStorage.setItem("refreshToken", response.data.refreshToken);
         sessionStorage.setItem("accessToken", response.data.accessToken);
         return response.data.userInfo;
     }
 
     getAvatar = async () => {
-        const response = await axios.post("http://localhost:3333/profile/avatar/", JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+        const response = await axios.post('http://' + domain + ':3333/profile/avatar/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
         sessionStorage.setItem("refreshToken", response.data.refreshToken);
         sessionStorage.setItem("accessToken", response.data.accessToken);
         return response.data.avatar;
     }
 
     getUsername = async () => {
-        const response = await axios.post("http://localhost:3333/profile/username/", JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+        const response = await axios.post('http://' + domain + ':3333/profile/username/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
         sessionStorage.setItem("refreshToken", response.data.refreshToken);
         sessionStorage.setItem("accessToken", response.data.accessToken);
         return response.data.username;
     }
 
     getWins = async () => {
-        const response = await axios.post("http://localhost:3333/profile/wins/", JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+        const response = await axios.post('http://' + domain + ':3333/profile/wins/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
         sessionStorage.setItem("refreshToken", response.data.refreshToken);
         sessionStorage.setItem("accessToken", response.data.accessToken);
         return response.data.wins;
     }
 
     getLosses = async () => {
-        const response = await axios.post("http://localhost:3333/profile/losses/", JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+        const response = await axios.post('http://' + domain + ':3333/profile/losses/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
         sessionStorage.setItem("refreshToken", response.data.refreshToken);
         sessionStorage.setItem("accessToken", response.data.accessToken);
         return response.data.losses;
     }
 
     getLadderLevel = async () => {
-        const response = await axios.post("http://localhost:3333/profile/ladder_level/", JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+        const response = await axios.post('http://' + domain + ':3333/profile/ladder_level/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
         sessionStorage.setItem("refreshToken", response.data.refreshToken);
         sessionStorage.setItem("accessToken", response.data.accessToken);
         return response.data.ladderLevel;
     }
 
     getAchievements = async () => {
-        const response = await axios.post("http://localhost:3333/profile/achievements/", JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+        const response = await axios.post('http://' + domain + ':3333/profile/achievements/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
         sessionStorage.setItem("refreshToken", response.data.refreshToken);
         sessionStorage.setItem("accessToken", response.data.accessToken);
         return response.data.achievements;
     }
 
     get2FAStatus = async () => {
-        const response = await axios.post("http://localhost:3333/2fa/check_2fa/", JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+        const response = await axios.post('http://' + domain + ':3333/2fa/check_2fa/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
         if (response.data.success === true) {
             sessionStorage.setItem("accessToken", response.data.accessToken);
             sessionStorage.setItem("refreshToken", response.data.refreshToken);
@@ -170,7 +174,7 @@ class ProfilePage extends Component<IProps, IState> {
     }
 
     async getIsFriend() {
-        const request = await axios.post('http://localhost:3333/profile/is_friend/',
+        const request = await axios.post('http://' + domain + ':3333/profile/is_friend/',
             JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken"), profileId: this.state.profileId }), { headers: { 'Content-Type': 'application/json' } }
         )
         if (request.data.success === true) {
@@ -186,7 +190,7 @@ class ProfilePage extends Component<IProps, IState> {
     }
 
     async checkUserExists() {
-        const request = await axios.post('http://localhost:3333/profile/user_check/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken"), id: this.state.profileId }), { headers: { 'Content-Type': 'application/json' } });
+        const request = await axios.post('http://' + domain + ':3333/profile/user_check/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken"), id: this.state.profileId }), { headers: { 'Content-Type': 'application/json' } });
         if (request.data.success === false)
             window.location.href = '/profile/';
         sessionStorage.setItem("refreshToken", request.data.refreshToken);
@@ -203,7 +207,7 @@ class ProfilePage extends Component<IProps, IState> {
             avatar.append('accessToken', sessionStorage.getItem('accessToken'));
 
             const request = await axios.post(
-                'http://localhost:3333/profile/upload/',
+                'http://' + domain + ':3333/profile/upload/',
                 avatar,
                 {
                     headers: {
@@ -218,7 +222,7 @@ class ProfilePage extends Component<IProps, IState> {
     };
 
     async disable2FA() {
-        const request = await axios.post('http://localhost:3333/2fa/disable_2fa/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+        const request = await axios.post('http://' + domain + ':3333/2fa/disable_2fa/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
         if (request.data.success === true) {
             sessionStorage.setItem("refreshToken", request.data.refreshToken);
             sessionStorage.setItem("accessToken", request.data.accessToken);
@@ -227,7 +231,7 @@ class ProfilePage extends Component<IProps, IState> {
     }
 
     async enable2FA() {
-        const request = await axios.post('http://localhost:3333/2fa/create/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+        const request = await axios.post('http://' + domain + ':3333/2fa/create/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
         if (request.data.success === true) {
             sessionStorage.setItem("refreshToken", request.data.refreshToken);
             sessionStorage.setItem("accessToken", request.data.accessToken);
@@ -237,7 +241,7 @@ class ProfilePage extends Component<IProps, IState> {
 
     async addFriend(): Promise<void> {
         const request = await axios.post(
-            "http://localhost:3333/social/send_friend_request/",
+            'http://' + domain + ':3333/social/send_friend_request/',
             JSON.stringify({
                 requesterUsername: sessionStorage.getItem("username"),
                 requestedUsername: this.state.username,

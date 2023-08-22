@@ -7,6 +7,10 @@ import { promises } from "dns";
 import CreateChannel from "./CreateChannel";
 import JoinChannel from "./JoinChannel";
 
+const currentUrl = window.location.href;
+const url = new URL(currentUrl);
+const domain = url.hostname;
+
 let avatarUrls: Map<string, string> = new Map<string, string>();
 let status: Map<string, string> = new Map<string, string>();
 
@@ -55,7 +59,7 @@ export default class SocialPage extends Component<IProps, IState> {
 
   async joinChannel(channelName: string, password?: string) {
     const request = await axios.post(
-      "http://localhost:3333/channel/join/",
+      'http://' + domain + ':3333/channel/join/',
       JSON.stringify({
         username: sessionStorage.getItem("username"),
         accessToken: sessionStorage.getItem("accessToken"),
@@ -85,7 +89,7 @@ export default class SocialPage extends Component<IProps, IState> {
       return;
     }
     const request = await axios.post(
-      "http://localhost:3333/channel/get_channel_messages/",
+      'http://' + domain + ':3333/channel/get_channel_messages/',
       JSON.stringify({
         username: sessionStorage.getItem("username"),
         accessToken: sessionStorage.getItem("accessToken"),
@@ -107,7 +111,7 @@ export default class SocialPage extends Component<IProps, IState> {
 
   async getFriendRequests(): Promise<string[]> {
     const response = await axios.post(
-      "http://localhost:3333/social/friend_request/",
+      'http://' + domain + ':3333/social/friend_request/',
       JSON.stringify({
         username: sessionStorage.getItem("username"),
         refreshToken: sessionStorage.getItem("refreshToken"),
@@ -127,7 +131,7 @@ export default class SocialPage extends Component<IProps, IState> {
 
   async getFriends(): Promise<string[]> {
     const response = await axios.post(
-      "http://localhost:3333/social/friends/",
+      'http://' + domain + ':3333/social/friends/',
       JSON.stringify({
         username: sessionStorage.getItem("username"),
         refreshToken: sessionStorage.getItem("refreshToken"),
@@ -152,7 +156,7 @@ export default class SocialPage extends Component<IProps, IState> {
 
   async getBlockedIds(): Promise<number[]> {
     const response = await axios.post(
-      "http://localhost:3333/social/blocked_ids/",
+      'http://' + domain + ':3333/social/blocked_ids/',
       JSON.stringify({
         username: sessionStorage.getItem("username"),
         refreshToken: sessionStorage.getItem("refreshToken"),
@@ -192,7 +196,7 @@ export default class SocialPage extends Component<IProps, IState> {
   async sendFriendRequestEnter(): Promise<void> {
     let inputElement = document.querySelector(".add-friend-input") as HTMLInputElement;
     const request = await axios.post(
-      "http://localhost:3333/social/send_friend_request/",
+      'http://' + domain + ':3333/social/send_friend_request/',
       JSON.stringify({
         requesterUsername: sessionStorage.getItem("username"),
         requestedUsername: inputElement.value,
@@ -220,7 +224,7 @@ export default class SocialPage extends Component<IProps, IState> {
   async sendFriendRequest(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
     let inputElement = document.querySelector(".add-friend-input") as HTMLInputElement;
     const request = await axios.post(
-      "http://localhost:3333/social/send_friend_request/",
+      'http://' + domain + ':3333/social/send_friend_request/',
       JSON.stringify({
         requesterUsername: sessionStorage.getItem("username"),
         requestedUsername: inputElement.value,
@@ -247,7 +251,7 @@ export default class SocialPage extends Component<IProps, IState> {
 
   async removeFriend(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
     const request = await axios.post(
-      "http://localhost:3333/social/remove_friend",
+      'http://' + domain + ':3333/social/remove_friend',
       JSON.stringify({
         removerUsername: sessionStorage.getItem("username"),
         removedUsername: event.currentTarget.dataset.name,
@@ -270,7 +274,7 @@ export default class SocialPage extends Component<IProps, IState> {
 
   async getFriendChat(username: string): Promise<{ room: string, messages: [{ senderId: string, text: string, time: string, username: string, avatar: string }] }> {
     const response = await axios.post(
-      "http://localhost:3333/social/friend_chat/",
+      'http://' + domain + ':3333/social/friend_chat/',
       JSON.stringify({
         username: sessionStorage.getItem("username"),
         friendUsername: username,
@@ -289,7 +293,7 @@ export default class SocialPage extends Component<IProps, IState> {
   async seeProfile(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
     console.log(event.currentTarget.dataset.name);
     const request = await axios.post(
-      "http://localhost:3333/social/get_friend_id/",
+      'http://' + domain + ':3333/social/get_friend_id/',
       JSON.stringify({
         username: sessionStorage.getItem("username"),
         friendUsername: event.currentTarget.dataset.name,
@@ -308,7 +312,7 @@ export default class SocialPage extends Component<IProps, IState> {
 
   async getAvatar(username: string): Promise<void> {
     const request = await axios.post(
-      "http://localhost:3333/social/get_avatar/",
+      'http://' + domain + ':3333/social/get_avatar/',
       JSON.stringify({
         username: username,
       }),
@@ -329,7 +333,7 @@ export default class SocialPage extends Component<IProps, IState> {
 
   async getStatus(username: string) {
     const request = await axios.post(
-      "http://localhost:3333/social/get_status/",
+      'http://' + domain + ':3333/social/get_status/',
       JSON.stringify({
         username: username,
       }),
@@ -350,7 +354,7 @@ export default class SocialPage extends Component<IProps, IState> {
   async blockUser(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
     let inputElement = document.querySelector(".block-user-input") as HTMLInputElement;
     const request = await axios.post(
-      "http://localhost:3333/social/block_user/",
+      'http://' + domain + ':3333/social/block_user/',
       JSON.stringify({
         username: sessionStorage.getItem("username"),
         blockedUsername: inputElement.value,
@@ -372,7 +376,7 @@ export default class SocialPage extends Component<IProps, IState> {
   async blockUserEnter() {
     let inputElement = document.querySelector(".block-user-input") as HTMLInputElement;
     const request = await axios.post(
-      "http://localhost:3333/social/block_user/",
+      'http://' + domain + ':3333/social/block_user/',
       JSON.stringify({
         username: sessionStorage.getItem("username"),
         blockedUsername: inputElement.value,
