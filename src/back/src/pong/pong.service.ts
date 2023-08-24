@@ -113,7 +113,7 @@ export class PongService {
     this.map1.delete(socketId);
   }
 
-  moveUp(socketId: number, key: string) {
+  moveUp(socketId: string, key: string) {
     try {
       const index = this.map1.get(socketId);
       if (index !== undefined) {
@@ -167,7 +167,7 @@ export class PongService {
     }
   }
 
-  moveDown(socketId: number, key: string) {
+  moveDown(socketId: string, key: string) {
     try {
       const index = this.map1.get(socketId);
       if (index !== undefined) {
@@ -511,7 +511,7 @@ export class PongService {
     gameState.prevRpc = rpc;
   }
 
-  getGameState(socketId: number, io: any): { success: boolean, gameState?: { x: number, y: number, dx: number, dy: number, paddleLeft: number, paddleRight: number, secondPaddleLeft?: number, secondPaddleRight?: number, leftScore: number, rightScore: number } } {
+  getGameState(socketId: string, io: any): { success: boolean, gameState?: { x: number, y: number, dx: number, dy: number, paddleLeft: number, paddleRight: number, secondPaddleLeft?: number, secondPaddleRight?: number, leftScore: number, rightScore: number } } {
     try {
       const index = this.map1.get(socketId);
       if (this.gameStates[index]?.socketLeft === 0 || this.gameStates[index]?.socketRight === 0) {
@@ -625,7 +625,7 @@ export class PongService {
   }
 
 
-  async changeSocketClassic(socketId: number, username: string, io: any): Promise<{ success: boolean }> {
+  async changeSocketClassic(socketId: string, username: string, io: any): Promise<{ success: boolean }> {
     try {
       const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: username } });
       const index = this.gameStates.findIndex((gameState) => gameState.id1 === user.id || gameState.id2 === user.id);
