@@ -2,7 +2,7 @@
     position: absolute;
     background-color: grey;
     z-index: 100;
-    width: 0.8rem;
+    width: calc(0.75vw + 0.75vh);
     height: 100px;
     left: 0;
     top: 0;
