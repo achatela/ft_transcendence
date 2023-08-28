@@ -9,7 +9,7 @@ var bcrypt = require('bcryptjs');
 
 @Injectable()
 export class AuthService {
-    
+
     tokenApp: string;
     countdown: number;
 
@@ -21,27 +21,27 @@ export class AuthService {
         try {
             const user = await this.prismaService.createUser({ username: username });
             const payload = { id: user.id };
-            const accessToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '5m' });
+            const accessToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '45m' });
             const refreshToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
-            await this.prismaService.user.update({ where: { username: username }, data: {avatar: 'http://localhost:3133/defaultPfp.png', hashedPassword: password, refreshToken: refreshToken, accessToken: accessToken } });
-            return {success: true, username: username, accessToken: accessToken, refreshToken: refreshToken};
+            await this.prismaService.user.update({ where: { username: username }, data: { avatar: 'http://localhost:3133/defaultPfp.png', hashedPassword: password, refreshToken: refreshToken, accessToken: accessToken } });
+            return { success: true, username: username, accessToken: accessToken, refreshToken: refreshToken };
         }
         catch {
-            return ({success: false, error: "user already exist"});
+            return ({ success: false, error: "user already exist" });
         }
     }
 
     async getVerifySignIn(username: string, password: string) {
-        const user = await this.prismaService.user.findUnique({ where: {username: username} });
+        const user = await this.prismaService.user.findUnique({ where: { username: username } });
         if (!user)
-            return ({success: false, error: "user doesn't exist"});
+            return ({ success: false, error: "user doesn't exist" });
         if (!(await bcrypt.compare(password, user.hashedPassword)))
             return { success: false, error: "incorrect password" };
-        return {success: true, username: username, accessToken: user.accessToken, refreshToken: user.refreshToken};
+        return { success: true, username: username, accessToken: user.accessToken, refreshToken: user.refreshToken };
     }
 
     async getRedirectFortyTwo() {
-        return {url: this.redirectUrl()};
+        return { url: this.redirectUrl() };
     }
 
     async verifySignIn(code: string) {
@@ -60,9 +60,9 @@ export class AuthService {
             }
             let user = await this.prismaService.createUser({ username: username, login: request.data.login, avatar: request.data.image.versions.small, personnal42Token: personnal42Token.access_token });
             const payload = { id: user.id };
-            const accessToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '5m' });
+            const accessToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '45m' });
             const refreshToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
-            user = await this.prismaService.user.update({ where: { username: username } , data: { accessToken: accessToken, refreshToken: refreshToken } });
+            user = await this.prismaService.user.update({ where: { username: username }, data: { accessToken: accessToken, refreshToken: refreshToken } });
             // while (!user.username)
             //     user = await this.prismaService.user.findUnique({ where: { username: username } });
             return {
@@ -180,7 +180,7 @@ export class AuthService {
             catch {
                 if (user.refreshToken === refreshToken) {
                     const payload = { id: user.id };
-                    accessToken = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '5m' });
+                    accessToken = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '45m' });
                     await this.prismaService.user.update({ where: { id: user.id }, data: { accessToken: accessToken } });
                     try {
                         await this.jwtService.verify(refreshToken, { secret: process.env.JWT_REFRESH_SECRET });
