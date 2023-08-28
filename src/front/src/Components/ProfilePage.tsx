@@ -282,8 +282,8 @@ class ProfilePage extends Component<IProps, IState> {
             }
             else {
                 console.error(request.data.error);
+                alert(request.data.error);
             }
-            alert(request.data.error);
         }
     }
 
