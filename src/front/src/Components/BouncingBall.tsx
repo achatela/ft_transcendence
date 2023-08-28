@@ -8,7 +8,7 @@ interface State {
   start: number;
 }
 
-class BouncingBall extends Component<{index: number, speed: number, balls: any[], setBalls: Dispatch<SetStateAction<any[]>>}, State> {
+class BouncingBall extends Component<{index: number, speed: number, balls: any[]}, State> {
   animationRef: number;
   lastFrameTime: number;
   speedMultiplier: number;
@@ -18,7 +18,7 @@ class BouncingBall extends Component<{index: number, speed: number, balls: any[]
   normalizedSpeedX: number;
   normalizedSpeedY: number;
   elements: Array<any>;
-  constructor(props: {index: number, speed: number, balls: any[], setBalls: Dispatch<SetStateAction<any[]>>}) {
+  constructor(props: {index: number, speed: number, balls: any[]}) {
     super(props);
     this.state = {
       position: props.balls[props.index].position,
@@ -28,7 +28,7 @@ class BouncingBall extends Component<{index: number, speed: number, balls: any[]
     };
     this.animationRef = 0;
     this.lastFrameTime = performance.now();
-    this.speedMultiplier = 3;
+    this.speedMultiplier = (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) + Math.max(document.documentElement.clientHeight, window.innerHeight || 0)) / 700;
     this.squareSize = (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) + Math.max(document.documentElement.clientHeight, window.innerHeight || 0)) / 100;
     this.magnitude = Math.sqrt(this.state.direction.dx ** 2 + this.state.direction.dy ** 2);
     this.normalizedSpeedX = this.state.direction.dx / this.magnitude;
@@ -37,9 +37,9 @@ class BouncingBall extends Component<{index: number, speed: number, balls: any[]
   }
 
   updateBall = (ball: {position: {x: number, y: number}, direction: {dx: number, dy: number}}) => {
-    const balls = [...this.props.balls];
+    const balls = JSON.parse(sessionStorage.getItem('balls'));
     balls[this.props.index] = ball;
-    this.props.setBalls(balls)
+    // this.props.setBalls(balls)
     sessionStorage.setItem('balls', JSON.stringify(balls));
     this.setState({position: ball.position, direction: ball.direction})
   }
@@ -131,6 +131,7 @@ class BouncingBall extends Component<{index: number, speed: number, balls: any[]
       newPosition = this.getRandomPosition();
     }
     this.updateBall({position: newPosition, direction: this.state.direction});
+    this.speedMultiplier = (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) + Math.max(document.documentElement.clientHeight, window.innerHeight || 0)) / 700;
     this.squareSize = (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) + Math.max(document.documentElement.clientHeight, window.innerHeight || 0)) / 100;
   };
 
