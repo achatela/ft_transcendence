@@ -135,7 +135,6 @@ export class AuthService {
             const data: any = request.data;
             const token = data.access_token;
             const tokenExpires = data.expires_in;
-            console.log(token, tokenExpires);
             // Create the user in the database
             return { success: true, access_token: token, expires_in: tokenExpires };
         }

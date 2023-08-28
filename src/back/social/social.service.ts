@@ -30,8 +30,6 @@ export class SocialService {
         const removed = await this.prismaService.user.findUnique({ where: { username: removedUsername }, include: { friends: true } });
         const friend = await remover.friends.find((friend) => friend.friendId == removed.id);
         const friend2 = await removed.friends.find((friend) => friend.friendId == remover.id);
-        console.log("friend:", friend);
-        console.log("friend2:", friend2);
         if (friend == undefined || friend2 == undefined)
             return { success: false };
 
@@ -139,7 +137,6 @@ export class SocialService {
         const friendRequests = [];
         for (const requestId of user.friendRequests)
             friendRequests.push((await this.prismaService.user.findUnique({ where: { id: requestId }, select: { username: true } })).username);
-        console.log("friend requests", friendRequests);
         return { success: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken, friendRequests: friendRequests };
     }
 
@@ -168,7 +165,6 @@ export class SocialService {
                     let user = await this.prismaService.user.findUnique({ where: { id: message.senderId }, select: { username: true, avatar: true } });
                     messages.push({ senderId: message.senderId, text: message.text, time: message.createdAt, username: user.username, avatar: user.avatar })
                 }
-                console.log("messages", messages);
                 return { success: true, accessToken: auth.accessToken, refreshToken: auth.refreshToken, chat: { room: chat.room, messages: messages } };
             }
         }

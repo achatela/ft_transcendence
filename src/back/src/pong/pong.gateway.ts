@@ -38,12 +38,10 @@ export class PongGateway {
       const ret = this.pongService.getGameState(socket.id, this.server);
       socket.emit('update', ret);
     }, 16);
-    console.log("update", data);
   }
 
   @SubscribeMessage('disconnect')
   handleDisconnect(@ConnectedSocket() socket: Socket, @MessageBody() data: any) {
-    console.log(socket.id)
     this.pongService.disconnectSocket(socket.id, this.server);
   }
 }

@@ -515,7 +515,6 @@ export class PongService {
     try {
       const index = this.map1.get(socketId);
       if (this.gameStates[index]?.socketLeft === 0 || this.gameStates[index]?.socketRight === 0) {
-        console.log('user disconnected')
         return { success: false };
       }
       if (index !== undefined) {
@@ -597,7 +596,6 @@ export class PongService {
             }
           }
         }
-        console.log('gameStates in classic', this.gameStates);
         return { success: true };
       }
     } catch (e) {
@@ -665,7 +663,6 @@ export class PongService {
             }
           }
         }
-        console.log('gameStates in classic', this.gameStates);
         return { success: true };
       }
     } catch (e) {
@@ -697,7 +694,6 @@ export class PongService {
         const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueCustom[1] } });
         this.gameStates.push({ mode: "custom", secondPaddleLeft: 0, secondPaddleRight: 0, statsAttributed: false, started: false, id1: this.queueCustom[0], id2: this.queueCustom[1], socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false, onOff: false, speedMultiplier: 10 });
         this.queueCustom.splice(0, 2);
-        console.log('gameStates in custom', this.gameStates);
         await this.prismaService.user.update({ where: { id: user1.id }, data: { status: 'playing custom' } });
         await this.prismaService.user.update({ where: { id: user2.id }, data: { status: 'playing custom' } });
         return { success: true };
@@ -757,14 +753,12 @@ export class PongService {
   }
 
   async checkQueueClassic(): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
-    // console.log('classic', this.queueClassic)
     try {
       if (this.queueClassic.length >= 2) {
         const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueClassic[0] } });
         const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueClassic[1] } });
         this.gameStates.push({ mode: "classic", statsAttributed: false, started: false, id1: this.queueClassic[0], id2: this.queueClassic[1], socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false, onOff: false, speedMultiplier: 10 });
         this.queueClassic.splice(0, 2);
-        console.log('gameStates in classic', this.gameStates);
         await this.prismaService.user.update({ where: { id: user1.id }, data: { status: 'playing classic' } });
         await this.prismaService.user.update({ where: { id: user2.id }, data: { status: 'playing classic' } });
         return { success: true };

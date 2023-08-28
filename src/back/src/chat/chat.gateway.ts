@@ -11,21 +11,13 @@ export class ChatGateway {
   constructor(private prismaService: PrismaService, private authService: AuthService) { }
   @WebSocketServer()
   server: Server;
-
-  // handleConnection(@ConnectedSocket() client : Socket, @MessageBody() data: {room: string}): void {
-  //   client.join(data.room)
-  //   console.log(client.id, 'joined', data.room);
-  // }
-
   @SubscribeMessage('joinRoom')
   handleJoinRoom(@ConnectedSocket() socket: Socket, @MessageBody() body: { room: string }): void {
     socket.join(body.room);
     socket.on('disconnect', () => {
       socket.leave(body.room);
-      console.log(socket.id, 'left', body.room);
     });
     this.server.emit('joinRoom', body.room);
-    console.log(socket.id, 'joined', body.room);
   }
 
   @SubscribeMessage('message')
@@ -68,6 +60,5 @@ export class ChatGateway {
     });
     let user = await this.prismaService.user.findUnique({ where: { id: sender.id }, select: { username: true, avatar: true } });
     this.server.emit('message', { senderId: sender.id, text: body.message, time: messages[0].createdAt, username: user.username, avatar: user.avatar });
-    console.log(socket.id, ":", body.message);
   }
 }

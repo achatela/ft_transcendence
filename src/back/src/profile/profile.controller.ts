@@ -85,13 +85,10 @@ export class ProfileController {
 
         try {
           fs.unlinkSync(filePath);
-          console.log(`Old avatar deleted: ${file}`);
         } catch {
-          console.log(`Error while deleting old avatar: ${file}`);
         }
       }
     } catch {
-      console.log("Error while reading directory");
     }
 
     try {
@@ -99,7 +96,6 @@ export class ProfileController {
         if (err) {
           throw err;
         } else {
-          console.log('Successfully moved the file!');
         }
       });
 
