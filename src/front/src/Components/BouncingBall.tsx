@@ -33,7 +33,7 @@ class BouncingBall extends Component<{ speed: number, queryType: number }, State
     this.magnitude = Math.sqrt(this.state.direction.dx ** 2 + this.state.direction.dy ** 2);
     this.normalizedSpeedX = this.state.direction.dx / this.magnitude;
     this.normalizedSpeedY = this.state.direction.dy / this.magnitude;
-    this.elements =  Array<any>(null);
+    this.elements = Array<any>(null);
   }
 
   handleSpeedChange = () => {
@@ -136,7 +136,7 @@ class BouncingBall extends Component<{ speed: number, queryType: number }, State
   componentDidMount() {
     this.elements.push(document.querySelector('.addBallButton'))
     this.elements.push(document.querySelector('.removeBallButton'))
-    if (this.props.queryType == 1){
+    if (this.props.queryType == 1) {
       this.elements.push(document.querySelector('.signup-button'));
       this.elements.push(document.querySelector('.signin-button'));
       this.elements.push(document.querySelector('.signin42-button'));

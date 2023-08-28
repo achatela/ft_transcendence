@@ -9,6 +9,16 @@ var bcrypt = require('bcryptjs');
 
 @Injectable()
 export class AuthService {
+    async logOut(username: string, refreshToken: string, accessToken: string) {
+        const user = await this.prismaService.user.findUnique({ where: { username: username } });
+        if (!user)
+            return ({ success: false, error: "user doesn't exist" });
+        const ret = await this.checkToken(user, refreshToken, accessToken);
+        if (ret.success == false)
+            return ({ success: false, error: "invalid token" });
+        await this.prismaService.user.update({ where: { username: username }, data: { status: "offline" } });
+        return ({ success: true });
+    }
 
     tokenApp: string;
     countdown: number;
