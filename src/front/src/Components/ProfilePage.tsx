@@ -309,9 +309,7 @@ class ProfilePage extends Component<IProps, IState> {
                         <button onClick={() => this.addFriend()} className='add-friend-profile'>
                             Add Friend
                         </button>
-                    ) : <div className='friend-state-div'>
-                        TMP STATUS HERE
-                    </div>)
+                    ) : null)
                     : null
                 }
 

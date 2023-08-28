@@ -27,6 +27,8 @@ export class ChannelService {
             return { success: false, error: 'Channel not found' };
         }
         if (user.id === channel.owner) {
+            // delete all the messages of the channel
+            await this.prismaService.channelMessage.deleteMany({ where: { channelId: channel.id } });
             await this.prismaService.channel.delete({ where: { channelName: channelName } });
             return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
         }
@@ -96,8 +98,6 @@ export class ChannelService {
             return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
         }
         if (channel.password != '') {
-            console.log("channel password: ", channel.password);
-            console.log("password: ", password)
             if (bcrypt.compareSync(password, channel.password, function (err, res) { }) == false) {
                 return { success: false, error: 'Invalid password' };
             }
@@ -157,7 +157,6 @@ export class ChannelService {
     }
 
     async createChannel(body: { username: string, accessToken: string, refreshToken: string, channelName: string, hasPassword: boolean, password?: string, isPrivate: boolean }) {
-        console.log(body);
         const { username, accessToken, refreshToken, channelName, hasPassword, password, isPrivate } = body;
         const user = await this.prismaService.user.findUnique({ where: { username: username } });
         if (!user) {

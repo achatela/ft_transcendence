@@ -33,7 +33,7 @@ class BouncingBall extends Component<{index: number, speed: number, balls: any[]
     this.magnitude = Math.sqrt(this.state.direction.dx ** 2 + this.state.direction.dy ** 2);
     this.normalizedSpeedX = this.state.direction.dx / this.magnitude;
     this.normalizedSpeedY = this.state.direction.dy / this.magnitude;
-    this.elements =  Array<any>(null);
+    this.elements = Array<any>(null);
   }
 
   updateBall = (ball: {position: {x: number, y: number}, direction: {dx: number, dy: number}}) => {

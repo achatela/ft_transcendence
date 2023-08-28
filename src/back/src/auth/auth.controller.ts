@@ -9,7 +9,7 @@ import { User } from '@prisma/client';
 export class AuthController {
     constructor(private readonly authService: AuthService, private prismaService: PrismaService, private jwtService: JwtService) { }
 
-    
+
     @Post('verify_sign_up')
     async getVerifySignUp(@Body() userInput: { username: string, password: string }) {
         return await this.authService.getVerifySignUp(userInput.username, userInput.password)
@@ -29,5 +29,10 @@ export class AuthController {
     async verifySignIn(@Body() userInput: { code: string }) {
         return await this.authService.verifySignIn(userInput.code)
     }
-    
+
+    @Post('log_out')
+    async logOut(@Body() userInput: { username: string, refreshToken: string, accessToken: string }) {
+        return await this.authService.logOut(userInput.username, userInput.refreshToken, userInput.accessToken)
+    }
+
 }

@@ -180,16 +180,15 @@ class ModePage extends Component<IProps, IState> {
     render() {
         return (
             <div className="divModePage">
-                <button className='reset-debug' onClick={() => { sessionStorage.setItem("queueing", ""); window.location.href = "/mode" }}></button>
                 {!sessionStorage.getItem("queueing") && (
-                    <div className="normalGameMode">
-                        <p className="classicPong" onClick={this.queueClassic}>Classic Pong</p>
+                    <div className="normalGameMode" onClick={this.queueClassic}>
+                        <p className="classicPong">Classic Pong</p>
                         <div className="imgPlaceHolder"></div>
                     </div>
                 )}
                 {!sessionStorage.getItem("queueing") && (
-                    <div className="customGameMode">
-                        <p className="customPong" onClick={this.queueCustom}>Custom Pong</p>
+                    <div className="customGameMode" onClick={this.queueCustom}>
+                        <p className="customPong">Custom Pong</p>
                         <div className="imgPlaceHolder2"></div>
                     </div>
                 )}

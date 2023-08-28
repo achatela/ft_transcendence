@@ -12,31 +12,24 @@ export class ChannelGateway {
     @WebSocketServer()
     server: Server;
 
-    // handleConnection(@ConnectedSocket() client : Socket, @MessageBody() data: {room: string}): void {
-    //   client.join(data.room)
-    //   console.log(client.id, 'joined', data.room);
-    // }
-
     @SubscribeMessage('joinRoomChannel')
     handleJoinRoomChannel(@ConnectedSocket() socket: Socket, @MessageBody() body: { room: string }): void {
-        console.log("joinRoomChannel body:\n", body);
         socket.join(body.room);
         socket.on('disconnect', () => {
             socket.leave(body.room);
-            console.log(socket.id, 'left', body.room);
         });
         this.server.emit('joinRoomChannel', body.room);
-        console.log(socket.id, 'joined', body.room);
     }
 
     @SubscribeMessage('messageChannel')
     async handleMessageChannel(@ConnectedSocket() socket: Socket, @MessageBody() body: { room: string, senderUsername: string, message: string },): Promise<void> {
-        console.log("messageChannel body:\n", body);
-        const chat = await this.prismaService.channel.findUnique({ where: { channelName: body.room }, select: { messages: true, mutedIds: true } });
+        const chat = await this.prismaService.channel.findUnique({ where: { channelName: body.room }, select: { messages: true, mutedIds: true, bannedIds: true } });
         const sender = await this.prismaService.user.findUnique({ where: { username: body.senderUsername }, select: { id: true } });
 
         if (chat.mutedIds.includes(sender.id)) {
-            console.log("muted");
+            return;
+        }
+        else if (chat.bannedIds.includes(sender.id)) {
             return;
         }
         const { messages } = await this.prismaService.channel.update({
@@ -66,7 +59,6 @@ export class ChannelGateway {
         });
         let user = await this.prismaService.user.findUnique({ where: { id: sender.id }, select: { username: true, avatar: true } });
         this.server.emit('messageChannel', { senderId: sender.id, text: body.message, time: messages[0].createdAt, username: user.username, avatar: user.avatar });
-        console.log(socket.id, ":", body.message);
     }
 
     @SubscribeMessage('inviteClassic')
@@ -76,7 +68,6 @@ export class ChannelGateway {
 
     @SubscribeMessage('acceptClassic')
     async acceptClassic(@ConnectedSocket() socket: Socket, @MessageBody() body: { room: string, username: string, targetUsername: string }): Promise<void> {
-        console.log(body.username, body.targetUsername)
         const user = await this.prismaService.user.findUnique({ where: { username: body.username }, select: { id: true } });
         const targetUser = await this.prismaService.user.findUnique({ where: { username: body.targetUsername }, select: { id: true } });
 

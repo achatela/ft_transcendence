@@ -2,7 +2,7 @@
     border: white 4px solid;
     position: absolute;
     top: 50%;
-    left: 50%;
+    left: 47.5%;
     transform: translate(-101%, -50%);
     width: 30vw;
     height: 30vw;
@@ -12,7 +12,7 @@
     border: white 4px solid;
     position: absolute;
     top: 50%;
-    left: 50%;
+    left: 52.5%;
     transform: translate(+1%, -50%);
     width: 30vw;
     height: 30vw;
@@ -41,8 +41,8 @@
 }
 
 .normalGameMode:hover .imgPlaceHolder {
-    background-image: url('../img/normalPongReversed.png');
-    border-color: black;
+    background-image: url('../img/pongNormal.png');
+    /* border-color: black; */
 }
 
 .customGameMode:hover {
@@ -54,34 +54,34 @@
 }
 
 .customGameMode:hover .imgPlaceHolder2 {
-    background-image: url('../img/normalPongReversed.png');
-    border-color: black;
+    background-image: url('../img/pongCustom.png');
+    /* border-color: black; */
 }
 
 .imgPlaceHolder {
     background-size: cover;
-    background-image: url('../img/normalPong.png');
+    background-image: url('../img/pongNormal.png');
     margin-top: 4vw;
     position: absolute;
-    top: 50%;
+    top: 55%;
     left: 50%;
     border: white 3px solid;
     transform: translate(-50%, -50%);
-    width: 19vw;
+    width: 30vw;
     height: 19vw;
 }
 
 
 .imgPlaceHolder2 {
     background-size: cover;
-    background-image: url('../img/normalPong.png');
+    background-image: url('../img/pongCustom.png');
     margin-top: 4vw;
     position: absolute;
-    top: 50%;
+    top: 55%;
     left: 50%;
     border: white 3px solid;
     transform: translate(-50%, -50%);
-    width: 19vw;
+    width: 30vw;
     height: 19vw;
 }
 

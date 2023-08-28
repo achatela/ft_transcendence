@@ -141,7 +141,7 @@ class GameBoard extends Component<IProps, IState> {
 
     setSocket() {
         this.setState((prevState) => ({
-            socket: io("http://" + domain + ":3131/"),
+            socket: io("http://" + domain + ":3333/"),
         }));
         this.sleep(175).then(() => {
             if (sessionStorage.getItem('gameMode') === "classic") {

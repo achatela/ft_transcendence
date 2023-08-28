@@ -1,5 +1,3 @@
-todo:
-
-<!-- Mettre les jwt dans un cookie httpOnly -->
-
-Pour mode custom: - Nouvelle map - Double paddle, fleches et zs -
+Fix probleme de matchmaking
+fix css socialPage
+Pouvoir changer de pseudo dans la profilePage

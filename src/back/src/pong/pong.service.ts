@@ -113,7 +113,7 @@ export class PongService {
     this.map1.delete(socketId);
   }
 
-  moveUp(socketId: number, key: string) {
+  moveUp(socketId: string, key: string) {
     try {
       const index = this.map1.get(socketId);
       if (index !== undefined) {
@@ -167,7 +167,7 @@ export class PongService {
     }
   }
 
-  moveDown(socketId: number, key: string) {
+  moveDown(socketId: string, key: string) {
     try {
       const index = this.map1.get(socketId);
       if (index !== undefined) {
@@ -265,7 +265,7 @@ export class PongService {
             await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { xpBar: { decrement: user2.ladderLevel * 100 } } });
           }
           historyWinnerString = 'W:' + user1.username + ' L:' + user2.username + ' ' + gameState.leftScore + ' - ' + gameState.rightScore;
-          historyLoserString = 'L:' + user1.username + ' W:' + user2.username + ' ' + gameState.rightScore + ' - ' + gameState.leftScore;
+          historyLoserString = 'L:' + user1.username + ' W:' + user2.username + ' ' + gameState.leftScore + ' - ' + gameState.rightScore;
           await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { matchHistory: { push: historyWinnerString } } });
           await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { matchHistory: { push: historyLoserString } } });
         }
@@ -283,7 +283,7 @@ export class PongService {
             await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { xpBar: { decrement: user2.ladderLevel * 100 } } });
           }
           historyWinnerString = 'W:' + user2.username + ' L:' + user1.username + ' ' + gameState.rightScore + ' - ' + gameState.leftScore;
-          historyLoserString = 'L:' + user2.username + ' W:' + user1.username + ' ' + gameState.leftScore + ' - ' + gameState.rightScore;
+          historyLoserString = 'L:' + user2.username + ' W:' + user1.username + ' ' + gameState.rightScore + ' - ' + gameState.leftScore;
           await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { matchHistory: { push: historyLoserString } } });
           await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { matchHistory: { push: historyWinnerString } } });
         }
@@ -402,7 +402,7 @@ export class PongService {
             await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { xpBar: { decrement: user2.ladderLevel * 100 } } });
           }
           historyWinnerString = 'W:' + user1.username + ' L:' + user2.username + ' ' + gameState.leftScore + ' - ' + gameState.rightScore;
-          historyLoserString = 'L:' + user1.username + ' W:' + user2.username + ' ' + gameState.rightScore + ' - ' + gameState.leftScore;
+          historyLoserString = 'L:' + user1.username + ' W:' + user2.username + ' ' + gameState.leftScore + ' - ' + gameState.rightScore;
           await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { matchHistory: { push: historyWinnerString } } });
           await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { matchHistory: { push: historyLoserString } } });
         }
@@ -420,7 +420,7 @@ export class PongService {
             await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { xpBar: { decrement: user2.ladderLevel * 100 } } });
           }
           historyWinnerString = 'W:' + user2.username + ' L:' + user1.username + ' ' + gameState.rightScore + ' - ' + gameState.leftScore;
-          historyLoserString = 'L:' + user2.username + ' W:' + user1.username + ' ' + gameState.leftScore + ' - ' + gameState.rightScore;
+          historyLoserString = 'L:' + user2.username + ' W:' + user1.username + ' ' + gameState.rightScore + ' - ' + gameState.leftScore;
           await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { matchHistory: { push: historyLoserString } } });
           await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { matchHistory: { push: historyWinnerString } } });
         }
@@ -511,11 +511,10 @@ export class PongService {
     gameState.prevRpc = rpc;
   }
 
-  getGameState(socketId: number, io: any): { success: boolean, gameState?: { x: number, y: number, dx: number, dy: number, paddleLeft: number, paddleRight: number, secondPaddleLeft?: number, secondPaddleRight?: number, leftScore: number, rightScore: number } } {
+  getGameState(socketId: string, io: any): { success: boolean, gameState?: { x: number, y: number, dx: number, dy: number, paddleLeft: number, paddleRight: number, secondPaddleLeft?: number, secondPaddleRight?: number, leftScore: number, rightScore: number } } {
     try {
       const index = this.map1.get(socketId);
       if (this.gameStates[index]?.socketLeft === 0 || this.gameStates[index]?.socketRight === 0) {
-        console.log('user disconnected')
         return { success: false };
       }
       if (index !== undefined) {
@@ -597,7 +596,6 @@ export class PongService {
             }
           }
         }
-        console.log('gameStates in classic', this.gameStates);
         return { success: true };
       }
     } catch (e) {
@@ -625,7 +623,7 @@ export class PongService {
   }
 
 
-  async changeSocketClassic(socketId: number, username: string, io: any): Promise<{ success: boolean }> {
+  async changeSocketClassic(socketId: string, username: string, io: any): Promise<{ success: boolean }> {
     try {
       const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: username } });
       const index = this.gameStates.findIndex((gameState) => gameState.id1 === user.id || gameState.id2 === user.id);
@@ -665,7 +663,6 @@ export class PongService {
             }
           }
         }
-        console.log('gameStates in classic', this.gameStates);
         return { success: true };
       }
     } catch (e) {
@@ -697,7 +694,6 @@ export class PongService {
         const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueCustom[1] } });
         this.gameStates.push({ mode: "custom", secondPaddleLeft: 0, secondPaddleRight: 0, statsAttributed: false, started: false, id1: this.queueCustom[0], id2: this.queueCustom[1], socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false, onOff: false, speedMultiplier: 10 });
         this.queueCustom.splice(0, 2);
-        console.log('gameStates in custom', this.gameStates);
         await this.prismaService.user.update({ where: { id: user1.id }, data: { status: 'playing custom' } });
         await this.prismaService.user.update({ where: { id: user2.id }, data: { status: 'playing custom' } });
         return { success: true };
@@ -757,14 +753,12 @@ export class PongService {
   }
 
   async checkQueueClassic(): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
-    // console.log('classic', this.queueClassic)
     try {
       if (this.queueClassic.length >= 2) {
         const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueClassic[0] } });
         const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueClassic[1] } });
         this.gameStates.push({ mode: "classic", statsAttributed: false, started: false, id1: this.queueClassic[0], id2: this.queueClassic[1], socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false, onOff: false, speedMultiplier: 10 });
         this.queueClassic.splice(0, 2);
-        console.log('gameStates in classic', this.gameStates);
         await this.prismaService.user.update({ where: { id: user1.id }, data: { status: 'playing classic' } });
         await this.prismaService.user.update({ where: { id: user2.id }, data: { status: 'playing classic' } });
         return { success: true };
