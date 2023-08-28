@@ -32,11 +32,15 @@ export class ChannelGateway {
     @SubscribeMessage('messageChannel')
     async handleMessageChannel(@ConnectedSocket() socket: Socket, @MessageBody() body: { room: string, senderUsername: string, message: string },): Promise<void> {
         console.log("messageChannel body:\n", body);
-        const chat = await this.prismaService.channel.findUnique({ where: { channelName: body.room }, select: { messages: true, mutedIds: true } });
+        const chat = await this.prismaService.channel.findUnique({ where: { channelName: body.room }, select: { messages: true, mutedIds: true, bannedIds: true } });
         const sender = await this.prismaService.user.findUnique({ where: { username: body.senderUsername }, select: { id: true } });
 
         if (chat.mutedIds.includes(sender.id)) {
             console.log("muted");
+            return;
+        }
+        else if (chat.bannedIds.includes(sender.id)) {
+            console.log("banned");
             return;
         }
         const { messages } = await this.prismaService.channel.update({
