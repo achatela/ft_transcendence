@@ -265,7 +265,7 @@ export class PongService {
             await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { xpBar: { decrement: user2.ladderLevel * 100 } } });
           }
           historyWinnerString = 'W:' + user1.username + ' L:' + user2.username + ' ' + gameState.leftScore + ' - ' + gameState.rightScore;
-          historyLoserString = 'L:' + user1.username + ' W:' + user2.username + ' ' + gameState.rightScore + ' - ' + gameState.leftScore;
+          historyLoserString = 'L:' + user1.username + ' W:' + user2.username + ' ' + gameState.leftScore + ' - ' + gameState.rightScore;
           await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { matchHistory: { push: historyWinnerString } } });
           await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { matchHistory: { push: historyLoserString } } });
         }
@@ -283,7 +283,7 @@ export class PongService {
             await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { xpBar: { decrement: user2.ladderLevel * 100 } } });
           }
           historyWinnerString = 'W:' + user2.username + ' L:' + user1.username + ' ' + gameState.rightScore + ' - ' + gameState.leftScore;
-          historyLoserString = 'L:' + user2.username + ' W:' + user1.username + ' ' + gameState.leftScore + ' - ' + gameState.rightScore;
+          historyLoserString = 'L:' + user2.username + ' W:' + user1.username + ' ' + gameState.rightScore + ' - ' + gameState.leftScore;
           await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { matchHistory: { push: historyLoserString } } });
           await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { matchHistory: { push: historyWinnerString } } });
         }
@@ -402,7 +402,7 @@ export class PongService {
             await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { xpBar: { decrement: user2.ladderLevel * 100 } } });
           }
           historyWinnerString = 'W:' + user1.username + ' L:' + user2.username + ' ' + gameState.leftScore + ' - ' + gameState.rightScore;
-          historyLoserString = 'L:' + user1.username + ' W:' + user2.username + ' ' + gameState.rightScore + ' - ' + gameState.leftScore;
+          historyLoserString = 'L:' + user1.username + ' W:' + user2.username + ' ' + gameState.leftScore + ' - ' + gameState.rightScore;
           await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { matchHistory: { push: historyWinnerString } } });
           await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { matchHistory: { push: historyLoserString } } });
         }
@@ -420,7 +420,7 @@ export class PongService {
             await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { xpBar: { decrement: user2.ladderLevel * 100 } } });
           }
           historyWinnerString = 'W:' + user2.username + ' L:' + user1.username + ' ' + gameState.rightScore + ' - ' + gameState.leftScore;
-          historyLoserString = 'L:' + user2.username + ' W:' + user1.username + ' ' + gameState.leftScore + ' - ' + gameState.rightScore;
+          historyLoserString = 'L:' + user2.username + ' W:' + user1.username + ' ' + gameState.rightScore + ' - ' + gameState.leftScore;
           await this.prismaService.user.update({ where: { id: gameState.id1 }, data: { matchHistory: { push: historyLoserString } } });
           await this.prismaService.user.update({ where: { id: gameState.id2 }, data: { matchHistory: { push: historyWinnerString } } });
         }

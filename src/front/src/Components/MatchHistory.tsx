@@ -92,7 +92,7 @@ class MatchHistory extends Component<IProps, IState> {
                         rightLetter.style.color = matchObj.rightLetter == "W" ? "green" : "red";
                         let rightUsername = document.querySelectorAll('.match-right-username')[index] as HTMLElement;
                         rightUsername.style.color = matchObj.rightLetter == "W" ? "green" : "red";
-                    }, 20, index)
+                    }, 75, index)
                     return (
                         <div className='match-history-match-div' key={index}>
                             <div className='match-history-match-info-div'>
