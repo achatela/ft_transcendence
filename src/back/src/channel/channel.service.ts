@@ -27,6 +27,8 @@ export class ChannelService {
             return { success: false, error: 'Channel not found' };
         }
         if (user.id === channel.owner) {
+            // delete all the messages of the channel
+            await this.prismaService.channelMessage.deleteMany({ where: { channelId: channel.id } });
             await this.prismaService.channel.delete({ where: { channelName: channelName } });
             return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
         }
