@@ -26,10 +26,6 @@ export default function BouncingBallsUI() {
             return balls;
         }
     });
-    // const [balls, setBalls] = useState([{
-    //     position: {x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight},
-    //     direction: {dx: Math.random() * 2 - 1, dy: Math.random() * 2 - 1}
-    // }]);
 
     useEffect(() => {
         const slider = document.getElementById("myRange");
@@ -68,7 +64,6 @@ export default function BouncingBallsUI() {
         });
         sessionStorage.setItem('balls', JSON.stringify(balls));
     }
-
     return (
         <>
             <div className="bouncing-balls-buttons">
@@ -78,7 +73,7 @@ export default function BouncingBallsUI() {
                 <p className="speed">Speed: <b>{speed}</b></p>
             </div>
             {balls.map((ball: { position: { x: number, y: number }, direction: { dx: number, dy: number } }, index: number) => (
-                <BouncingBall key={index} index={index} speed={speed} balls={balls} setBalls={setBalls} />
+                <BouncingBall key={index} index={index} speed={speed} balls={balls} />
             ))}
         </>
     );
