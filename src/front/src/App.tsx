@@ -16,7 +16,6 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import BouncingBallsUI from './Components/BouncingBallsUI';
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import BouncingBall from './Components/BouncingBall';
-import { useSelector } from 'react-redux';
 
 
 function App() {

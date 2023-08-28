@@ -1,5 +1,4 @@
 import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
-import { useDispatch } from 'react-redux';
 import BouncingBall from './BouncingBall';
 import { normalize } from "path";
 
@@ -20,8 +19,8 @@ export default function BouncingBallsUI() {
             return JSON.parse(sessionBalls);
         else {
             const balls = [{
-                position: {x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight},
-                direction: {dx: Math.random() * 2 - 1, dy: Math.random() * 2 - 1}
+                position: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight },
+                direction: { dx: Math.random() * 2 - 1, dy: Math.random() * 2 - 1 }
             }]
             sessionStorage.setItem('balls', JSON.stringify(balls));
             return balls;
@@ -48,23 +47,23 @@ export default function BouncingBallsUI() {
     }, []);
 
     function addBall() {
-        setBalls((prevBalls: {position: {x: number, y: number}, direction: {dx: number, dy: number}}[]) => [
+        setBalls((prevBalls: { position: { x: number, y: number }, direction: { dx: number, dy: number } }[]) => [
             ...prevBalls,
             {
-                position: {x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight},
-                direction: {dx: Math.random() * 2 - 1, dy: Math.random() * 2 - 1}
+                position: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight },
+                direction: { dx: Math.random() * 2 - 1, dy: Math.random() * 2 - 1 }
             },
         ]);
         sessionStorage.setItem('balls', JSON.stringify(balls));
     }
 
     function removeBall() {
-        setBalls((prevBalls: {position: {x: number, y: number}, direction: {dx: number, dy: number}}[]) => {
+        setBalls((prevBalls: { position: { x: number, y: number }, direction: { dx: number, dy: number } }[]) => {
             "accessToken"
             if (prevBalls.length > 0) {
-              return prevBalls.slice(0, -1);
+                return prevBalls.slice(0, -1);
             } else {
-              return prevBalls;
+                return prevBalls;
             }
         });
         sessionStorage.setItem('balls', JSON.stringify(balls));
@@ -72,15 +71,15 @@ export default function BouncingBallsUI() {
 
     return (
         <>
-        <div className="bouncing-balls-buttons">
-            <button className="addBallButton" type="button" onClick={addBall}>Add Ball</button>
-            <button className="removeBallButton" type="button" onClick={removeBall}>Remove Ball</button>
-            <input defaultValue={speed} type="range" min="0" max="10" className="slider" id="myRange" />
-            <p className="speed">Speed: <b>{speed}</b></p>
-        </div>
-        {balls.map((ball: {position: {x: number, y: number}, direction: {dx: number, dy: number}}, index: number) => (
-            <BouncingBall key={index} index={index} speed={speed} balls={balls} setBalls={setBalls}/>
-        ))}
+            <div className="bouncing-balls-buttons">
+                <button className="addBallButton" type="button" onClick={addBall}>Add Ball</button>
+                <button className="removeBallButton" type="button" onClick={removeBall}>Remove Ball</button>
+                <input defaultValue={speed} type="range" min="0" max="10" className="slider" id="myRange" />
+                <p className="speed">Speed: <b>{speed}</b></p>
+            </div>
+            {balls.map((ball: { position: { x: number, y: number }, direction: { dx: number, dy: number } }, index: number) => (
+                <BouncingBall key={index} index={index} speed={speed} balls={balls} setBalls={setBalls} />
+            ))}
         </>
     );
 }
