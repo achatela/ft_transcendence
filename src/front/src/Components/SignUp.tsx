@@ -72,7 +72,6 @@ export default class SignUp extends Component<IProps, IState> {
                     <input type="password" placeholder='password' className='password-input' />
                     <button className='signup-signup-button' onClick={this.redirectSignUp}>Sign Up</button>
                 </div>
-                <BouncingBallsUI queryType={2} />
             </>
         )
     }

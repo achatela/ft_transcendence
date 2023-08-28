@@ -72,7 +72,6 @@ export default class SignIn extends Component<IProps, IState> {
                     <input type="password" placeholder='password' className='signin-password-input' />
                     <button className='signin-signin-button' onClick={this.redirectSignIn}>Sign In</button>
                 </div>
-                <BouncingBallsUI queryType={3} />
             </>
         )
     }

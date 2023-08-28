@@ -7,10 +7,10 @@
     position: absolute;
     font-weight: 550;
     color: white;
-    font-size: 15vw;
+    font-size: calc(7.5vw + 7.5vh);
     left: 50%;
     transform: translate(-50%, -50%);
-    top: 15%;
+    top: calc(7.5vw + 7.5vh);
 }
 
 .login-input[type="text"] {
@@ -57,9 +57,9 @@
 
 .signup-button {
     background-color: black;
-    border: white 0.1em solid;
+    border: white calc(0.15vw + 0.15vh) solid;
     text-align: center;
-    font-size: 3vw;
+    font-size: calc(1.5vw + 1.5vh);
     width: 100%;
     height: 100%;
     padding-block: 0.25em;
@@ -74,11 +74,11 @@
 
 .signin-button {
     background-color: black;
-    border: white 0.1em solid;
+    border: white calc(0.15vw + 0.15vh) solid;
     text-align: center;
     width: 100%;
     height: 100%;
-    font-size: 3vw;
+    font-size: calc(1.5vw + 1.5vh);
     padding-block: 0.25em;
     white-space: nowrap;
 }
@@ -91,7 +91,7 @@
 
 .signin42-button {
     background-color: black;
-    border: white 0.1em solid;
+    border: white calc(0.15vw + 0.15vh) solid;
     padding-block: 0.2em;
     width: 100%;
     height: 100%;
@@ -99,14 +99,9 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    font-size: 3vw;
+    font-size: calc(1.5vw + 1.5vh);
     cursor: pointer;
     white-space: nowrap;
-}
-
-.logo42 {
-    width: 2.33vw;
-    margin-left: 0.25vw;
 }
 
 .signin42-button:hover {

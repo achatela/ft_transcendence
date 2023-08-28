@@ -13,9 +13,15 @@ import PageNotFound from './Components/PageNotFound'
 import SignUp from './Components/SignUp'
 import SignIn from './Components/SignIn'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import BouncingBallsUI from './Components/BouncingBallsUI';
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
+import BouncingBall from './Components/BouncingBall';
+import { useSelector } from 'react-redux';
+
 
 function App() {
   return (
+    <>
     <BrowserRouter>
       {sessionStorage.getItem('username') !== null && (<>
         <NavBar />
@@ -33,12 +39,16 @@ function App() {
             <Route path="/history/:profileId" element={<MatchHistory />} />
           </>
         )}
+        <Route path="/" element={<HomePage />} />
         <Route path="/sign_up" element={<SignUp />} />
         <Route path="/sign_in" element={<SignIn />} />
-        <Route path="/" element={<HomePage />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </BrowserRouter>
+    {window.location.pathname === "/" || window.location.pathname === "/sign_up" || window.location.pathname === "/sign_in" ? (
+      <BouncingBallsUI/>
+    ): null}
+    </>
   );
 }
 

@@ -56,12 +56,11 @@ export default function HomePage(props: any) {
       <button className="signin42-button" type="button" onClick={redirectFortyTwo} onMouseEnter={() => {setHover42(true)}} onMouseLeave={() => {setHover42(false)}}>
         Sign
         {
-          hover42 ? (<img src={'http://localhost:3133/black42logo.png'} alt="Image" className="logo42" style={{width: '2.5vw', marginLeft: '0.25vw'}}/>)
-          :(<img src={'http://localhost:3133/white42logo.png'} alt="Image" className="logo42" style={{width: '2.5vw', marginLeft: '0.25vw'}}/>)
+          hover42 ? (<img src={'http://localhost:3133/black42logo.png'} alt="Image" className="logo42" style={{width: 'calc(1.25vw + 1.25vh)', marginLeft: 'calc(0.15vw + 0.15vh)'}}/>)
+          :(<img src={'http://localhost:3133/white42logo.png'} alt="Image" className="logo42" style={{width: 'calc(1.25vw + 1.25vh)', marginLeft: 'calc(0.15vw + 0.15vh)'}}/>)
         }
       </button>
     </div>
-    <BouncingBallsUI queryType={1}/>
     </>
   );
 }

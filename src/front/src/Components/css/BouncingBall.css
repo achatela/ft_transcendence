@@ -9,8 +9,8 @@
 
 .bouncing-ball {
     position: absolute;
-    width: 30px;
-    height: 30px;
+    width: calc(1vw + 1vh);
+    height: calc(1vw + 1vh);
     /* border-radius: 50%; */
     background-color: white;
 }
