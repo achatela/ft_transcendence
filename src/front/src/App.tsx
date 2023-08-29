@@ -19,6 +19,19 @@ import BouncingBall from './Components/BouncingBall';
 
 
 function App() {
+
+  function getSpeed() {
+    const sessionSpeed = sessionStorage.getItem('speed');
+    const speed = sessionSpeed ? parseInt(sessionSpeed) : 5;
+    return speed;
+  }
+
+  function getBalls()  {
+    const sessionBalls = sessionStorage.getItem('balls');
+    const balls = sessionBalls ? JSON.parse(sessionBalls) : [];
+    return balls
+  }
+
   return (
     <>
     <BrowserRouter>
@@ -45,7 +58,7 @@ function App() {
       </Routes>
     </BrowserRouter>
     {window.location.pathname === "/" || window.location.pathname === "/sign_up" || window.location.pathname === "/sign_in" ? (
-      <BouncingBallsUI/>
+      <BouncingBallsUI balls={getBalls()} speed={getSpeed()}/>
     ): null}
     </>
   );

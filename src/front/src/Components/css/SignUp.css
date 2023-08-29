@@ -14,17 +14,17 @@
     gap: 2vh;
     padding: 2.5%;
     align-items: center;
-    border: white 0.3vw solid;
+    border: white calc(0.2vw + 0.2vh) solid;
 }
 
 .username-input[type='text'] {
-    font-size: 2.25vw;
+    font-size: calc(1.2vw + 1.2vh);
     text-align: left;
 }
 
 .username-input {
     background-color: black;
-    border: white 0.15vw solid;
+    border: white calc(0.1vw + 0.1vh) solid;
     text-align: center;
     width: 92.5%;
     height: 100%;
@@ -34,13 +34,13 @@
 }
 
 .password-input[type='password'] {
-    font-size: 2.25vw;
+    font-size: calc(1.2vw + 1.2vh);
     text-align: left;
 }
 
 .password-input {
     background-color: black;
-    border: white 0.15vw solid;
+    border: white calc(0.1vw + 0.1vh) solid;
     text-align: center;
     width: 92.5%;
     height: 100%;
@@ -51,7 +51,7 @@
 
 .signup-signup-button {
     background-color: black;
-    border: white 0.2vw solid;
+    border: white calc(0.125vw + 0.125vh) solid;
     font-size: 3vw;
     text-align: center;
     width: 40%;
