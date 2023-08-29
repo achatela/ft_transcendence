@@ -12,6 +12,11 @@ import * as path from 'path';
 export class ProfileController {
   constructor(private readonly profileService: ProfileService, private authService: AuthService) { }
 
+  @Post('change_username')
+  async changeUsername(@Body() userInput: { username: string, refreshToken: string, accessToken: string, newUsername: string }) {
+    return await this.profileService.changeUsername(userInput.username, userInput.refreshToken, userInput.accessToken, userInput.newUsername);
+  }
+
   @Post('is_friend')
   async getIsFriend(@Body() userInput: { username: string, refreshToken: string, accessToken: string, profileId: number }) {
     return await this.profileService.getIsFriend(userInput.username, userInput.refreshToken, userInput.accessToken, userInput.profileId);

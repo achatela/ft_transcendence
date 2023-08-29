@@ -31,6 +31,7 @@ interface IState {
     qrCode: string;
     xp: number;
     isFriend: boolean;
+    error: string;
 }
 
 class ProfilePage extends Component<IProps, IState> {
@@ -49,6 +50,7 @@ class ProfilePage extends Component<IProps, IState> {
             qrCode: "",
             xp: 0,
             isFriend: false,
+            error: "",
         };
         this.fileInputRef = React.createRef();
     }
@@ -169,8 +171,6 @@ class ProfilePage extends Component<IProps, IState> {
                 );
             this.setState({ isFriend: await this.getIsFriend() })
         }
-        console.log(sessionStorage.getItem('username'))
-        console.log(this.state.username)
     }
 
     async getIsFriend() {
@@ -265,6 +265,28 @@ class ProfilePage extends Component<IProps, IState> {
         }
     }
 
+    async changeUsername() {
+        const newUsername = prompt("Enter new username: ");
+        if (newUsername !== null) {
+            const request = await axios.post("http://" + domain + ":3333/profile/change_username/", JSON.stringify({
+                username: sessionStorage.getItem('username'),
+                accessToken: sessionStorage.getItem("accessToken"),
+                refreshToken: sessionStorage.getItem("refreshToken"),
+                newUsername: newUsername,
+            }), { headers: { "Content-Type": "application/json" } });
+            if (request.data.success) {
+                sessionStorage.setItem("refreshToken", request.data.refreshToken);
+                sessionStorage.setItem("accessToken", request.data.accessToken);
+                sessionStorage.setItem("username", newUsername);
+                window.location.href = "/profile";
+            }
+            else {
+                console.error(request.data.error);
+                alert(request.data.error);
+            }
+        }
+    }
+
     render() {
         if (this.props.profileId != undefined && sessionStorage.getItem('username') == this.state.username)
             window.location.href = "/profile"
@@ -299,9 +321,13 @@ class ProfilePage extends Component<IProps, IState> {
                 <p className="userName">{this.state.username}</p>
                 <div className="pictureProfile" id="pfpPlaceholder" style={{ backgroundImage: `url(${this.state.avatar})` }}>
                     {this.props.profileId === undefined &&
-                        <button className="downloadButton" onClick={() => this.fileInputRef.current!.click()}>
-                            <input accept="image/*" type="file" className="visuallyHidden" ref={this.fileInputRef} onChange={event => this.fileChange(event)}></input>
-                        </button>
+                        <>
+                            <button className="downloadButton" onClick={() => this.fileInputRef.current!.click()}>
+                                <input accept="image/*" type="file" className="visuallyHidden" ref={this.fileInputRef} onChange={event => this.fileChange(event)}></input>
+                            </button>
+                            <button className='change-username' onClick={this.changeUsername}>Change username</button>
+                            {this.state.error != "" ? (<p className='error-profile-page'>{this.state.error}</p>) : null}
+                        </>
                     }
                 </div>
                 {this.props.profileId !== undefined ?
