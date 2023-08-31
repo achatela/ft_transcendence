@@ -78,11 +78,11 @@ class ModePage extends Component<IProps, IState> {
     }
 
     componentCleanup() {
-        this.cancelQueue();
+        this.cancelQueue().then(() => { });
         clearInterval(this.interval);
     }
 
-    queueClassic = async () => {
+    async queueClassic() {
         const response = await axios.post('http://' + domain + ':3333/pong/classic/queue_up/',
             JSON.stringify({
                 username: sessionStorage.getItem('username'),
@@ -95,6 +95,7 @@ class ModePage extends Component<IProps, IState> {
             sessionStorage.setItem('accessToken', response.data.accessToken);
             sessionStorage.setItem('refreshToken', response.data.refreshToken);
             sessionStorage.setItem("queueing", "Classic Pong");
+            sessionStorage.setItem("fix", "one")
             window.location.href = "/mode";
         }
         else {
@@ -102,7 +103,7 @@ class ModePage extends Component<IProps, IState> {
         }
     };
 
-    queueCustom = async () => {
+    async queueCustom() {
         const response = await axios.post('http://' + domain + ':3333/pong/custom/queue_up/',
             JSON.stringify({
                 username: sessionStorage.getItem('username'),
@@ -115,6 +116,7 @@ class ModePage extends Component<IProps, IState> {
             sessionStorage.setItem('accessToken', response.data.accessToken);
             sessionStorage.setItem('refreshToken', response.data.refreshToken);
             sessionStorage.setItem("queueing", "Custom Pong");
+            sessionStorage.setItem("fix", "one")
             window.location.href = "/mode";
         }
         else {
@@ -122,7 +124,7 @@ class ModePage extends Component<IProps, IState> {
         }
     };
 
-    cancelQueue = async () => {
+    async cancelQueue() {
         if (sessionStorage.getItem("queueing") === "Classic Pong") {
             const response = await axios.post('http://' + domain + ':3333/pong/classic/queue_down/',
                 JSON.stringify({

@@ -14,9 +14,12 @@ import SignUp from './Components/SignUp'
 import SignIn from './Components/SignIn'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import BouncingBallsUI from './Components/BouncingBallsUI';
-import { useState, useEffect, Dispatch, SetStateAction } from "react";
-import BouncingBall from './Components/BouncingBall';
+import { useEffect } from "react";
+import axios from "axios"
 
+const currentUrl = window.location.href;
+const url = new URL(currentUrl);
+const domain = url.hostname;
 
 function App() {
 
@@ -26,40 +29,87 @@ function App() {
     return speed;
   }
 
-  function getBalls()  {
+  function getBalls() {
     const sessionBalls = sessionStorage.getItem('balls');
     const balls = sessionBalls ? JSON.parse(sessionBalls) : [];
     return balls
   }
 
+  async function pageLoad() {
+    if (sessionStorage.getItem("fix") == "one") {
+      sessionStorage.removeItem("fix");
+      return;
+    }
+    if (sessionStorage.getItem("queueing") === "Classic Pong") {
+      const response = await axios.post('http://' + domain + ':3333/pong/classic/queue_down/',
+        JSON.stringify({
+          username: sessionStorage.getItem('username'),
+          refreshToken: sessionStorage.getItem('refreshToken'),
+          accessToken: sessionStorage.getItem('accessToken'),
+        }),
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      if (response.data.success === true) {
+        sessionStorage.setItem('accessToken', response.data.accessToken);
+        sessionStorage.setItem('refreshToken', response.data.refreshToken);
+        sessionStorage.setItem("queueing", "");
+      }
+      else {
+        sessionStorage.setItem("queueing", "");
+      }
+    }
+    else if (sessionStorage.getItem("queueing") === "Custom Pong") {
+      const response = await axios.post('http://' + domain + ':3333/pong/custom/queue_down/',
+        JSON.stringify({
+          username: sessionStorage.getItem('username'),
+          refreshToken: sessionStorage.getItem('refreshToken'),
+          accessToken: sessionStorage.getItem('accessToken'),
+        }),
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      if (response.data.success === true) {
+        sessionStorage.setItem('accessToken', response.data.accessToken);
+        sessionStorage.setItem('refreshToken', response.data.refreshToken);
+        sessionStorage.setItem("queueing", "");
+      }
+      else {
+        sessionStorage.setItem("queueing", "");
+      }
+    }
+  }
+
+  useEffect(() => {
+    pageLoad();
+  }, []);
+
   return (
     <>
-    <BrowserRouter>
-      {sessionStorage.getItem('username') !== null && (<>
-        <NavBar />
-      </>)}
-      <Routes>
-        {sessionStorage.getItem('username') !== null && (
-          <>
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/profile/:profileId" element={<ProfilePage />} />
-            <Route path="/mode" element={<ModePage />} />
-            <Route path="/game" element={<GameBoard />} />
-            <Route path="/social" element={<SocialPage />} />
-            <Route path="/two_fa" element={<TwoFa />} />
-            <Route path="/history" element={<MatchHistory />} />
-            <Route path="/history/:profileId" element={<MatchHistory />} />
-          </>
-        )}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/sign_up" element={<SignUp />} />
-        <Route path="/sign_in" element={<SignIn />} />
-        <Route path="*" element={<PageNotFound />} />
-      </Routes>
-    </BrowserRouter>
-    {window.location.pathname === "/" || window.location.pathname === "/sign_up" || window.location.pathname === "/sign_in" ? (
-      <BouncingBallsUI balls={getBalls()} speed={getSpeed()}/>
-    ): null}
+      <BrowserRouter>
+        {sessionStorage.getItem('username') !== null && (<>
+          <NavBar />
+        </>)}
+        <Routes>
+          {sessionStorage.getItem('username') !== null && (
+            <>
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/profile/:profileId" element={<ProfilePage />} />
+              <Route path="/mode" element={<ModePage />} />
+              <Route path="/game" element={<GameBoard />} />
+              <Route path="/social" element={<SocialPage />} />
+              <Route path="/two_fa" element={<TwoFa />} />
+              <Route path="/history" element={<MatchHistory />} />
+              <Route path="/history/:profileId" element={<MatchHistory />} />
+            </>
+          )}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/sign_up" element={<SignUp />} />
+          <Route path="/sign_in" element={<SignIn />} />
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+      </BrowserRouter>
+      {window.location.pathname === "/" || window.location.pathname === "/sign_up" || window.location.pathname === "/sign_in" ? (
+        <BouncingBallsUI balls={getBalls()} speed={getSpeed()} />
+      ) : null}
     </>
   );
 }
