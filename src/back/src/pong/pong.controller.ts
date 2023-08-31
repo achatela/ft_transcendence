@@ -31,7 +31,6 @@ export class PongController {
 
     @Post('custom/queue_down/')
     async getCustomPongDown(@Body() userInput: { username: string, refreshToken: string, accessToken: string }): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
-        console.log("unmoun?")
         return await this.pongService.queueDownCustomPong(userInput.username, userInput.refreshToken, userInput.accessToken);
     }
 

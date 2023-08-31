@@ -291,9 +291,9 @@ class ProfilePage extends Component<IProps, IState> {
         if (this.props.profileId != undefined && sessionStorage.getItem('username') == this.state.username)
             window.location.href = "/profile"
         let ratio = this.state.wins * 100 / (this.state.wins + this.state.losses);
-        if (this.state.wins === 0
-            || this.state.losses === 0)
-            ratio = 0;
+        // if (this.state.wins === 0
+        //     || this.state.losses === 0)
+        //     ratio = 0;
         return (
             <div>
                 {this.props.profileId === undefined && (
