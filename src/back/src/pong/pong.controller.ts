@@ -14,7 +14,6 @@ export class PongController {
 
     @Post('classic/queue_down/')
     async getClassicPongDown(@Body() userInput: { username: string, refreshToken: string, accessToken: string }): Promise<{ success: boolean, refreshToken?: string, accessToken?: string }> {
-        console.log("unmoun?")
         return await this.pongService.queueDownClassicPong(userInput.username, userInput.refreshToken, userInput.accessToken);
     }
 

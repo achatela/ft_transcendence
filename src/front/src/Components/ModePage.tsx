@@ -78,7 +78,6 @@ class ModePage extends Component<IProps, IState> {
     }
 
     componentCleanup() {
-        this.cancelQueue().then(() => { });
         clearInterval(this.interval);
     }
 
