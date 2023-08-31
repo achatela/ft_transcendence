@@ -75,10 +75,10 @@ class GameBoard extends Component<IProps, IState> {
         this.leftPaddleCollision = false;
         this.rightPaddleCollision = false;
         this.canvasRef = React.createRef();
+        this.handleResize = this.handleResize.bind(this);
     }
 
     handleResize() {
-        console.log("resize")
         this.rect = document.querySelector('.gameBoard')!.getBoundingClientRect();
         this.magicHeightRatio = this.rect!.height / 600;
         this.magicWidthRatio = this.rect!.width / 1000;

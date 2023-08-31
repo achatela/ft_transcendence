@@ -4,6 +4,4 @@ Regler la longueur des :
 
 Toujours prbl de css dans socialpage
 
-handleResize dans GameBoard pour le responsive
-
-Peut etre quand l'user change l'username, changer tous les messages, historique, etc..
+Peut etre quand l'user change l'username, changer tous les messages, historique, etc..``
