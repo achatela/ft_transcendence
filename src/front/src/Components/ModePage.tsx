@@ -21,12 +21,6 @@ class ModePage extends Component<IProps, IState> {
         };
     }
 
-    getCurrentPlayer = async () => {
-        // const response = await fetch('http://' + domain + ':3333/player_number');
-        // const data = await response.json();
-        // return data.currentPlayers;
-    };
-
     async componentDidMount(): Promise<void> {
         if (sessionStorage.getItem("username") === null) {
             window.location.href = "/";
@@ -81,13 +75,6 @@ class ModePage extends Component<IProps, IState> {
                 }
             }, 1000);
         }
-        // this.getCurrentPlayer()
-        // .then(currentPlayers => {
-        //     this.setState({ currentPlayers });
-        // })
-        // .catch(error => {
-        //     console.error("Error fetching current players:", error);
-        // });
     }
 
     queueClassic = async () => {
@@ -173,7 +160,8 @@ class ModePage extends Component<IProps, IState> {
         }
     }
 
-    componentWillUnmount(): void {
+    async componentWillUnmount() {
+        await this.cancelQueue();
         clearInterval(this.interval);
     }
 
