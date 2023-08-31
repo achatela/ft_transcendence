@@ -43,7 +43,8 @@
   left: calc(0.8rem + 0.65vw);
   width: 19vw;
   top: calc(6vh + 4.5px);
-  height: calc(100vh - 9.9rem - 8.4rem - 10.8rem - 4rem);
+  /* height: calc(100vh - 9.9rem - 8.4rem - 10.8rem - 4rem); */
+  height: 60vh;
   overflow-y: auto;
   margin-top: 1.2rem;
 }
@@ -69,8 +70,6 @@
   height: calc(100vh - 2.7rem);
 }
 
-
-
 .friend-requests {
   position: absolute;
   border: 6px solid white;
@@ -79,9 +78,11 @@
   left: calc(0.8rem + 0.65vw);
   top: calc(6vh + 6px);
   width: 19vw;
-  height: calc(100vh - (100vh - 9.6rem) + 8.1rem);
+  /* height: calc(100vh - (100vh - 9.6rem) + 8.1rem); */
+  height: 19vh;
   overflow-y: auto;
-  margin-top: calc(100vh - 9.9rem - 8.4rem - 10.8rem + 1.2rem + 3px - 4rem);
+  /* margin-top: calc(100vh - 9.9rem - 8.4rem - 10.8rem + 1.2rem + 3px - 4rem); */
+  margin-top: 61.6vh;
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
@@ -170,7 +171,7 @@
   border-top: 3px solid white;
   left: calc(0.8rem + 0.65vw);
   width: 19vw;
-  height: 8.0rem;
+  height: 10.2vh;
   text-align: center;
   bottom: 1.5em;
 }

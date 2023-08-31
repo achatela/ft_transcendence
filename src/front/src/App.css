@@ -22,7 +22,7 @@
     right: 0;
     top: 0;
     height: 100vh;
-    width: calc(0.75vw + 0.75vh);
+    width: calc(0.34vw + 0.34vh);
     background-color: white;
 }
 
@@ -31,7 +31,7 @@
     left: 0;
     top: 0;
     height: 100vh;
-    width: calc(0.75vw + 0.75vh);
+    width: calc(0.34vw + 0.34vh);
     background-color: white;
 }
 
@@ -39,7 +39,7 @@
     position: fixed;
     left: 0;
     top: 0;
-    height: calc(0.75vw + 0.75vh);
+    height: calc(0.34vw + 0.34vh);
     width: 100vw;
     background-color: white;
 }
@@ -48,7 +48,7 @@
     position: fixed;
     left: 0;
     bottom: 0;
-    height: calc(0.75vw + 0.75vh);
+    height: calc(0.34vw + 0.34vh);
     width: 100vw;
     background-color: white;
 }
