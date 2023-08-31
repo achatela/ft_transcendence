@@ -77,6 +77,11 @@ class ModePage extends Component<IProps, IState> {
         }
     }
 
+    componentWillUnmount() {
+        this.cancelQueue();
+        clearInterval(this.interval);
+    }
+
     queueClassic = async () => {
         const response = await axios.post('http://' + domain + ':3333/pong/classic/queue_up/',
             JSON.stringify({
@@ -158,11 +163,6 @@ class ModePage extends Component<IProps, IState> {
                 window.location.href = "/mode";
             }
         }
-    }
-
-    async componentWillUnmount() {
-        await this.cancelQueue();
-        clearInterval(this.interval);
     }
 
     render() {
