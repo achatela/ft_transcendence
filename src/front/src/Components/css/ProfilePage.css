@@ -165,7 +165,7 @@
 
 .qrCode {
     position: absolute;
-    transform: translate(145%, 180%);
+    transform: translate(235%, 275%);
     border: 6px solid white;
     width: 100px;
     height: 100px;
