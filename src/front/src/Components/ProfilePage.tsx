@@ -350,7 +350,9 @@ class ProfilePage extends Component<IProps, IState> {
                         <p>Xp: {this.state.xp}/{this.state.ladderLevel * 100}</p>
                     </div>
                 </div>
-                <button className='match-history-button' onClick={() => { window.location.href = "/history" }}>Match History</button>
+                {this.props.profileId === undefined ?
+                    (<button className='match-history-button' onClick={() => { window.location.href = "/history" }}>Match History</button>)
+                    : null}
             </div>
         );
     }
