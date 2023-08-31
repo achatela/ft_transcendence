@@ -70,6 +70,7 @@ class ProfilePage extends Component<IProps, IState> {
         sessionStorage.setItem("accessToken", request.data.accessToken);
         if (request.data.success === false)
             window.location.href = '/profile/';
+        console.log(request.data.userInfo)
         return request.data.userInfo;
     }
 
