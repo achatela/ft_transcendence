@@ -4,14 +4,35 @@ import { normalize } from "path";
 import { randomInt } from "crypto";
 
 
-interface BouncingBallsProps {
-    balls: { position: { x: number, y: number }, direction: { dx: number, dy: number } }[];
-    speed: number;
-}
+export default function BouncingBallsUI() {
+    function getSpeed() {
+        const storedSpeed = sessionStorage.getItem('speed');
+        const speed = storedSpeed ? parseInt(storedSpeed) : 5;
+        return speed;
+    }
 
-export default function BouncingBallsUI(props: BouncingBallsProps) {
-    const [balls, setBalls] = useState(props.balls);
-    const [speed, setSpeed] = useState(props.speed);
+    function getBalls(): any[] {
+        const storedBalls = sessionStorage.getItem('balls');
+        if (storedBalls) {
+            return JSON.parse(storedBalls);
+        } else {
+            const newBalls = [{
+                position: {
+                    x: Math.random() * window.innerWidth,
+                    y: Math.random() * window.innerHeight
+                },
+                direction: {
+                    dx: Math.random() * 2 - 1,
+                    dy: Math.random() * 2 - 1
+                }
+            }];
+            sessionStorage.setItem('balls', JSON.stringify(newBalls));
+            return newBalls
+        }
+    }
+
+    const [balls, setBalls] = useState(getBalls());
+    const [speed, setSpeed] = useState(getSpeed());
 
     useEffect(() => {
         sessionStorage.setItem('balls', JSON.stringify(balls));
@@ -29,7 +50,9 @@ export default function BouncingBallsUI(props: BouncingBallsProps) {
     }, []);
 
     function addBall() {
-        setBalls((prevBalls) => [
+        if (balls.length == 100)
+            return;
+        setBalls((prevBalls: any[]) => [
             ...prevBalls,
             {
                 position: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight },
@@ -50,7 +73,7 @@ export default function BouncingBallsUI(props: BouncingBallsProps) {
                 <input defaultValue={speed} type="range" min="0" max="10" className="slider" id="myRange" />
                 <p className="speed">Speed: <b>{speed}</b></p>
             </div>
-            {balls && (balls.map((ball, index) => (<BouncingBall key={index} index={index} speed={speed} balls={balls} setBalls={setBalls}/>)))}
+            {balls && (balls.map((ball: any[], index: number) => (<BouncingBall key={index} index={index} speed={speed} balls={balls} setBalls={setBalls}/>)))}
         </>
     );
 }

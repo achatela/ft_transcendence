@@ -23,18 +23,6 @@ const domain = url.hostname;
 
 function App() {
 
-  function getSpeed() {
-    const sessionSpeed = sessionStorage.getItem('speed');
-    const speed = sessionSpeed ? parseInt(sessionSpeed) : 5;
-    return speed;
-  }
-
-  function getBalls() {
-    const sessionBalls = sessionStorage.getItem('balls');
-    const balls = sessionBalls ? JSON.parse(sessionBalls) : [];
-    return balls
-  }
-
   async function pageLoad() {
     if (sessionStorage.getItem("fix") == "one") {
       sessionStorage.removeItem("fix");
@@ -84,32 +72,32 @@ function App() {
 
   return (
     <>
-      <BrowserRouter>
-        {sessionStorage.getItem('username') !== null && (<>
-          <NavBar />
-        </>)}
-        <Routes>
-          {sessionStorage.getItem('username') !== null && (
-            <>
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/profile/:profileId" element={<ProfilePage />} />
-              <Route path="/mode" element={<ModePage />} />
-              <Route path="/game" element={<GameBoard />} />
-              <Route path="/social" element={<SocialPage />} />
-              <Route path="/two_fa" element={<TwoFa />} />
-              <Route path="/history" element={<MatchHistory />} />
-              <Route path="/history/:profileId" element={<MatchHistory />} />
-            </>
-          )}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/sign_up" element={<SignUp />} />
-          <Route path="/sign_in" element={<SignIn />} />
-          <Route path="*" element={<PageNotFound />} />
-        </Routes>
-      </BrowserRouter>
-      {window.location.pathname === "/" || window.location.pathname === "/sign_up" || window.location.pathname === "/sign_in" ? (
-        <BouncingBallsUI balls={getBalls()} speed={getSpeed()} />
-      ) : null}
+    <BrowserRouter>
+      {sessionStorage.getItem('username') !== null && (<>
+        <NavBar />
+      </>)}
+      <Routes>
+        {sessionStorage.getItem('username') !== null && (
+          <>
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/profile/:profileId" element={<ProfilePage />} />
+            <Route path="/mode" element={<ModePage />} />
+            <Route path="/game" element={<GameBoard />} />
+            <Route path="/social" element={<SocialPage />} />
+            <Route path="/two_fa" element={<TwoFa />} />
+            <Route path="/history" element={<MatchHistory />} />
+            <Route path="/history/:profileId" element={<MatchHistory />} />
+          </>
+        )}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/sign_up" element={<SignUp />} />
+        <Route path="/sign_in" element={<SignIn />} />
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
+    </BrowserRouter>
+    {window.location.pathname === "/" || window.location.pathname === "/sign_up" || window.location.pathname === "/sign_in" ? (
+      <BouncingBallsUI />
+    ): null}
     </>
   );
 }

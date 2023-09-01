@@ -35,110 +35,105 @@ class BouncingBall extends Component<{index: number, speed: number, balls: any[]
     this.elements = [];
   }
 
-  updateBall = (ball: {position: {x: number, y: number}, direction: {dx: number, dy: number}}) => {
-    this.setState({position: ball.position, direction: ball.direction});
-    const tmpBalls = JSON.parse(sessionStorage.getItem('balls'));
-    tmpBalls[this.props.index] = ball;
-    this.props.setBalls(tmpBalls);
-    sessionStorage.setItem('balls', JSON.stringify(tmpBalls));
-  }
-  
-
   handleSpeedChange = () => {
     const speedSlider = document.getElementById('myRange');
     // @ts-ignore: Object is possibly 'null'.
     this.speed = speedSlider.value;
   };
 
-  isValidSpawn = (x: number, y: number, squareSize: number) => {
-    // Check if the position is within the bounds of the window
-    if (
-      x <= this.bordersWidth + squareSize ||
-      x >= window.innerWidth - (this.bordersWidth + squareSize) ||
-      y <= this.bordersWidth + squareSize ||
-      y >= window.innerHeight - (this.bordersWidth + squareSize)
-    ) {
-      return false;
-    }
-
-    // Check if the position overlaps with any of the elements
-    for (const element of this.elements) {
-      if (element) {
-        const rect = element.getBoundingClientRect();
-        if (
-          x - squareSize <= rect.right &&
-          x + squareSize >= rect.left &&
-          y - squareSize <= rect.bottom &&
-          y + squareSize >= rect.top
-        ) {
-          return false;
-        }
-      }
-    }
-
-    // If the position is valid, return true
-    return true;
+  checkCollisionsX = (x: number) => {
+    if (x >= window.innerWidth - (this.squareSize + this.bordersWidth) || x <= this.bordersWidth)
+      return true;
+    return false;
   };
 
-  checkCollisions = (newX: number, newY: number, squareSize: number, elements: HTMLElement[]) => {
-    for (const element of elements) {
-      if (this.checkCollision(newX, newY, squareSize, element)) {
+  checkCollisionsY = (y: number) => {
+    return (y >= window.innerHeight - (this.squareSize + this.bordersWidth) || y <= this.bordersWidth)
+  };
+
+  checkCollisions = (x: number, y: number) => {
+    for (const element of this.elements) {
+      const rect = element?.getBoundingClientRect();
+      if (x <= rect?.right && x + this.squareSize >= rect?.left && y <= rect?.bottom && y + this.squareSize >= rect?.top) {
         return true;
       }
     }
     return false;
   };
 
-  checkCollision = (newX: number, newY: number, squareSize: number, element: HTMLElement) => {
-    const rect = element?.getBoundingClientRect();
-    return (
-      newX < rect?.right &&
-      newX + squareSize > rect?.left &&
-      newY < rect?.bottom &&
-      newY + squareSize > rect?.top
-    );
+  
+
+  getRandomPosition = () => {
+    return {
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+    };
   };
 
   updatePosition = () => {
-    if (this.speed > 0) {
-      const newX = this.state.position.x + this.normalizedSpeedX * this.speed * this.speedMultiplier;
-      const newY = this.state.position.y + this.normalizedSpeedY * this.speed * this.speedMultiplier;
-      if (newX > window.innerWidth - (this.squareSize + this.bordersWidth) || newX < this.bordersWidth || this.checkCollisions(newX, this.state.position.y, this.squareSize, this.elements)) {
-        // this.updateBall({position: this.state.position, direction: { dx: -this.state.direction.dx, dy: this.state.direction.dy }});
-        this.setState({direction: { dx: -this.state.direction.dx, dy: this.state.direction.dy }}, () => {
-          const tmpBalls = JSON.parse(sessionStorage.getItem('balls'));
-          tmpBalls[this.props.index] = {position: this.state.position, direction: this.state.direction};
-          this.props.setBalls(tmpBalls);
-          sessionStorage.setItem('balls', JSON.stringify(tmpBalls));
-          this.magnitude = Math.sqrt(this.state.direction.dx ** 2 + this.state.direction.dy ** 2);
-          this.normalizedSpeedX = this.state.direction.dx / this.magnitude;
-        });
-      }
-      else if (newY > window.innerHeight - (this.squareSize + this.bordersWidth) || newY < this.bordersWidth || this.checkCollisions(this.state.position.x, newY, this.squareSize, this.elements)) {
-        // this.updateBall({position: this.state.position, direction: { dx: this.state.direction.dx, dy: -this.state.direction.dy }});
-        this.setState({direction: { dx: this.state.direction.dx, dy: -this.state.direction.dy }}, () => {
-          const tmpBalls = JSON.parse(sessionStorage.getItem('balls'));
-          tmpBalls[this.props.index] = {position: this.state.position, direction: this.state.direction};
-          this.props.setBalls(tmpBalls);
-          sessionStorage.setItem('balls', JSON.stringify(tmpBalls));
-          this.magnitude = Math.sqrt(this.state.direction.dx ** 2 + this.state.direction.dy ** 2);
-          this.normalizedSpeedY = this.state.direction.dy / this.magnitude;
-        });
-      }
-      else {
-        this.updateBall({position: { x: newX, y: newY }, direction: this.state.direction});
-      }
+    const newX = this.state.position.x + this.normalizedSpeedX * this.speed * this.speedMultiplier;
+    const newY = this.state.position.y + this.normalizedSpeedY * this.speed * this.speedMultiplier;
+    if (this.checkCollisionsX(newX) || this.checkCollisions(newX, this.state.position.y)) {
+      const newDirection = { dx: -this.state.direction.dx, dy: this.state.direction.dy };
+      this.magnitude = Math.sqrt(newDirection.dx ** 2 + newDirection.dy ** 2);
+      this.normalizedSpeedX = newDirection.dx / this.magnitude;
+      let newPosition = {
+        x: this.state.position.x + this.normalizedSpeedX * this.speed * this.speedMultiplier,
+        y: this.state.position.y + this.normalizedSpeedY * this.speed * this.speedMultiplier
+      };
+      while ((this.checkCollisionsX(newPosition.x) || this.checkCollisionsY(newPosition.y) || this.checkCollisions(newPosition.x, newPosition.y)) && window.innerHeight - this.bordersWidth * 2 > this.squareSize)
+        newPosition = this.getRandomPosition();
+      this.setState({position: newPosition, direction: newDirection}, () => {
+        const balls = JSON.parse(sessionStorage.getItem('balls'));
+        if (!balls)
+          return;
+        balls[this.props.index] = { position: this.state.position, direction: this.state.direction };
+        sessionStorage.setItem('balls', JSON.stringify(balls));
+      })
+    }
+    else if (this.checkCollisionsY(newY) || this.checkCollisions(this.state.position.x, newY)) {
+      const newDirection = { dx: this.state.direction.dx, dy: -this.state.direction.dy };
+      this.magnitude = Math.sqrt(newDirection.dx ** 2 + newDirection.dy ** 2);
+      this.normalizedSpeedY = newDirection.dy / this.magnitude;
+      let newPosition = {
+        x: this.state.position.x + this.normalizedSpeedX * this.speed * this.speedMultiplier,
+        y: this.state.position.y + this.normalizedSpeedY * this.speed * this.speedMultiplier
+      };
+      while ((this.checkCollisionsX(newPosition.x) || this.checkCollisionsY(newPosition.y) || this.checkCollisions(newPosition.x, newPosition.y)) && window.innerHeight - this.bordersWidth * 2 > this.squareSize)
+        newPosition = this.getRandomPosition();
+      this.setState({position: newPosition, direction: newDirection}, () => {
+        const balls = JSON.parse(sessionStorage.getItem('balls'));
+        if (!balls)
+          return;
+        balls[this.props.index] = { position: this.state.position, direction: this.state.direction };
+        sessionStorage.setItem('balls', JSON.stringify(balls));
+      })
+    }
+    else {
+      this.setState({position: { x: newX, y: newY }}, () => {
+        const balls = JSON.parse(sessionStorage.getItem('balls'));
+        if (!balls)
+          return;
+        balls[this.props.index] = { position: this.state.position, direction: this.state.direction };
+        sessionStorage.setItem('balls', JSON.stringify(balls));
+      })
     }
     this.animationRef = requestAnimationFrame(this.updatePosition);
-  };
+  }
 
   handleResize = () => {
-    let newPosition = this.state.position;
-    newPosition = this.getRandomPosition();
-    while (this.isValidSpawn(newPosition.x, newPosition.y, this.squareSize) === false) {
-      newPosition = this.getRandomPosition();
+    if ((this.checkCollisionsX(this.state.position.x) || this.checkCollisionsY(this.state.position.y) || this.checkCollisions(this.state.position.x, this.state.position.y)) && window.innerHeight - this.bordersWidth * 2 > this.squareSize) {
+      let newPosition = this.getRandomPosition();
+      while ((this.checkCollisionsX(newPosition.x) || this.checkCollisionsY(newPosition.y) || this.checkCollisions(newPosition.x, newPosition.y)) && window.innerHeight - this.bordersWidth * 2 > this.squareSize)
+        newPosition = this.getRandomPosition();
+      this.setState({position: newPosition}, () => {
+        const balls = JSON.parse(sessionStorage.getItem('balls'));
+        if (!balls)
+          return;
+        balls[this.props.index] = { position: this.state.position, direction: this.state.direction };
+        sessionStorage.setItem('balls', JSON.stringify(balls));
+      });
     }
-    this.updateBall({position: newPosition, direction: this.state.direction});
     this.bordersWidth = (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) + Math.max(document.documentElement.clientHeight, window.innerHeight || 0)) / 75;
     this.speedMultiplier = (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) + Math.max(document.documentElement.clientHeight, window.innerHeight || 0)) / 750;
     this.squareSize = (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) + Math.max(document.documentElement.clientHeight, window.innerHeight || 0)) / 100;
@@ -158,14 +153,9 @@ class BouncingBall extends Component<{index: number, speed: number, balls: any[]
         this.elements.push(element);
       }
     });
-    // let newPosition = this.state.position;
     const speedSlider = document.getElementById('myRange');
 
     window.addEventListener("resize", this.handleResize);
-    // while (this.isValidSpawn(newPosition.x, newPosition.y, this.squareSize) === false) {
-    //   newPosition = this.getRandomPosition();
-    // }
-    // this.updateBall({position: newPosition, direction: this.state.direction});
     // @ts-ignore: Object is possibly 'null'.
     this.animationRef = requestAnimationFrame(this.updatePosition);
     speedSlider.addEventListener('input', this.handleSpeedChange);
@@ -177,12 +167,7 @@ class BouncingBall extends Component<{index: number, speed: number, balls: any[]
     speedSlider!.removeEventListener('input', this.handleSpeedChange);
   }
 
-  getRandomPosition = () => {
-    return {
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight,
-    };
-  };
+  
 
   render() {
     return (
