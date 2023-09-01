@@ -16,6 +16,36 @@ export class ProfileService {
       return ({ success: false, error: "Username already taken" })
     const ret = await this.authService.checkToken(user, refreshToken, accessToken);
     if (ret.success == true) {
+      const historyArray = user.matchHistory;
+      let newArray = [];
+      for (let i = 0; i < historyArray.length; i++) {
+        let modify = historyArray[i];
+        if (modify.includes(username)) {
+          let splited = modify.split(" ");
+          let otherUser = "";
+          for (let j = 0; j < splited.length; j++) {
+            if (splited[j].includes(":") && !splited[j].includes(username)) {
+              otherUser = splited[j].split(":")[1];
+              break;
+            }
+          }
+          if (otherUser != "") {
+            const userToModify = await this.prismaService.user.findUnique({ where: { username: otherUser } })
+            if (userToModify) {
+              let newHistory = userToModify.matchHistory;
+              for (let k = 0; k < newHistory.length; k++) {
+                if (newHistory[k].includes(username)) {
+                  newHistory[k] = newHistory[k].replace(username, newUsername);
+                }
+              }
+              await this.prismaService.user.update({ where: { username: otherUser }, data: { matchHistory: newHistory } });
+            }
+          }
+          modify = modify.replace(username, newUsername);
+        }
+        newArray.push(modify);
+      }
+      await this.prismaService.user.update({ where: { username: user.username }, data: { matchHistory: newArray } });
       await this.prismaService.user.update({ where: { username: user.username }, data: { username: newUsername } });
       return ({ success: true, refreshToken: ret.refreshToken, accessToken: ret.accessToken })
     }
