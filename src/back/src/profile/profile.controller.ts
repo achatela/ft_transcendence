@@ -14,6 +14,9 @@ export class ProfileController {
 
   @Post('change_username')
   async changeUsername(@Body() userInput: { username: string, refreshToken: string, accessToken: string, newUsername: string }) {
+    if (userInput.newUsername != undefined && userInput.newUsername.length > 9) {
+      return { success: false, error: "Username too long (9 characters maximum)" };
+    }
     return await this.profileService.changeUsername(userInput.username, userInput.refreshToken, userInput.accessToken, userInput.newUsername);
   }
 

@@ -13,6 +13,8 @@ export class ChannelController {
 
     @Post('create')
     async createChannel(@Body() body: { username: string, accessToken: string, refreshToken: string, channelName: string, hasPassword: boolean, password?: string, isPrivate: boolean }) {
+        if (body.channelName && body.channelName.length > 18)
+            return { success: false, error: "Channel name too long (18 characters maximum)" };
         return await this.channelService.createChannel(body);
     }
 
