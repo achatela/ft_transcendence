@@ -44,7 +44,7 @@ export default class SignUp extends Component<IProps, IState> {
             window.location.href = '/profile';
         }
         else {
-            console.log(request.data.error);
+            alert(request.data.error);
         }
         return;
     }

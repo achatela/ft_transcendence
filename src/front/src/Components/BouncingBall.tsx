@@ -26,8 +26,8 @@ class BouncingBall extends Component<{index: number, speed: number, balls: any[]
     this.speed = props.speed;
     this.animationRef = 0;
     this.lastFrameTime = performance.now();
-    this.bordersWidth = (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) + Math.max(document.documentElement.clientHeight, window.innerHeight || 0)) / 150;
-    this.speedMultiplier = (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) + Math.max(document.documentElement.clientHeight, window.innerHeight || 0)) / 1000;
+    this.bordersWidth = (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) + Math.max(document.documentElement.clientHeight, window.innerHeight || 0)) / 200;
+    this.speedMultiplier = (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) + Math.max(document.documentElement.clientHeight, window.innerHeight || 0)) / 750;
     this.squareSize = (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) + Math.max(document.documentElement.clientHeight, window.innerHeight || 0)) / 100;
     this.magnitude = Math.sqrt(this.state.direction.dx ** 2 + this.state.direction.dy ** 2);
     this.normalizedSpeedX = this.state.direction.dx / this.magnitude;
@@ -77,66 +77,50 @@ class BouncingBall extends Component<{index: number, speed: number, balls: any[]
       const newDirection = { dx: -this.state.direction.dx, dy: this.state.direction.dy };
       this.magnitude = Math.sqrt(newDirection.dx ** 2 + newDirection.dy ** 2);
       this.normalizedSpeedX = newDirection.dx / this.magnitude;
-      let newPosition = {
-        x: this.state.position.x + this.normalizedSpeedX * this.speed * this.speedMultiplier,
-        y: this.state.position.y + this.normalizedSpeedY * this.speed * this.speedMultiplier
-      };
-      while ((this.checkCollisionsX(newPosition.x) || this.checkCollisionsY(newPosition.y) || this.checkCollisions(newPosition.x, newPosition.y)) && window.innerHeight - this.bordersWidth * 2 > this.squareSize)
-        newPosition = this.getRandomPosition();
-      this.setState({position: newPosition, direction: newDirection}, () => {
-        const balls = JSON.parse(sessionStorage.getItem('balls'));
-        if (!balls)
-          return;
-        balls[this.props.index] = { position: this.state.position, direction: this.state.direction };
+      this.setState({direction: newDirection});
+      const balls = JSON.parse(sessionStorage.getItem('balls'));
+      if (balls){
+        balls[this.props.index] = { position: this.state.position, direction: newDirection };
         sessionStorage.setItem('balls', JSON.stringify(balls));
-      })
+      }
     }
     else if (this.checkCollisionsY(newY) || this.checkCollisions(this.state.position.x, newY)) {
       const newDirection = { dx: this.state.direction.dx, dy: -this.state.direction.dy };
       this.magnitude = Math.sqrt(newDirection.dx ** 2 + newDirection.dy ** 2);
       this.normalizedSpeedY = newDirection.dy / this.magnitude;
-      let newPosition = {
-        x: this.state.position.x + this.normalizedSpeedX * this.speed * this.speedMultiplier,
-        y: this.state.position.y + this.normalizedSpeedY * this.speed * this.speedMultiplier
-      };
-      while ((this.checkCollisionsX(newPosition.x) || this.checkCollisionsY(newPosition.y) || this.checkCollisions(newPosition.x, newPosition.y)) && window.innerHeight - this.bordersWidth * 2 > this.squareSize)
-        newPosition = this.getRandomPosition();
-      this.setState({position: newPosition, direction: newDirection}, () => {
-        const balls = JSON.parse(sessionStorage.getItem('balls'));
-        if (!balls)
-          return;
-        balls[this.props.index] = { position: this.state.position, direction: this.state.direction };
+      this.setState({direction: newDirection});
+      const balls = JSON.parse(sessionStorage.getItem('balls'));
+      if (balls){
+        balls[this.props.index] = { position: this.state.position, direction: newDirection };
         sessionStorage.setItem('balls', JSON.stringify(balls));
-      })
+      }
     }
     else {
-      this.setState({position: { x: newX, y: newY }}, () => {
-        const balls = JSON.parse(sessionStorage.getItem('balls'));
-        if (!balls)
-          return;
-        balls[this.props.index] = { position: this.state.position, direction: this.state.direction };
+      this.setState({position: { x: newX, y: newY }});
+      const balls = JSON.parse(sessionStorage.getItem('balls'));
+      if (balls) {
+        balls[this.props.index] = { position: { x: newX, y: newY }, direction: this.state.direction };
         sessionStorage.setItem('balls', JSON.stringify(balls));
-      })
+      }
     }
     this.animationRef = requestAnimationFrame(this.updatePosition);
   }
 
   handleResize = () => {
+    this.bordersWidth = (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) + Math.max(document.documentElement.clientHeight, window.innerHeight || 0))/ 200;
+    this.speedMultiplier = (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) + Math.max(document.documentElement.clientHeight, window.innerHeight || 0)) / 750;
+    this.squareSize = (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) + Math.max(document.documentElement.clientHeight, window.innerHeight || 0)) / 100;
     if ((this.checkCollisionsX(this.state.position.x) || this.checkCollisionsY(this.state.position.y) || this.checkCollisions(this.state.position.x, this.state.position.y)) && window.innerHeight - this.bordersWidth * 2 > this.squareSize) {
       let newPosition = this.getRandomPosition();
       while ((this.checkCollisionsX(newPosition.x) || this.checkCollisionsY(newPosition.y) || this.checkCollisions(newPosition.x, newPosition.y)) && window.innerHeight - this.bordersWidth * 2 > this.squareSize)
         newPosition = this.getRandomPosition();
-      this.setState({position: newPosition}, () => {
-        const balls = JSON.parse(sessionStorage.getItem('balls'));
-        if (!balls)
-          return;
-        balls[this.props.index] = { position: this.state.position, direction: this.state.direction };
+      this.setState({position: newPosition});
+      const balls = JSON.parse(sessionStorage.getItem('balls'));
+      if (balls) {
+        balls[this.props.index] = { position: newPosition, direction: this.state.direction };
         sessionStorage.setItem('balls', JSON.stringify(balls));
-      });
+      }
     }
-    this.bordersWidth = (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) + Math.max(document.documentElement.clientHeight, window.innerHeight || 0)) / 75;
-    this.speedMultiplier = (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) + Math.max(document.documentElement.clientHeight, window.innerHeight || 0)) / 750;
-    this.squareSize = (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) + Math.max(document.documentElement.clientHeight, window.innerHeight || 0)) / 100;
   };
 
   componentDidMount() {
@@ -153,6 +137,18 @@ class BouncingBall extends Component<{index: number, speed: number, balls: any[]
         this.elements.push(element);
       }
     });
+    if ((this.checkCollisionsX(this.state.position.x) || this.checkCollisionsY(this.state.position.y) || this.checkCollisions(this.state.position.x, this.state.position.y)) && window.innerHeight - this.bordersWidth * 2 > this.squareSize) {
+      let newPosition = this.getRandomPosition();
+      while ((this.checkCollisionsX(newPosition.x) || this.checkCollisionsY(newPosition.y) || this.checkCollisions(newPosition.x, newPosition.y)) && window.innerHeight - this.bordersWidth * 2 > this.squareSize)
+        newPosition = this.getRandomPosition();
+      this.setState({position: newPosition});
+      const balls = JSON.parse(sessionStorage.getItem('balls'));
+      if (balls) {
+        balls[this.props.index] = { position: this.state.position, direction: this.state.direction };
+        sessionStorage.setItem('balls', JSON.stringify(balls));
+      }
+    }
+
     const speedSlider = document.getElementById('myRange');
 
     window.addEventListener("resize", this.handleResize);
