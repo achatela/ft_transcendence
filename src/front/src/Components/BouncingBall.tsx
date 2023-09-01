@@ -6,7 +6,7 @@ interface State {
   direction: { dx: number, dy: number };
 }
 
-class BouncingBall extends Component<{index: number, speed: number, balls: any[], setBalls: Dispatch<SetStateAction<any[]>>}, State> {
+class BouncingBall extends Component<{index: number, speed: number, balls: any[]}, State> {
   speed: number;
   animationRef: number;
   lastFrameTime: number;
@@ -17,7 +17,7 @@ class BouncingBall extends Component<{index: number, speed: number, balls: any[]
   normalizedSpeedX: number;
   normalizedSpeedY: number;
   elements: Array<any>;
-  constructor(props: {index: number, speed: number, balls: any[], setBalls: Dispatch<SetStateAction<any[]>>}) {
+  constructor(props: {index: number, speed: number, balls: any[]}) {
     super(props);
     this.state = {
       position: props.balls[props.index].position,

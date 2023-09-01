@@ -73,7 +73,7 @@ export default function BouncingBallsUI() {
                 <input defaultValue={speed} type="range" min="0" max="10" className="slider" id="myRange" />
                 <p className="speed">Speed: <b>{speed}</b></p>
             </div>
-            {balls && (balls.map((ball: any[], index: number) => (<BouncingBall key={index} index={index} speed={speed} balls={balls} setBalls={setBalls}/>)))}
+            {balls && (balls.map((ball: any[], index: number) => (<BouncingBall key={index} index={index} speed={speed} balls={balls} />)))}
         </>
     );
 }
