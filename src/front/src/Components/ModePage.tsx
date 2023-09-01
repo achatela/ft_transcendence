@@ -77,7 +77,11 @@ class ModePage extends Component<IProps, IState> {
         }
     }
 
-    queueClassic = async () => {
+    componentCleanup() {
+        clearInterval(this.interval);
+    }
+
+    async queueClassic() {
         const response = await axios.post('http://' + domain + ':3333/pong/classic/queue_up/',
             JSON.stringify({
                 username: sessionStorage.getItem('username'),
@@ -90,6 +94,7 @@ class ModePage extends Component<IProps, IState> {
             sessionStorage.setItem('accessToken', response.data.accessToken);
             sessionStorage.setItem('refreshToken', response.data.refreshToken);
             sessionStorage.setItem("queueing", "Classic Pong");
+            sessionStorage.setItem("fix", "one")
             window.location.href = "/mode";
         }
         else {
@@ -97,7 +102,7 @@ class ModePage extends Component<IProps, IState> {
         }
     };
 
-    queueCustom = async () => {
+    async queueCustom() {
         const response = await axios.post('http://' + domain + ':3333/pong/custom/queue_up/',
             JSON.stringify({
                 username: sessionStorage.getItem('username'),
@@ -110,6 +115,7 @@ class ModePage extends Component<IProps, IState> {
             sessionStorage.setItem('accessToken', response.data.accessToken);
             sessionStorage.setItem('refreshToken', response.data.refreshToken);
             sessionStorage.setItem("queueing", "Custom Pong");
+            sessionStorage.setItem("fix", "one")
             window.location.href = "/mode";
         }
         else {
@@ -117,7 +123,7 @@ class ModePage extends Component<IProps, IState> {
         }
     };
 
-    cancelQueue = async () => {
+    async cancelQueue() {
         if (sessionStorage.getItem("queueing") === "Classic Pong") {
             const response = await axios.post('http://' + domain + ':3333/pong/classic/queue_down/',
                 JSON.stringify({
@@ -158,11 +164,6 @@ class ModePage extends Component<IProps, IState> {
                 window.location.href = "/mode";
             }
         }
-    }
-
-    async componentWillUnmount() {
-        await this.cancelQueue();
-        clearInterval(this.interval);
     }
 
     render() {

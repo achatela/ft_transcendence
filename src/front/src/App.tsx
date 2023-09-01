@@ -14,11 +14,61 @@ import SignUp from './Components/SignUp'
 import SignIn from './Components/SignIn'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import BouncingBallsUI from './Components/BouncingBallsUI';
-import { useState, useEffect, Dispatch, SetStateAction } from "react";
-import BouncingBall from './Components/BouncingBall';
+import { useEffect } from "react";
+import axios from "axios"
 
+const currentUrl = window.location.href;
+const url = new URL(currentUrl);
+const domain = url.hostname;
 
 function App() {
+
+  async function pageLoad() {
+    if (sessionStorage.getItem("fix") == "one") {
+      sessionStorage.removeItem("fix");
+      return;
+    }
+    if (sessionStorage.getItem("queueing") === "Classic Pong") {
+      const response = await axios.post('http://' + domain + ':3333/pong/classic/queue_down/',
+        JSON.stringify({
+          username: sessionStorage.getItem('username'),
+          refreshToken: sessionStorage.getItem('refreshToken'),
+          accessToken: sessionStorage.getItem('accessToken'),
+        }),
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      if (response.data.success === true) {
+        sessionStorage.setItem('accessToken', response.data.accessToken);
+        sessionStorage.setItem('refreshToken', response.data.refreshToken);
+        sessionStorage.setItem("queueing", "");
+      }
+      else {
+        sessionStorage.setItem("queueing", "");
+      }
+    }
+    else if (sessionStorage.getItem("queueing") === "Custom Pong") {
+      const response = await axios.post('http://' + domain + ':3333/pong/custom/queue_down/',
+        JSON.stringify({
+          username: sessionStorage.getItem('username'),
+          refreshToken: sessionStorage.getItem('refreshToken'),
+          accessToken: sessionStorage.getItem('accessToken'),
+        }),
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      if (response.data.success === true) {
+        sessionStorage.setItem('accessToken', response.data.accessToken);
+        sessionStorage.setItem('refreshToken', response.data.refreshToken);
+        sessionStorage.setItem("queueing", "");
+      }
+      else {
+        sessionStorage.setItem("queueing", "");
+      }
+    }
+  }
+
+  useEffect(() => {
+    pageLoad();
+  }, []);
 
   return (
     <>

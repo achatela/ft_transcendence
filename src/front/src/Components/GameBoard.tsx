@@ -75,10 +75,10 @@ class GameBoard extends Component<IProps, IState> {
         this.leftPaddleCollision = false;
         this.rightPaddleCollision = false;
         this.canvasRef = React.createRef();
+        this.handleResize = this.handleResize.bind(this);
     }
 
     handleResize() {
-        console.log("resize")
         this.rect = document.querySelector('.gameBoard')!.getBoundingClientRect();
         this.magicHeightRatio = this.rect!.height / 600;
         this.magicWidthRatio = this.rect!.width / 1000;
@@ -125,12 +125,18 @@ class GameBoard extends Component<IProps, IState> {
                 let secondLeftPaddle = document.querySelectorAll('.leftPaddle')[1] as HTMLElement
                 let secondRightPaddle = document.querySelectorAll('.rightPaddle')[1] as HTMLElement
 
-                secondLeftPaddle.style.width = 20 / 1000 * this.rect!.width + "px";
-                secondLeftPaddle.style.height = 100 / 600 * this.rect!.height + "px";
-                secondLeftPaddle.style.marginLeft = 275 / 1000 * this.rect!.width + "px";
-                secondRightPaddle.style.width = 20 / 1000 * this.rect!.width + "px";
-                secondRightPaddle.style.height = 100 / 600 * this.rect!.height + "px";
-                secondRightPaddle.style.marginRight = 275 / 1000 * this.rect!.width + "px";
+                if (secondLeftPaddle)
+                    secondLeftPaddle!.style!.width = 20 / 1000 * this.rect!.width + "px";
+                if (secondLeftPaddle)
+                    secondLeftPaddle!.style.height = 100 / 600 * this.rect!.height + "px";
+                if (secondLeftPaddle)
+                    secondLeftPaddle!.style.marginLeft = 275 / 1000 * this.rect!.width + "px";
+                if (secondRightPaddle)
+                    secondRightPaddle!.style.width = 20 / 1000 * this.rect!.width + "px";
+                if (secondRightPaddle)
+                    secondRightPaddle!.style.height = 100 / 600 * this.rect!.height + "px";
+                if (secondRightPaddle)
+                    secondRightPaddle!.style.marginRight = 275 / 1000 * this.rect!.width + "px";
             }
         }
         let leftPaddle = document.querySelectorAll('.leftPaddle')[0] as HTMLElement

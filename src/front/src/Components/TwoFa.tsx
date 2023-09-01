@@ -48,22 +48,6 @@ class TwoFa extends Component<IProps, IState> {
 		}
 	}
 
-	componentDidMount = async () => {
-		const request = await axios.post("http://' + domain + ':3333/2fa/get_qr",
-			JSON.stringify({
-				username: sessionStorage.getItem('username'),
-				refreshToken: sessionStorage.getItem('refreshToken'),
-				accessToken: sessionStorage.getItem('accessToken'),
-			}),
-			{ headers: { 'Content-Type': 'application/json' } });
-		if (request.data.success === true) {
-			// add qr code as background image url
-			// @ts-ignore: Object is possibly 'null'.
-			document.querySelector('.qr-div').style.backgroundImage = `url(${request.data.qrCode})`;
-		}
-
-	}
-
 	render() {
 		return (
 			<div>
