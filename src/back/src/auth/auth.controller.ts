@@ -15,6 +15,9 @@ export class AuthController {
         if (userInput.username != undefined && userInput.username.length > 9) {
             return { success: false, error: "Username too long (9 characters maximum)" };
         }
+        if (userInput.username != undefined && /\s/.test(userInput.username)) {
+            return { success: false, error: "Username cannot contain whitespaces" };
+        }
         return await this.authService.getVerifySignUp(userInput.username, userInput.password)
     }
 

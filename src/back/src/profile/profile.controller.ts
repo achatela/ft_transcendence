@@ -17,6 +17,9 @@ export class ProfileController {
     if (userInput.newUsername != undefined && userInput.newUsername.length > 9) {
       return { success: false, error: "Username too long (9 characters maximum)" };
     }
+    if (userInput.newUsername != undefined && /\s/.test(userInput.newUsername)) {
+      return { success: false, error: "Username cannot contain whitespaces" };
+    }
     return await this.profileService.changeUsername(userInput.username, userInput.refreshToken, userInput.accessToken, userInput.newUsername);
   }
 
