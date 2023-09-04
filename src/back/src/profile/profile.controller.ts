@@ -80,33 +80,28 @@ export class ProfileController {
   }))
 
   async uploadAvatar(@UploadedFile() file, @Req() request) {
-    // Needs to check JWT
+    // Needs to check JWT todo
     const avatar = file;
     const fileExtension = file.originalname.split('.').pop();
     const { username, refreshToken, accessToken } = request.body;
-    const oldPath = path.join(__dirname, '../uploads', `undefined.${fileExtension}`);
-    const newPath = path.join(__dirname, '../uploads', `${username}.${fileExtension}`);
-    const directory = path.join(__dirname, '../uploads');
+    // const oldPath = path.join(__dirname, '../uploads', `undefined.${fileExtension}`);
+    // const newPath = path.join(__dirname, '../uploads', `${username}.${fileExtension}`);
+    // const directory = path.join(__dirname, '../uploads');
+    const oldPath = path.join('./uploads', `undefined.${fileExtension}`);
+    const newPath = path.join('./uploads', `${username}.${fileExtension}`);
+    const directory = path.join('./uploads');
 
     if (!fs.existsSync(directory)) {
       fs.mkdirSync(directory);
     }
 
-    if (fs.existsSync(oldPath)) {
-      fs.rename(oldPath, newPath, (err) => {
-        if (err) {
-        }
-      });
-    } else {
-      console.log('Source file does not exist');
-    }
 
     try {
       const files = fs.readdirSync(directory);
+      console.log("files", files);
       const filesToDelete = files.filter(file => file.startsWith(username));
       for (const file of filesToDelete) {
         const filePath = path.join(directory, file);
-
         try {
           fs.unlinkSync(filePath);
         } catch (e) {
@@ -117,15 +112,10 @@ export class ProfileController {
       console.log(e);
     }
 
-    try {
-      fs.rename(oldPath, newPath, (err) => {
-        if (err) {
-        } else {
-        }
-      });
-    }
-    catch (e) {
-      console.log(e);
+    if (fs.existsSync(oldPath)) {
+      fs.renameSync(oldPath, newPath);
+    } else {
+      console.log('Source file does not exist');
     }
 
     return await this.profileService.setUploadedAvatar(avatar, username, refreshToken, accessToken, fileExtension);

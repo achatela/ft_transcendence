@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from 'src/auth/auth.service';
+import * as path from 'path';
+import * as fs from 'fs';
 
 @Injectable()
 export class ProfileService {
@@ -45,8 +47,28 @@ export class ProfileService {
         }
         newArray.push(modify);
       }
-      await this.prismaService.user.update({ where: { username: user.username }, data: { matchHistory: newArray } });
+      const changeAvatar = await this.prismaService.user.update({ where: { username: user.username }, data: { matchHistory: newArray } });
       await this.prismaService.user.update({ where: { username: user.username }, data: { username: newUsername } });
+
+      const filePath = changeAvatar.avatar;
+      if (filePath.includes('uploads')) {
+        const array = filePath.split('/');
+        const fileName = array[array.length - 1];
+        const fileExtension = fileName.split('.')[fileName.split('.').length - 1];
+
+        const oldPath = path.join('./uploads', `${username}.${fileExtension}`);
+        const newPath = path.join('./uploads', `${newUsername}.${fileExtension}`);
+        if (fs.existsSync(oldPath)) {
+          fs.renameSync(oldPath, newPath);
+          await this.prismaService.user.update({
+            where: { username: newUsername },
+            data: { avatar: "http://" + process.env.HOST + ":3333/uploads/" + newUsername + "." + fileExtension }
+          });
+        } else {
+          console.log('Source file does not exist');
+        }
+      }
+
       return ({ success: true, refreshToken: ret.refreshToken, accessToken: ret.accessToken })
     }
     else {

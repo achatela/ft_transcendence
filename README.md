@@ -1,8 +1,8 @@
 problem en prod premier lancement, backend trop rapide
-changer de profile picture = crash
 
 bug bizzare historique noms differents
 (si qwe change de nom et que qwerty existe)
+changer de nom = changer le path de l'image
 
 qrcode toujours mal placé
 
