@@ -26,7 +26,7 @@ export class ProfileService {
           let splited = modify.split(" ");
           let otherUser = "";
           for (let j = 0; j < splited.length; j++) {
-            if (splited[j].includes(":") && !splited[j].includes(username)) {
+            if (splited[j].includes(":") && (splited[j] != ("W:" + username) && splited[j] != ("L:" + username))) { //&& !splited[j].includes(username)) {
               otherUser = splited[j].split(":")[1];
               break;
             }
