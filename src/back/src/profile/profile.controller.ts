@@ -88,6 +88,19 @@ export class ProfileController {
     const newPath = path.join(__dirname, '../uploads', `${username}.${fileExtension}`);
     const directory = path.join(__dirname, '../uploads');
 
+    if (!fs.existsSync(directory)) {
+      fs.mkdirSync(directory);
+    }
+
+    if (fs.existsSync(oldPath)) {
+      fs.rename(oldPath, newPath, (err) => {
+        if (err) {
+        }
+      });
+    } else {
+      console.log('Source file does not exist');
+    }
+
     try {
       const files = fs.readdirSync(directory);
       const filesToDelete = files.filter(file => file.startsWith(username));
@@ -96,23 +109,23 @@ export class ProfileController {
 
         try {
           fs.unlinkSync(filePath);
-        } catch {
+        } catch (e) {
+          console.log(e);
         }
       }
-    } catch {
+    } catch (e) {
+      console.log(e);
     }
 
     try {
       fs.rename(oldPath, newPath, (err) => {
         if (err) {
-          throw err;
         } else {
         }
       });
-
     }
-    catch {
-      console.log("Error while renaming file");
+    catch (e) {
+      console.log(e);
     }
 
     return await this.profileService.setUploadedAvatar(avatar, username, refreshToken, accessToken, fileExtension);

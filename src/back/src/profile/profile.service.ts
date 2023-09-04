@@ -143,7 +143,7 @@ export class ProfileService {
     const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: username } });
     const ret = await this.authService.checkToken(user, refreshToken, accessToken);
     if (ret.success == true) {
-      await this.prismaService.user.update({ where: { username: user.username }, data: { avatar: "http://localhost:3333/uploads/" + username + "." + fileExtension } });
+      await this.prismaService.user.update({ where: { username: user.username }, data: { avatar: "http://" + process.env.HOST + ":3333/uploads/" + username + "." + fileExtension } });
       return ({ success: true, refreshToken: ret.refreshToken, accessToken: ret.accessToken });
     }
     return;
