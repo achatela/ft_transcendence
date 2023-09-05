@@ -33,7 +33,7 @@ export class AuthService {
             const payload = { id: user.id };
             const accessToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '45m' });
             const refreshToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
-            await this.prismaService.user.update({ where: { username: username }, data: { avatar: 'http://localhost:3133/defaultPfp.png', hashedPassword: password, refreshToken: refreshToken, accessToken: accessToken } });
+            await this.prismaService.user.update({ where: { username: username }, data: { avatar: 'http://' + process.env.HOST + ':3133/defaultPfp.png', hashedPassword: password, refreshToken: refreshToken, accessToken: accessToken } });
             return { success: true, username: username, accessToken: accessToken, refreshToken: refreshToken };
         }
         catch {

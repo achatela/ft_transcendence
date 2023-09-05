@@ -332,7 +332,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
       return;
     }
     const request = await axios.post(
-    'http://' + domain + ':3333/channel/change_password_channel',
+      'http://' + domain + ':3333/channel/change_password_channel',
       JSON.stringify({
         username: sessionStorage.getItem("username"),
         newPassword: bcrypt.hashSync(newPassword, 10),

@@ -56,8 +56,8 @@ export default function HomePage(props: any) {
         <button className="signin42-button" type="button" onClick={redirectFortyTwo} onMouseEnter={() => { setHover42(true) }} onMouseLeave={() => { setHover42(false) }}>
           Sign
           {
-            hover42 ? (<img src={'http://localhost:3133/black42logo.png'} alt="Image" className="logo42" style={{ width: 'calc(1.25vw + 1.25vh)', marginLeft: 'calc(0.15vw + 0.15vh)' }} />)
-              : (<img src={'http://localhost:3133/white42logo.png'} alt="Image" className="logo42" style={{ width: 'calc(1.25vw + 1.25vh)', marginLeft: 'calc(0.15vw + 0.15vh)' }} />)
+            hover42 ? (<img src={'http://' + domain + ':3133/black42logo.png'} alt="Image" className="logo42" style={{ width: 'calc(1.25vw + 1.25vh)', marginLeft: 'calc(0.15vw + 0.15vh)' }} />)
+              : (<img src={'http://' + domain + ':3133/white42logo.png'} alt="Image" className="logo42" style={{ width: 'calc(1.25vw + 1.25vh)', marginLeft: 'calc(0.15vw + 0.15vh)' }} />)
           }
         </button>
       </div>
