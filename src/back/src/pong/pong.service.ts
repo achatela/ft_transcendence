@@ -305,13 +305,13 @@ export class PongService {
       }
     }
 
-    const newX = gameState.x + gameState.dx * this.gameStates[index].speedMultiplier;
+    let newX = gameState.x + gameState.dx * this.gameStates[index].speedMultiplier;
     const newY = gameState.y + gameState.dy * this.gameStates[index].speedMultiplier;
     const lpc = this.checkPaddleCollision(newX, newY, paddleGap, gameState.paddleLeft);
     const rpc = this.checkPaddleCollision(newX, newY, widthGameboard - paddleGap - paddleWidth, gameState.paddleRight);
     const lpc2 = this.checkPaddleCollision(newX, newY, paddleGap + (275 - (paddleWidth * 2)), gameState.secondPaddleLeft);
     const rpc2 = this.checkPaddleCollision(newX, newY, widthGameboard - paddleGap - paddleWidth - (275 - (2 * paddleWidth)), gameState.secondPaddleRight);
-    if ((lpc == true || lpc2 == true) && gameState.prevLpc == false) {
+    if (lpc == true && gameState.prevLpc == false) {
       const dirX = -gameState.dx;
       let dirY = (gameState.y + squareSize / 2 - gameState.paddleLeft - paddleMid) / paddleMid;
       if (dirY / dirX > 2)
@@ -322,8 +322,22 @@ export class PongService {
       const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
       gameState.dx = dirX / magnitude;
       gameState.dy = dirY / magnitude;
+      newX = 71;
     }
-    else if ((rpc == true || rpc2 == true) && gameState.prevRpc == false) {
+    else if (lpc2 == true && gameState.prevLpc2 == false) {
+      const dirX = -gameState.dx;
+      let dirY = (gameState.y + squareSize / 2 - gameState.paddleLeft - paddleMid) / paddleMid;
+      if (dirY / dirX > 2)
+        dirY = 2 * dirX;
+      else if (dirY / dirX < -2)
+        dirY = -2 * dirX;
+      this.gameStates[index].speedMultiplier += 1;
+      const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
+      gameState.dx = dirX / magnitude;
+      gameState.dy = dirY / magnitude;
+      newX = 346;
+    }
+    else if (rpc == true && gameState.prevRpc == false) {
       const dirX = -gameState.dx;
       let dirY = (gameState.y + squareSize / 2 - gameState.paddleRight - paddleMid) / paddleMid;
       if (dirY / dirX > 2)
@@ -334,6 +348,20 @@ export class PongService {
       const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
       gameState.dx = dirX / magnitude;
       gameState.dy = dirY / magnitude;
+      newX = 929;
+    }
+    else if (rpc2 == true && gameState.prevRpc2 == false) {
+      const dirX = -gameState.dx;
+      let dirY = (gameState.y + squareSize / 2 - gameState.paddleRight - paddleMid) / paddleMid;
+      if (dirY / dirX > 2)
+        dirY = 2 * dirX;
+      else if (dirY / dirX < -2)
+        dirY = -2 * dirX;
+      this.gameStates[index].speedMultiplier += 1;
+      const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
+      gameState.dx = dirX / magnitude;
+      gameState.dy = dirY / magnitude;
+      newX = 654;
     }
     else if (newY < 0 || newY + squareSize > heightGameboard) {
       gameState.dy = -gameState.dy;
@@ -374,6 +402,8 @@ export class PongService {
     }
     gameState.prevLpc = lpc;
     gameState.prevRpc = rpc;
+    gameState.prevLpc2 = lpc2;
+    gameState.prevRpc2 = rpc2;
   }
 
   async gameLogicClassic(index: number, io: any) {
@@ -442,7 +472,7 @@ export class PongService {
       }
     }
 
-    const newX = gameState.x + gameState.dx * this.gameStates[index].speedMultiplier;
+    let newX = gameState.x + gameState.dx * this.gameStates[index].speedMultiplier;
     const newY = gameState.y + gameState.dy * this.gameStates[index].speedMultiplier;
     const lpc = this.checkPaddleCollision(newX, newY, paddleGap, gameState.paddleLeft);
     const rpc = this.checkPaddleCollision(newX, newY, widthGameboard - paddleGap - paddleWidth, gameState.paddleRight);
@@ -457,6 +487,7 @@ export class PongService {
       const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
       gameState.dx = dirX / magnitude;
       gameState.dy = dirY / magnitude;
+      newX = 71;
     }
     else if (rpc == true && gameState.prevRpc == false) {
       const dirX = -gameState.dx;
@@ -469,6 +500,7 @@ export class PongService {
       const magnitude = Math.sqrt(dirX ** 2) + Math.sqrt(dirY ** 2);
       gameState.dx = dirX / magnitude;
       gameState.dy = dirY / magnitude;
+      newX = 929;
     }
     else if (newY < 0 || newY + squareSize > heightGameboard) {
       gameState.dy = -gameState.dy;
@@ -692,7 +724,7 @@ export class PongService {
       if (this.queueCustom.length >= 2) {
         const user1 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueCustom[0] } });
         const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { id: this.queueCustom[1] } });
-        this.gameStates.push({ mode: "custom", secondPaddleLeft: 0, secondPaddleRight: 0, statsAttributed: false, started: false, id1: this.queueCustom[0], id2: this.queueCustom[1], socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false, onOff: false, speedMultiplier: 10 });
+        this.gameStates.push({ mode: "custom", secondPaddleLeft: 0, secondPaddleRight: 0, statsAttributed: false, started: false, id1: this.queueCustom[0], id2: this.queueCustom[1], socketLeft: 0, socketRight: 0, x: 0, y: 0, dx: 0, dy: 0, paddleLeft: 0, paddleRight: 0, leftScore: 0, rightScore: 0, prevLpc: false, prevRpc: false, prevLpc2: false, prevRpc2: false, onOff: false, speedMultiplier: 10 });
         this.queueCustom.splice(0, 2);
         await this.prismaService.user.update({ where: { id: user1.id }, data: { status: 'playing custom' } });
         await this.prismaService.user.update({ where: { id: user2.id }, data: { status: 'playing custom' } });

@@ -135,7 +135,6 @@ export class AuthService {
             code: userCode,
             redirect_uri: "http://localhost:3133"
         });
-
         try {
             const request = await axios.post("https://api.intra.42.fr/oauth/token", requestBody.toString(), {
                 headers: {
