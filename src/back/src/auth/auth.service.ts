@@ -133,7 +133,7 @@ export class AuthService {
             client_id: process.env.FORTY_TWO_UID,
             client_secret: process.env.FORTY_TWO_SECRET,
             code: userCode,
-            redirect_uri: "http://localhost:3133"
+            redirect_uri: "http://" + process.env.HOST + ":3133"
         });
         try {
             const request = await axios.post("https://api.intra.42.fr/oauth/token", requestBody.toString(), {
@@ -156,7 +156,7 @@ export class AuthService {
     redirectUrl(): string {
         const queryParams = new URLSearchParams({
             client_id: process.env.FORTY_TWO_UID,
-            redirect_uri: "http://localhost:3133",
+            redirect_uri: "http://" + process.env.HOST + ":3133"
         });
 
         return (`https://api.intra.42.fr/oauth/authorize?response_type=code&` + queryParams.toString())
