@@ -1,5 +1,5 @@
 #!/bin/bash
-
+sleep 6
 set -m
 
 npx prisma migrate dev --name init &

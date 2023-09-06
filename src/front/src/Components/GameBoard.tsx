@@ -11,7 +11,7 @@ const io = require("socket.io-client");
 
 const upArrow: number = 38;
 const downArrow: number = 40;
-const zKey: number = 90;
+const zKey: number = 87;
 const sKey: number = 83;
 
 interface IProps { }
@@ -46,6 +46,7 @@ class GameBoard extends Component<IProps, IState> {
     magicWidthRatio: number;
     leftUser: string;
     rightUser: string;
+    username: string;
     constructor(props: IProps) {
         super(props);
         const dirX = Math.random() < 0.5 ? -1 : 1;
@@ -76,6 +77,7 @@ class GameBoard extends Component<IProps, IState> {
         this.rightPaddleCollision = false;
         this.canvasRef = React.createRef();
         this.handleResize = this.handleResize.bind(this);
+        this.username = sessionStorage.getItem('username')!;
     }
 
     handleResize() {
@@ -145,6 +147,61 @@ class GameBoard extends Component<IProps, IState> {
         rightPaddle.style.top = this.state.rightPaddleY + "px";
     }
 
+    async update(keysPressed: any) {
+        if (this.leftUser == this.username) {
+            if (keysPressed[upArrow] && keysPressed[zKey]) {
+                this.state.socket.emit("moveUp", { key: "Z" });
+                this.state.socket.emit("moveUp", { key: "up" });
+            }
+            else if (keysPressed[downArrow] && keysPressed[zKey]) {
+                this.state.socket.emit("moveDown", { key: "S" });
+                this.state.socket.emit("moveUp", { key: "up" });
+            }
+            else if (keysPressed[upArrow] && keysPressed[sKey]) {
+                this.state.socket.emit("moveUp", { key: "Z" });
+                this.state.socket.emit("moveDown", { key: "down" });
+            }
+            else if (keysPressed[downArrow] && keysPressed[sKey]) {
+                this.state.socket.emit("moveDown", { key: "S" });
+                this.state.socket.emit("moveDown", { key: "down" });
+            }
+            else if (keysPressed[upArrow])
+                this.state.socket.emit("moveUp", { key: "Z" });
+            else if (keysPressed[downArrow])
+                this.state.socket.emit("moveDown", { key: "S" });
+            else if (keysPressed[zKey])
+                this.state.socket.emit("moveUp", { key: "up" });
+            else if (keysPressed[sKey])
+                this.state.socket.emit("moveDown", { key: "down" });
+        }
+        else if (this.rightUser == this.username) {
+            if (keysPressed[upArrow] && keysPressed[zKey]) {
+                this.state.socket.emit("moveUp", { key: "up" });
+                this.state.socket.emit("moveUp", { key: "Z" });
+            }
+            else if (keysPressed[downArrow] && keysPressed[zKey]) {
+                this.state.socket.emit("moveDown", { key: "down" });
+                this.state.socket.emit("moveUp", { key: "Z" });
+            }
+            else if (keysPressed[upArrow] && keysPressed[sKey]) {
+                this.state.socket.emit("moveUp", { key: "up" });
+                this.state.socket.emit("moveDown", { key: "S" });
+            }
+            else if (keysPressed[downArrow] && keysPressed[sKey]) {
+                this.state.socket.emit("moveDown", { key: "down" });
+                this.state.socket.emit("moveDown", { key: "S" });
+            }
+            else if (keysPressed[upArrow])
+                this.state.socket.emit("moveUp", { key: "up" });
+            else if (keysPressed[downArrow])
+                this.state.socket.emit("moveDown", { key: "down" });
+            else if (keysPressed[zKey])
+                this.state.socket.emit("moveUp", { key: "Z" });
+            else if (keysPressed[sKey])
+                this.state.socket.emit("moveDown", { key: "S" });
+        }
+    }
+
     setSocket() {
         this.setState((prevState) => ({
             socket: io("http://" + domain + ":3333/"),
@@ -157,7 +214,6 @@ class GameBoard extends Component<IProps, IState> {
                 });
             }
             else if (sessionStorage.getItem('gameMode') === "custom") {
-                console.log('custom sent')
                 this.state.socket.emit("connectGameCustom", {
                     socketId: this.state.socket.id,
                     login: sessionStorage.getItem("username"),
@@ -172,6 +228,28 @@ class GameBoard extends Component<IProps, IState> {
             this.state.socket.on('usernames', (data: any) => {
                 this.leftUser = data.leftUser;
                 this.rightUser = data.rightUser;
+                const keysPressed: { [key: number]: boolean } = {};
+
+                if (this.leftUser == sessionStorage.getItem('username')) {
+                    document.addEventListener('keydown', (event) => {
+                        keysPressed[event.keyCode] = true;
+                    });
+                }
+                else if (this.rightUser == sessionStorage.getItem('username')) {
+                    document.addEventListener('keydown', (event) => {
+                        keysPressed[event.keyCode] = true;
+                    });
+                }
+                document.addEventListener('keyup', (event) => {
+                    delete keysPressed[event.keyCode];
+                });
+
+                console.log("events emitted")
+                setTimeout(() => {
+                    this.interval = setInterval(() => {
+                        this.update(keysPressed);
+                    }, 55);
+                }, 10);
             })
             this.state.socket.on('gameOver', (data: any) => {
                 // window.location.href = "/profile";
@@ -247,39 +325,6 @@ class GameBoard extends Component<IProps, IState> {
         ball.style.height = 20 / 600 * this.rect!.height + "px";
         window.addEventListener('resize', this.handleResize)
 
-        const keysPressed: { [key: number]: boolean } = {};
-
-        document.addEventListener('keydown', (event) => {
-            keysPressed[event.keyCode] = true;
-            if (keysPressed[upArrow] && keysPressed[zKey]) {
-                this.state.socket.emit("moveUp", { key: "up" });
-                this.state.socket.emit("moveUp", { key: "Z" });
-            }
-            else if (keysPressed[downArrow] && keysPressed[zKey]) {
-                this.state.socket.emit("moveDown", { key: "down" });
-                this.state.socket.emit("moveUp", { key: "Z" });
-            }
-            else if (keysPressed[upArrow] && keysPressed[sKey]) {
-                this.state.socket.emit("moveUp", { key: "up" });
-                this.state.socket.emit("moveDown", { key: "S" });
-            }
-            else if (keysPressed[downArrow] && keysPressed[sKey]) {
-                this.state.socket.emit("moveDown", { key: "down" });
-                this.state.socket.emit("moveDown", { key: "S" });
-            }
-            else if (keysPressed[upArrow])
-                this.state.socket.emit("moveUp", { key: "up" });
-            else if (keysPressed[downArrow])
-                this.state.socket.emit("moveDown", { key: "down" });
-            else if (keysPressed[zKey])
-                this.state.socket.emit("moveUp", { key: "Z" });
-            else if (keysPressed[sKey])
-                this.state.socket.emit("moveDown", { key: "S" });
-        });
-
-        document.addEventListener('keyup', (event) => {
-            delete keysPressed[event.keyCode];
-        });
     }
 
     componentWillUnmount() {
