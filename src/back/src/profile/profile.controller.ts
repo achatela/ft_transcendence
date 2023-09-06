@@ -80,13 +80,9 @@ export class ProfileController {
   }))
 
   async uploadAvatar(@UploadedFile() file, @Req() request) {
-    // Needs to check JWT todo
     const avatar = file;
     const fileExtension = file.originalname.split('.').pop();
     const { username, refreshToken, accessToken } = request.body;
-    // const oldPath = path.join(__dirname, '../uploads', `undefined.${fileExtension}`);
-    // const newPath = path.join(__dirname, '../uploads', `${username}.${fileExtension}`);
-    // const directory = path.join(__dirname, '../uploads');
     const oldPath = path.join('./uploads', `undefined.${fileExtension}`);
     const newPath = path.join('./uploads', `${username}.${fileExtension}`);
     const directory = path.join('./uploads');

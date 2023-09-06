@@ -7,7 +7,7 @@ import { User } from '@prisma/client';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly authService: AuthService, private prismaService: PrismaService, private jwtService: JwtService) { }
+    constructor(private readonly authService: AuthService) { }
 
 
     @Post('verify_sign_up')
