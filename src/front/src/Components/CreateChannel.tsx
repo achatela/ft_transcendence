@@ -59,8 +59,8 @@ export default class CreateChannel extends Component<IProps, IState> {
         }
         else {
             console.log("failed to create channel")
-            console.log(request.data.error)
-            this.setState({ channelCreated: false, channelError: true, errorMessage: request.data.error })
+            alert(request.data.error)
+            // this.setState({ channelCreated: false, channelError: true, errorMessage: request.data.error })
             return;
         }
     }

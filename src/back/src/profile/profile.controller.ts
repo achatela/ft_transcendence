@@ -14,6 +14,9 @@ export class ProfileController {
 
   @Post('change_username')
   async changeUsername(@Body() userInput: { username: string, refreshToken: string, accessToken: string, newUsername: string }) {
+    const regexSpe = /^[\x00-\x7F]+$/;
+    if (!regexSpe.test(userInput.newUsername))
+      return { success: false, error: "Username cannot contain special characters" };
     if (userInput.newUsername != undefined && userInput.newUsername.length > 9) {
       return { success: false, error: "Username too long (9 characters maximum)" };
     }

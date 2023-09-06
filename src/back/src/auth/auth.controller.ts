@@ -12,6 +12,9 @@ export class AuthController {
 
     @Post('verify_sign_up')
     async getVerifySignUp(@Body() userInput: { username: string, password: string }) {
+        const regexSpe = /^[\x00-\x7F]+$/;
+        if (!regexSpe.test(userInput.username))
+            return { success: false, error: "Username cannot contain special characters" };
         if (userInput.username != undefined && userInput.username.length > 9) {
             return { success: false, error: "Username too long (9 characters maximum)" };
         }

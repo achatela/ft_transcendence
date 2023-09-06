@@ -13,6 +13,9 @@ export class ChannelController {
 
     @Post('create')
     async createChannel(@Body() body: { username: string, accessToken: string, refreshToken: string, channelName: string, hasPassword: boolean, password?: string, isPrivate: boolean }) {
+        const regexSpe = /^[\x00-\x7F]+$/;
+        if (!regexSpe.test(body.channelName))
+            return { success: false, error: "Channel name cannot contain special characters" };
         if (body.channelName && body.channelName.length > 18)
             return { success: false, error: "Channel name too long (18 characters maximum)" };
         return await this.channelService.createChannel(body);

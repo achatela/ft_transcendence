@@ -118,8 +118,10 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
             opponentUsernameId: message.toId,
           }), { headers: { "Content-Type": "application/json" } });
           if (request.data.success === true) {
-            if (message.toUsername === sessionStorage.getItem("username"))
+            if (message.toUsername === sessionStorage.getItem("username")) {
+              sessionStorage.setItem('gameMode', "classic");
               window.location.href = '/game/'
+            }
           }
           else {
             console.error("failed to create classic game")
@@ -442,6 +444,7 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
           <button className='invite-div-accept' onClick={() => {
             setShowInvite(false);
             socket.emit('acceptClassic', { room: chat.room, username: sessionStorage.getItem("username"), targetUsername: fromUsername });
+            sessionStorage.setItem('gameMode', "classic");
             window.location.href = '/game/'
           }}>Accept</button>
           <button className='invite-div-decline' onClick={() => {
