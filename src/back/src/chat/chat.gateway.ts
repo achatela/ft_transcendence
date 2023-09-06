@@ -30,6 +30,7 @@ export class ChatGateway {
       return;
     }
 
+    
     if (body.message.length === 0) {
       return;
     }
