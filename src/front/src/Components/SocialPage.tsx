@@ -367,10 +367,12 @@ export default class SocialPage extends Component<IProps, IState> {
       sessionStorage.setItem("refreshToken", request.data.refreshToken);
       sessionStorage.setItem("accessToken", request.data.accessToken);
       console.log("blocked")
+      window.location.href = "/social"
     }
-    else
+    else {
       console.log("failed to block")
-    window.location.href = "/social"
+      inputElement.value = request.data.error;
+    }
   }
 
   async blockUserEnter() {

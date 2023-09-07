@@ -43,6 +43,8 @@ export class AuthService {
             return ({ success: false, error: "user doesn't exist" });
         if (!(await bcrypt.compare(password, user.hashedPassword)))
             return { success: false, error: "incorrect password" };
+        if (user.status != "offline")
+            return { success: false, error: "user already connected" };
         return { success: true, username: username, accessToken: user.accessToken, refreshToken: user.refreshToken, twoFa: user.enabled2FA };
     }
 
@@ -78,6 +80,8 @@ export class AuthService {
             };
         }
         user = await this.prismaService.user.update({ where: { login: request.data.login }, data: { personnal42Token: personnal42Token.access_token } });
+        if (user.status != "offline")
+            return { success: false, error: "user already connected" };
         return {
             success: true,
             refreshToken: user.refreshToken,

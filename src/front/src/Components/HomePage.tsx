@@ -29,7 +29,8 @@ export default function HomePage(props: any) {
           window.location.href = '/two_fa';
       }
       else {
-        console.error(request.data.error);
+        if (request.data.error == "user already connected")
+          alert(request.data.error);
       }
       // }
     }

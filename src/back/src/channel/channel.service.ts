@@ -246,6 +246,8 @@ export class ChannelService {
     }
 
     async kickUserChannel(body: { username: string; accessToken: string; refreshToken: string; channelName: string; targetUsername: string; }) {
+        if (body.username == body.targetUsername)
+            return { success: false, error: 'Cannot kick yourself' };
         const user = await this.prismaService.user.findUnique({ where: { username: body.username } });
         if (!user) {
             return { success: false, error: 'User not found' };
@@ -306,6 +308,8 @@ export class ChannelService {
     }
 
     async banUserChannel(body: { username: string; accessToken: string; refreshToken: string; channelName: string; targetUsername: string; }) {
+        if (body.username == body.targetUsername)
+            return { success: false, error: 'Cannot ban yourself' };
         const user = await this.prismaService.user.findUnique({ where: { username: body.username } });
         if (!user) {
             return { success: false, error: 'User not found' };
@@ -373,6 +377,8 @@ export class ChannelService {
     }
 
     async muteUserChannel(body: { username: string; accessToken: string; refreshToken: string; channelName: string; targetUsername: string, duration: number }) {
+        if (body.username == body.targetUsername)
+            return { success: false, error: 'Cannot mute yourself' };
         const user = await this.prismaService.user.findUnique({ where: { username: body.username } });
         if (!user) {
             return { success: false, error: 'User not found' };

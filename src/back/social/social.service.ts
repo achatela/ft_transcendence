@@ -201,6 +201,8 @@ export class SocialService {
 
     async blockUser(body: { username: string, blockedUsername: string, accessToken: string; refreshToken: string }): Promise<{ success: boolean, accessToken?: string, refreshToken?: string, error?: string }> {
         const { username, blockedUsername, accessToken, refreshToken } = body;
+        if (username == blockedUsername)
+            return { success: false, error: "You can't block yourself" };
         const user = await this.prismaService.user.findUnique({ where: { username: username } });
         if (user == null)
             return { success: false, error: "User not found" };
