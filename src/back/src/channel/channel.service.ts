@@ -169,6 +169,16 @@ export class ChannelService {
         if (channel) {
             return { success: false, error: 'Channel already exists' };
         }
+
+        const channels = await this.prismaService.channel.findMany({
+            where: {
+                owner: user.id,
+            },
+        });
+        if (channels.length >= 10) {
+            return { success: false, error: 'You already own 10 channels' };
+        }
+
         if (hasPassword == true) {
             const createdChannel = await this.prismaService.channel.create({
                 data: {
