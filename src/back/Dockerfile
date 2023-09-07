@@ -1,6 +1,6 @@
 FROM node:lts
 
-EXPOSE 3333 3133
+EXPOSE 3333 3133 5555
 
 WORKDIR ~/transcendence/back
 COPY package*.json .
