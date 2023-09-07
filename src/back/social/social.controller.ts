@@ -38,7 +38,7 @@ export class SocialController {
 
     @Post('send_friend_request')
     async sendFriendRequest(@Body() userInput: { requesterUsername: string, requestedUsername: string, accessToken: string, refreshToken: string }): Promise<{ error?: string, success: boolean, accessToken?: string, refreshToken?: string }> {
-        if (userInput.requestedUsername === '')
+        if (userInput != undefined && userInput.requestedUsername != undefined && userInput.requestedUsername === '')
             return ({ success: false });
         return await this.socialService.sendFriendRequest(userInput.requesterUsername, userInput.requestedUsername, userInput.accessToken, userInput.refreshToken);
     }

@@ -104,6 +104,8 @@ export class SocialService {
         if (auth.success == false)
             return { error: "User not found.", success: false };
         const requested = await this.prismaService.user.findUnique({ where: { username: requestedUsername } });
+        if (!requested)
+            return { error: "User not found.", success: false };
         for (const request of requested.friendRequests) {
             if (request == requester.id)
                 return { error: "Friend request already sent to this user.", success: false, accessToken: auth.accessToken, refreshToken: auth.refreshToken };
