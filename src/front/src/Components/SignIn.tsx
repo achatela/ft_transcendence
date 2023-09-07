@@ -70,6 +70,7 @@ export default class SignIn extends Component<IProps, IState> {
     render() {
         return (
             <>
+                <button className="go-back-button" onClick={() => { window.location.href = "/" }}>Go back</button>
                 <div className='signin-div'>
                     <input type="text" placeholder='username' className='signin-username-input' />
                     <input type="password" placeholder='password' className='signin-password-input' />

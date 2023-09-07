@@ -17,6 +17,19 @@
     border: white calc(0.2vw + 0.2vh) solid;
 }
 
+.go-back-button {
+    position: absolute;
+    top: 10vh;
+    left: 20vh;
+    background-color: black;
+    border: white calc(0.125vw + 0.125vh) solid;
+    font-size: calc(2vh + 2vw);
+    text-align: center;
+    white-space: nowrap;
+    padding-block: 0.20em;
+    margin-top: 1vh;
+}
+
 .username-input[type='text'] {
     font-size: calc(1.2vw + 1.2vh);
     text-align: left;
