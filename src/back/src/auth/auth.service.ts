@@ -16,7 +16,10 @@ export class AuthService {
         const ret = await this.checkToken(user, refreshToken, accessToken);
         if (ret.success == false)
             return ({ success: false, error: "invalid token" });
-        await this.prismaService.user.update({ where: { username: username }, data: { status: "offline" } });
+        if (user.qrCodeValidated2FA == false) {
+            await this.prismaService.user.update({ where: { username: username }, data: { status: "offline", enabled2FA: false } });
+        }
+        await this.prismaService.user.update({ where: { username: username }, data: { status: "offline", validatedSession2FA: false } });
         return ({ success: true });
     }
 

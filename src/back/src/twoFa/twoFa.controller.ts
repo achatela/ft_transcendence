@@ -29,4 +29,14 @@ export class twoFaController {
     async getQr(@Body() userInput: { username: string, refreshToken: string, accessToken: string }): Promise<{ success: boolean, refreshToken?: string, accessToken?: string, qrCode?: string }> {
         return await this.twoFaService.getQr(userInput.username, userInput.refreshToken, userInput.accessToken);
     }
+
+    @Post('check_session')
+    async checkSession(@Body() userInput: { username: string }) {
+        return await this.twoFaService.checkSession(userInput.username);
+    }
+
+    @Post('get_qr_if_not_enabled')
+    async getQrIfNotEnabled(@Body() userInput: { username: string, refreshToken: string, accessToken: string }) {
+        return await this.twoFaService.getQrIfNotEnabled(userInput.username, userInput.refreshToken, userInput.accessToken);
+    }
 }

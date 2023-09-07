@@ -66,38 +66,52 @@ function App() {
     }
   }
 
+  async function checkTwoFaSession() {
+    if (sessionStorage.getItem('username') === null || url.pathname === "/" || url.pathname === "/two_fa") {
+      return;
+    }
+    const request = await axios.post("http://" + domain + ":3333/2fa/check_session/",
+      JSON.stringify({ username: sessionStorage.getItem('username') }),
+      { headers: { 'Content-Type': 'application/json' } })
+
+    if (request.data.success !== true) {
+      window.location.href = "/two_fa";
+    }
+  }
+
   useEffect(() => {
     pageLoad();
+    checkTwoFaSession();
   }, []);
 
   return (
     <>
-    <BrowserRouter>
-      {sessionStorage.getItem('username') !== null && (<>
-        <NavBar />
-      </>)}
-      <Routes>
-        {sessionStorage.getItem('username') !== null && (
-          <>
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/profile/:profileId" element={<ProfilePage />} />
-            <Route path="/mode" element={<ModePage />} />
-            <Route path="/game" element={<GameBoard />} />
-            <Route path="/social" element={<SocialPage />} />
-            <Route path="/two_fa" element={<TwoFa />} />
-            <Route path="/history" element={<MatchHistory />} />
-            <Route path="/history/:profileId" element={<MatchHistory />} />
-          </>
-        )}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/sign_up" element={<SignUp />} />
-        <Route path="/sign_in" element={<SignIn />} />
-        <Route path="*" element={<PageNotFound />} />
-      </Routes>
-    </BrowserRouter>
-    {window.location.pathname === "/" || window.location.pathname === "/sign_up" || window.location.pathname === "/sign_in" ? (
-      <BouncingBallsUI />
-    ): null}
+      <BrowserRouter>
+        {sessionStorage.getItem('username') !== null && (<>
+          <NavBar />
+        </>)}
+        <Routes>
+          {sessionStorage.getItem('username') !== null && (
+            <>
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/profile/:profileId" element={<ProfilePage />} />
+              <Route path="/mode" element={<ModePage />} />
+              <Route path="/game" element={<GameBoard />} />
+              <Route path="/social" element={<SocialPage />} />
+              <Route path="/two_fa" element={<TwoFa />} />
+              <Route path="/history" element={<MatchHistory />} />
+              <Route path="/history/:profileId" element={<MatchHistory />} />
+            </>
+          )}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/sign_up" element={<SignUp />} />
+          <Route path="/sign_in" element={<SignIn />} />
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+      </BrowserRouter>
+      {window.location.pathname === "/" || window.location.pathname === "/sign_up" || window.location.pathname === "/sign_in" ? (
+        <BouncingBallsUI />
+      ) : null}
     </>
   );
 }

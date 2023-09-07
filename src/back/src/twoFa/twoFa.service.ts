@@ -7,6 +7,28 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class twoFaService {
     constructor(private authService: AuthService, private prismaService: PrismaService) { }
 
+
+    async getQrIfNotEnabled(username: string, refreshToken: string, accessToken: string) {
+        const user = await this.prismaService.user.findUnique({ where: { username: username } });
+        const ret = await this.authService.checkToken(user, refreshToken, accessToken);
+
+        if (ret.success == true) {
+            if (user.qrCodeValidated2FA == false)
+                return { success: true, qrCode: user.qrCode2FA };
+            return { success: false };
+        }
+    }
+
+    async checkSession(username: string) {
+        const user = await this.prismaService.user.findUnique({ where: { username: username } });
+
+        if (user.enabled2FA == false)
+            return { success: true }
+        if (user.validatedSession2FA == true)
+            return { success: true };
+        return { success: false };
+    }
+
     async create2Fa(username: string, accessToken: string, refreshToken: string): Promise<{ success: boolean, accessToken: string, refreshToken: string }> {
         try {
             const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: username } });
@@ -32,7 +54,7 @@ export class twoFaService {
             if (verified != null && verified.delta == 0) {
                 const ret = await this.authService.checkToken(user, user.refreshToken, user.accessToken);
                 if (ret.success == true) {
-                    // await this.prismaService.user.update({ where: { username: username }, data: { secret2FA: null } });
+                    await this.prismaService.user.update({ where: { username: username }, data: { validatedSession2FA: true, qrCodeValidated2FA: true } });
                     return { success: true, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
                 }
                 return { success: false };
@@ -69,7 +91,7 @@ export class twoFaService {
             const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: username } });
             const ret = await this.authService.checkToken(user, refreshToken, accessToken);
             if (ret.success == true) {
-                await this.prismaService.user.update({ where: { username: username }, data: { enabled2FA: false, secret2FA: null } });
+                await this.prismaService.user.update({ where: { username: username }, data: { enabled2FA: false, secret2FA: null, qrCodeValidated2FA: false, validatedSession2FA: false } });
                 return { success: true, refreshToken: ret.refreshToken, accessToken: ret.accessToken };
             }
             return { success: false };

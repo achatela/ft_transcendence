@@ -35,9 +35,11 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  enabled2FA Boolean @default(false)
-  secret2FA  String?
-  qrCode2FA  String?
+  enabled2FA          Boolean @default(false)
+  secret2FA           String?
+  qrCode2FA           String?
+  validatedSession2FA Boolean @default(false)
+  qrCodeValidated2FA  Boolean @default(false)
 
   xpBar        Int      @default(0)
   matchHistory String[]

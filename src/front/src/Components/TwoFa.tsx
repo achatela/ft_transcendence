@@ -12,6 +12,7 @@ interface IProps {
 
 interface IState {
 	success: boolean,
+	qrCode: string,
 }
 
 class TwoFa extends Component<IProps, IState> {
@@ -19,6 +20,7 @@ class TwoFa extends Component<IProps, IState> {
 		super(props);
 		this.state = {
 			success: true,
+			qrCode: "",
 		}
 	}
 
@@ -48,10 +50,27 @@ class TwoFa extends Component<IProps, IState> {
 		}
 	}
 
+	async componentDidMount(): Promise<void> {
+		const request = await axios.post('http://' + domain + ':3333/2fa/get_qr_if_not_enabled/',
+			JSON.stringify({
+				username: sessionStorage.getItem('username'),
+				refreshToken: sessionStorage.getItem('refreshToken'),
+				accessToken: sessionStorage.getItem('accessToken'),
+			}),
+			{ headers: { 'Content-Type': 'application/json' } });
+		if (request.data.success === true) {
+			console.log(request.data.qrCode)
+			this.setState({ qrCode: request.data.qrCode });
+		}
+		else {
+		}
+	}
+
 	render() {
 		return (
 			<div>
-				{/* <div className="qr-div"></div> */}
+				{this.state.qrCode != "" ?
+					<div className="qr-code" style={{ backgroundImage: `url(${this.state.qrCode})` }}></div> : null}
 				{this.state.success === false ? <p className="error">Invalid 2FA code</p> : <p></p>}
 				<input onKeyUp={(e) => { if (e.key === 'Enter') { this.sendInput() } }} className="input-2fa" type="text" maxLength={6} />
 				<button className="send-input" onClick={this.sendInput}>Validate 2FA</button>

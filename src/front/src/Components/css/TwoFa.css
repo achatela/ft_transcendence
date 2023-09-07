@@ -48,3 +48,15 @@
     transform: translate(-50%, 0%);
     background-size: cover;
 }
+
+.qr-code {
+
+    position: absolute;
+    /* transform: translate(235%, 275%); */
+    top: 25vh;
+    left: 47vw;
+    border: 6px solid white;
+    width: calc(3vh + 3vw);
+    height: calc(3vh + 3vw);
+    background-size: cover;
+}
