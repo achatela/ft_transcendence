@@ -5,6 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from 'src/auth/auth.service';
 
+require('events').EventEmitter.prototype._maxListeners = 20;
 
 @WebSocketGateway({ cors: "*" })
 export class ChannelGateway {
@@ -75,5 +76,16 @@ export class ChannelGateway {
         const targetUser = await this.prismaService.user.findUnique({ where: { username: body.targetUsername }, select: { id: true } });
 
         this.server.emit('receiveAcceptClassic', { fromUsername: body.username, toUsername: body.targetUsername, fromId: user.id, toId: targetUser.id });
+    }
+
+    @SubscribeMessage('pollKick')
+    async pollKick(@ConnectedSocket() socket: Socket, @MessageBody() body: { room: string, username: string }): Promise<void> {
+        const user = await this.prismaService.user.findUnique({ where: { username: body.username } });
+        const channel = await this.prismaService.channel.findUnique({ where: { channelName: body.room }, select: { users: true } });
+
+        if (!channel || !channel.users.includes(user.id)) {
+            this.server.emit('receivePollKick', { username: body.username });
+        }
+        return;
     }
 }

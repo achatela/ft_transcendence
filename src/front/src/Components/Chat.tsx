@@ -129,12 +129,22 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
         }
       })
 
+      socket.on('receivePollKick', async (message: { username: string }) => {
+        if (message.username == sessionStorage.getItem("username")) {
+          window.location.href = '/social';
+        }
+      })
+
+      let interval = setInterval(async () => {
+        socket.emit('pollKick', { room: chat.room, username: sessionStorage.getItem("username") });
+      }, 1000);
 
       return () => {
         setMessages([]);
         setMessage('');
         socket.disconnect();
         element.removeEventListener('keypress', handleSendMessage);
+        clearInterval(interval)
       }
     }
   }, [chat, isChannel]);
