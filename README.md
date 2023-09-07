@@ -1,2 +1,0 @@
-prisma studio
-NAN winrate
