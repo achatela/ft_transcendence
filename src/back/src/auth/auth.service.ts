@@ -168,14 +168,14 @@ export class AuthService {
                             const userTmp = await this.prismaService.user.findUnique({ where: { id: payload.id } });
                             if (accessToken == userTmp.accessToken && userTmp.status == "online")
                                 await this.prismaService.user.update({ where: { id: payload.id }, data: { status: "offline" } });
-                            // 5 minutes
-                        }, 300000);
+                            // 10 minutes
+                        }, 600000);
                         return { success: true, refreshToken: refreshToken, accessToken: accessToken };
                     }
                     setTimeout(async () => {
                         if (accessToken == userTmp.accessToken && userTmp.status == "online")
                             await this.prismaService.user.update({ where: { id: payload.id }, data: { status: "offline" } });
-                    }, 300000);
+                    }, 600000);
                     return { success: true, refreshToken: refreshToken, accessToken: accessToken };
                 }
                 return { success: false };
@@ -184,7 +184,7 @@ export class AuthService {
                 const userTmp = await this.prismaService.user.findUnique({ where: { id: user.id } });
                 if (accessToken == userTmp.accessToken && userTmp.status == "online")
                     await this.prismaService.user.update({ where: { id: user.id }, data: { status: "offline" } });
-            }, 300000);
+            }, 600000);
             return { success: true, refreshToken: refreshToken, accessToken: accessToken };
         }
         return { success: false };
