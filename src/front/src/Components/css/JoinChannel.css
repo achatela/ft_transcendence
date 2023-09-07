@@ -1,0 +1,313 @@
+.channel-list-item-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 8vh;
+}
+
+.channel-list-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 8vh;
+}
+
+.channel-list-item div {
+    width: 25%;
+}
+
+.channel-list-item:hover div {
+    opacity: 0.7;
+}
+
+.channel-list-item-number {
+    align-items: center;
+    justify-content: center;
+}
+
+
+.channel-list-item-owner {
+    align-items: center;
+    justify-content: center;
+}
+
+.channel-list-item p {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    font-size: 2em;
+    overflow-x: auto;
+}
+
+.channel-list-item-private {
+    align-items: center;
+    justify-content: center;
+}
+
+.channel-list-item-name {
+    /*align to left*/
+    max-width: 80%;
+    margin-left: 10%;
+    justify-content: flex-start;
+}
+
+.channel-list-item-header p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    height: 100%;
+    width: 100%;
+    border: 1px solid white;
+}
+
+.join-channel-div {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    border: 3px solid white;
+}
+
+.channels-list-div {
+    position: fixed;
+    top: 2.5vh;
+    left: 25vw;
+    height: 95vh;
+    border: 3px solid white;
+    width: 70%;
+}
+
+.your-channels-header {
+    font-size: 3rem;
+    height: 10%;
+    border: 3px solid white;
+}
+
+.channels-list-header {
+    font-size: 3rem;
+    height: 10%;
+    border: 3px solid white;
+}
+
+.your-channels-p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.channels-list-p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.channel-list-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 5vh;
+    border: 1px solid white;
+}
+
+.channel-list-item-number {
+    font-size: 3em;
+}
+
+.channel-list {
+    height: 90%;
+    overflow-y: auto;
+}
+
+.your-channels-list-item {
+    display: flex;
+    width: 100%;
+    height: 5vh;
+    border: 1px solid white;
+}
+
+.your-channels-list-item div {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: solid white 1px;
+}
+
+.your-channels-list-item p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    font-size: 1em;
+    overflow-x: auto;
+}
+
+.your-channels-list-item:hover div {
+    opacity: 0.7;
+}
+
+.join-channel-error {
+    position: absolute;
+    color: red;
+    font-size: 2em;
+}
+
+.your-channels-div {
+    position: absolute;
+    border: 6px solid white;
+    border-top: 3px solid white;
+    border-bottom: 3px solid white;
+    left: calc(0.8rem + 0.65vw);
+    width: 19vw;
+    top: calc(6vh + 4.5px);
+    /* height: calc(100vh - 9.9rem - 8.4rem - 10.8rem - 4rem); */
+    height: 59.2vh;
+    overflow-y: auto;
+    margin-top: 1.2rem;
+}
+
+.channels-invite {
+    position: absolute;
+    border: 6px solid white;
+    border-top: 2px solid white;
+    border-bottom: 3px solid white;
+    left: calc(0.8rem + 0.65vw);
+    top: calc(6vh + 6px);
+    width: 19vw;
+    /* height: calc(100vh - (100vh - 9.6rem) + 8.1rem); */
+    height: 18vh;
+    overflow-y: auto;
+    /* margin-top: calc(100vh - 9.9rem - 8.4rem - 10.8rem + 1.2rem + 3px - 4rem); */
+    margin-top: 61.6vh;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.channels-join-create-div {
+    position: absolute;
+    border: 6px solid white;
+    border-top: 3px solid white;
+    left: calc(0.8rem + 0.65vw);
+    width: 19vw;
+    height: 10.2vh;
+    text-align: center;
+    bottom: 0.8em;
+}
+
+.channels-header {
+    font-size: 3rem;
+    height: 10%;
+    border: 3px solid white;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.channels-invite-p {
+    width: calc(100%);
+    text-align: center;
+    border-bottom: 3px solid white;
+    padding-top: 1rem;
+    padding-bottom: 1vh;
+    font-size: 2rem;
+}
+
+/* .channels-invite-items {
+    display: flex;
+    flex-direction: column;
+    height: 82%;
+    border: 1px solid white;
+} */
+
+.channels-invite-items {
+    display: block;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 2rem;
+}
+
+.channels-invite-list-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 7vh;
+    min-width: 100%;
+    border: 1px solid white;
+}
+
+.channels-invite-list-item-name {
+    /*align to left*/
+    margin-top: 0.7rem;
+    height: 2rem;
+    width: 85%;
+    margin-left: 12%;
+    margin-right: 12%;
+    overflow-x: auto;
+}
+
+.channels-invite-accept {
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 0.25rem 0.5rem;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #28a745;
+}
+
+.channels-invite-decline {
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 0.25rem 0.5rem;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #dc3545;
+}
+
+
+.display-join {
+    background: black;
+    border: 3px solid white;
+    padding: 0.5em;
+    color: white;
+    outline: none;
+    margin-top: calc(3.2rem - 1.5rem + 3px);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.display-join:hover {
+    opacity: 0.8;
+}
+
+.display-create {
+    background: black;
+    border: 3px solid white;
+    padding: 0.5em;
+    color: white;
+    outline: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-left: 1rem;
+}
+
+.display-create:hover {
+    opacity: 0.8;
+}
+
+.reset-states-channel {
+    position: absolute;
+    background-color: red;
+    height: 20px;
+    width: 20px;
+    left: 1vw;
+    top: 1vw;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+}

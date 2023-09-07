@@ -1,0 +1,71 @@
+
+.bouncing-balls-buttons {
+    width: 10%;
+    position: absolute;
+    top: calc(2vw + 2vh);
+    left: 86%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.66vh;
+    align-items: center;
+}
+
+.addBallButton {
+    background-color: black;
+    border: white calc(0.1vw + 0.1vh) solid;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    font-size: calc(1vw + 1vh);
+    padding-block: 0.20em;
+    white-space: nowrap;
+    
+}
+
+.addBallButton:hover {
+    color: black;
+    background-color: white;
+    cursor: pointer;
+}
+
+.removeBallButton {
+    background-color: black;
+    border: white calc(0.1vw + 0.1vh) solid;
+    text-align: center;
+    display: block;
+    width: 100%;
+    height: 100%;
+    font-size: calc(1vw + 1vh);
+    padding-block: 0.20em;
+    white-space: nowrap;
+}
+
+.removeBallButton:hover {
+    color: black;
+    background-color: white;
+    cursor: pointer;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    width: calc(4.5vw + 4.5vh);
+    height: calc(0.33vw + 0.33vh);
+    background-color: grey;
+    outline: none;
+    margin-block: 1.33em;
+}
+  
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: calc(0.3vw + 0.3vh);
+    height: calc(0.75vw + 0.75vh);
+    background-color: white;
+    border-radius: 0;
+    box-sizing: border-box;
+}
+
+.speed {
+    color: white;
+    font-size: calc(1vw + 1vh);
+}

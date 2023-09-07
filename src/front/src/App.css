@@ -1,0 +1,58 @@
+@font-face {
+    font-family: 'pixeltype';
+    src: url('./misc/Pixeltype.ttf') format('truetype');
+}
+
+*::-webkit-scrollbar {
+    display: none;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'pixeltype', sans-serif;
+    color: white;
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.right-border {
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100vh;
+    width: calc(0.5vw + 0.5vh);
+    background-color: white;
+}
+
+.left-border {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: calc(0.5vw + 0.5vh);
+    background-color: white;
+}
+
+.top-border {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: calc(0.5vw + 0.5vh);
+    width: 100vw;
+    background-color: white;
+}
+
+.bottom-border {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    height: calc(0.5vw + 0.5vh);
+    width: 100vw;
+    background-color: white;
+}
+
+body {
+    background-color: black;
+}

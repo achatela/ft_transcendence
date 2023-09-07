@@ -1,0 +1,68 @@
+::placeholder {
+    opacity: 0.6;
+}
+
+.signup-div {
+    width: 25%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 2vh;
+    padding: 2.5%;
+    align-items: center;
+    border: white calc(0.2vw + 0.2vh) solid;
+}
+
+.username-input[type='text'] {
+    font-size: calc(1.2vw + 1.2vh);
+    text-align: left;
+}
+
+.username-input {
+    background-color: black;
+    border: white calc(0.1vw + 0.1vh) solid;
+    text-align: center;
+    width: 92.5%;
+    height: 100%;
+    white-space: nowrap;
+    padding: 0.33em;
+    outline: none;
+}
+
+.password-input[type='password'] {
+    font-size: calc(1.2vw + 1.2vh);
+    text-align: left;
+}
+
+.password-input {
+    background-color: black;
+    border: white calc(0.1vw + 0.1vh) solid;
+    text-align: center;
+    width: 92.5%;
+    height: 100%;
+    white-space: nowrap;
+    padding: 0.33em;
+    outline: none;
+}
+
+.signup-signup-button {
+    background-color: black;
+    border: white calc(0.125vw + 0.125vh) solid;
+    font-size: 3vw;
+    text-align: center;
+    width: 40%;
+    height: 100%;
+    white-space: nowrap;
+    padding-block: 0.20em;
+    margin-top: 1vh;
+}
+
+.signup-signup-button:hover {
+    color: black;
+    background-color: white;
+    cursor: pointer;
+}

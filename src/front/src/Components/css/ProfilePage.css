@@ -1,0 +1,222 @@
+.userName {
+    font-size: 5vw;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 65%);
+}
+
+.error-profile-page {
+    left: 50%;
+    top: 160%;
+    transform: translateX(-50%);
+    font-size: 5vw;
+    color: red;
+}
+
+.change-username {
+    left: 50%;
+    top: 120%;
+    transform: translateX(-50%);
+    position: absolute;
+    width: 10vw;
+    height: 5vh;
+    background-color: black;
+    border: white 2px solid;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 2.5vh;
+    cursor: pointer;
+}
+
+.pictureProfile {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 70%);
+    width: 12vh;
+    height: 12vh;
+    border: 3px solid white;
+    background-size: cover;
+    background-repeat: no-repeat;
+    /* background-position: center; */
+}
+
+.stats {
+    position: absolute;
+    font-size: 80px;
+    width: 80%;
+    left: 10%;
+    top: 40%;
+    border: 3px solid white;
+    height: 40%;
+    display: grid;
+}
+
+.winLose,
+.ladderLevel,
+.achievements {
+    border: 1px solid white;
+    display: flex;
+    justify-content: center;
+    vertical-align: middle;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+.winLose p {
+    margin-top: auto;
+    margin-bottom: auto;
+    font-size: 1em;
+}
+
+.ladderLevel p {
+    margin-top: auto;
+    margin-bottom: auto;
+    font-size: 1em;
+}
+
+.achievements p {
+    margin-top: auto;
+    margin-bottom: auto;
+    font-size: 1em;
+}
+
+.debug {
+    margin-left: 15px;
+    margin-top: 30px;
+    font-size: 25px;
+}
+
+.downloadButton {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: 1.5em;
+    width: 1.5em;
+    background-color: rgba(128, 128, 128, 0.753);
+    border: none;
+}
+
+.downloadButton:hover {
+    background-color: rgba(128, 128, 128, 0.9);
+    cursor: pointer;
+}
+
+.visuallyHidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+.TwoFa {
+    position: absolute;
+    top: 6vh;
+    left: 6.5vw;
+    width: 24vh;
+    height: 12vh;
+    border: 3px solid white;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.TwoFaButton {
+    position: absolute;
+    left: 50%;
+    bottom: 20%;
+    transform: translateX(-50%);
+    width: 70%;
+    height: 30%;
+    background-color: black;
+    border: white 2px solid;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 2.5vh;
+    cursor: pointer;
+}
+
+.TwoFaButton:hover {
+    opacity: 0.7;
+}
+
+.TwoFATrue {
+    font-size: 2rem;
+    color: rgb(0, 255, 0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2vh;
+}
+
+.TwoFAFalse {
+    font-size: 2rem;
+    color: rgb(255, 0, 0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2vh;
+}
+
+.qrCode {
+    position: absolute;
+    /* transform: translate(235%, 275%); */
+    top: 25vh;
+    left: 10.5vw;
+    border: 6px solid white;
+    width: calc(3vh + 3vw);
+    height: calc(3vh + 3vw);
+    background-size: cover;
+}
+
+.match-history-button {
+    position: absolute;
+    left: 50%;
+    bottom: 12%;
+    transform: translateX(-50%);
+    background-color: black;
+    border: white 3px solid;
+    padding: 1vh 1vw;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+.match-history-button:hover {
+    opacity: 0.7;
+}
+
+.add-friend-profile {
+    border: 3px solid white;
+    background-color: black;
+    width: 10vw;
+    height: 5vh;
+    margin-top: 27vh;
+    margin-left: calc(50vw - 5vw);
+    font-size: 2rem;
+}
+
+.add-friend-profile:hover {
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.friend-state-div {
+    position: absolute;
+    border: 3px solid white;
+    background-color: black;
+    width: 10vw;
+    height: 5vh;
+    margin-top: 27vh;
+    margin-left: calc(50vw - 5vw);
+    font-size: 2rem;
+}

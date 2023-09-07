@@ -1,0 +1,67 @@
+.match-history-div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50vw;
+    height: 80vh;
+    transform: translate(-50%, -50%);
+    border: 2px white solid;
+    overflow-y: auto;
+}
+
+.match-history-match-info-div {
+    border: solid 2px white;
+    width: 100%;
+    height: calc(8vh - 4px);
+}
+
+.match-history-match-info-div p {
+    text-align: center;
+    font-size: 2rem;
+    vertical-align: middle;
+    line-height: calc(8vh - 4px);
+    display: inline;
+}
+
+.match-left-letter {
+    float: left;
+    width: 5%;
+    height: 100%;
+    background-color: #1e1e1e;
+    /*move the text vertically to the middle of the parent div*/
+}
+
+.match-right-letter {
+    float: right;
+    width: 5%;
+    height: 100%;
+    background-color: #1e1e1e;
+}
+
+.match-left-username {
+    float: left;
+    width: 35%;
+    height: 100%;
+    background-color: #1e1e1e;
+}
+
+.match-right-username {
+    float: right;
+    width: 30%;
+    height: 100%;
+    background-color: #1e1e1e;
+}
+
+.match-left-score {
+    float: left;
+    width: 10%;
+    height: 100%;
+    background-color: #1e1e1e;
+}
+
+.match-right-score {
+    float: right;
+    width: 10%;
+    height: 100%;
+    background-color: #1e1e1e;
+}
