@@ -80,6 +80,12 @@ function App() {
   }
 
   useEffect(() => {
+    console.log(sessionStorage.getItem('accessToken'));
+    if (sessionStorage.getItem('accessToken') == "undefined" || sessionStorage.getItem('refreshToken') == "undefined") {
+      sessionStorage.clear();
+      window.location.href = "/";
+      return;
+    }
     pageLoad();
     checkTwoFaSession();
   }, []);
