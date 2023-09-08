@@ -17,22 +17,26 @@ export default function HomePage(props: any) {
 
     if (code) {
       console.log("code exists")
-      const request = await axios.post('http://' + domain + ':3333/auth/verify_sign_in_42/', JSON.stringify({ code: code }), { headers: { 'Content-Type': 'application/json' } });
-      if (request.data.success == true) {
-        sessionStorage.removeItem('accessToken')
-        sessionStorage.setItem("accessToken", request.data.accessToken);
-        sessionStorage.setItem("username", request.data.username);
-        sessionStorage.setItem("refreshToken", request.data.refreshToken);
-        if (request.data.twoFa === false)
-          window.location.href = '/profile';
-        else
-          window.location.href = '/two_fa';
+      try {
+        const request = await axios.post('http://' + domain + ':3333/auth/verify_sign_in_42/', JSON.stringify({ code: code }), { headers: { 'Content-Type': 'application/json' } });
+        if (request.data.success == true) {
+          sessionStorage.removeItem('accessToken')
+          sessionStorage.setItem("accessToken", request.data.accessToken);
+          sessionStorage.setItem("username", request.data.username);
+          sessionStorage.setItem("refreshToken", request.data.refreshToken);
+          if (request.data.twoFa === false)
+            window.location.href = '/profile';
+          else
+            window.location.href = '/two_fa';
+        }
+        else {
+          if (request.data.error == "user already connected")
+            alert(request.data.error);
+        }
       }
-      else {
-        if (request.data.error == "user already connected")
-          alert(request.data.error);
+      catch (err) {
+        console.log(err);
       }
-      // }
     }
   }
 
