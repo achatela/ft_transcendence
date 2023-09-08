@@ -29,39 +29,49 @@ function App() {
       return;
     }
     if (sessionStorage.getItem("queueing") === "Classic Pong") {
-      const response = await axios.post('http://' + domain + ':3333/pong/classic/queue_down/',
-        JSON.stringify({
-          username: sessionStorage.getItem('username'),
-          refreshToken: sessionStorage.getItem('refreshToken'),
-          accessToken: sessionStorage.getItem('accessToken'),
-        }),
-        { headers: { 'Content-Type': 'application/json' } }
-      );
-      if (response.data.success === true) {
-        sessionStorage.setItem('accessToken', response.data.accessToken);
-        sessionStorage.setItem('refreshToken', response.data.refreshToken);
-        sessionStorage.setItem("queueing", "");
+      try {
+        const response = await axios.post('http://' + domain + ':3333/pong/classic/queue_down/',
+          JSON.stringify({
+            username: sessionStorage.getItem('username'),
+            refreshToken: sessionStorage.getItem('refreshToken'),
+            accessToken: sessionStorage.getItem('accessToken'),
+          }),
+          { headers: { 'Content-Type': 'application/json' } }
+        );
+        if (response.data.success === true) {
+          sessionStorage.setItem('accessToken', response.data.accessToken);
+          sessionStorage.setItem('refreshToken', response.data.refreshToken);
+          sessionStorage.setItem("queueing", "");
+        }
+        else {
+          sessionStorage.setItem("queueing", "");
+        }
       }
-      else {
-        sessionStorage.setItem("queueing", "");
+      catch (err) {
+        console.log(err);
       }
     }
     else if (sessionStorage.getItem("queueing") === "Custom Pong") {
-      const response = await axios.post('http://' + domain + ':3333/pong/custom/queue_down/',
-        JSON.stringify({
-          username: sessionStorage.getItem('username'),
-          refreshToken: sessionStorage.getItem('refreshToken'),
-          accessToken: sessionStorage.getItem('accessToken'),
-        }),
-        { headers: { 'Content-Type': 'application/json' } }
-      );
-      if (response.data.success === true) {
-        sessionStorage.setItem('accessToken', response.data.accessToken);
-        sessionStorage.setItem('refreshToken', response.data.refreshToken);
-        sessionStorage.setItem("queueing", "");
+      try {
+        const response = await axios.post('http://' + domain + ':3333/pong/custom/queue_down/',
+          JSON.stringify({
+            username: sessionStorage.getItem('username'),
+            refreshToken: sessionStorage.getItem('refreshToken'),
+            accessToken: sessionStorage.getItem('accessToken'),
+          }),
+          { headers: { 'Content-Type': 'application/json' } }
+        );
+        if (response.data.success === true) {
+          sessionStorage.setItem('accessToken', response.data.accessToken);
+          sessionStorage.setItem('refreshToken', response.data.refreshToken);
+          sessionStorage.setItem("queueing", "");
+        }
+        else {
+          sessionStorage.setItem("queueing", "");
+        }
       }
-      else {
-        sessionStorage.setItem("queueing", "");
+      catch (err) {
+        console.log(err);
       }
     }
   }
@@ -70,31 +80,40 @@ function App() {
     if (sessionStorage.getItem('username') === null || url.pathname === "/" || url.pathname === "/two_fa") {
       return;
     }
-    const request = await axios.post("http://" + domain + ":3333/2fa/check_session/",
-      JSON.stringify({ username: sessionStorage.getItem('username') }),
-      { headers: { 'Content-Type': 'application/json' } })
+    try {
+      const request = await axios.post("http://" + domain + ":3333/2fa/check_session/",
+        JSON.stringify({ username: sessionStorage.getItem('username') }),
+        { headers: { 'Content-Type': 'application/json' } })
 
-    if (request.data.success !== true) {
-      window.location.href = "/two_fa";
+      if (request.data.success !== true) {
+        window.location.href = "/two_fa";
+      }
+    }
+    catch (err) {
+      console.log(err);
     }
   }
 
-  function checkValidity() {
+  async function checkValidity() {
     if (sessionStorage.getItem('username') === null) {
       return;
     }
-    const request = axios.post("http://" + domain + ":3333/profile/check_validity/",
-      JSON.stringify({
-        username: sessionStorage.getItem('username'),
-        refreshToken: sessionStorage.getItem('refreshToken'),
-        accessToken: sessionStorage.getItem('accessToken'),
-      }),
-      { headers: { 'Content-Type': 'application/json' } }).then((response) => {
-        if (response.data.success !== true) {
-          sessionStorage.clear();
-          window.location.href = "/";
-        }
-      });
+    try {
+      const request = await axios.post("http://" + domain + ":3333/profile/check_validity/",
+        JSON.stringify({
+          username: sessionStorage.getItem('username'),
+          refreshToken: sessionStorage.getItem('refreshToken'),
+          accessToken: sessionStorage.getItem('accessToken'),
+        }),
+        { headers: { 'Content-Type': 'application/json' } })
+      if (request.data.success !== true) {
+        sessionStorage.clear();
+        window.location.href = "/";
+      }
+    }
+    catch (err) {
+      console.log(err);
+    }
   }
 
   useEffect(() => {
