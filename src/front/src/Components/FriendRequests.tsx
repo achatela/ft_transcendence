@@ -6,46 +6,56 @@ const url = new URL(currentUrl);
 const domain = url.hostname;
 
 async function acceptFunction(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
-  const request = await axios.post(
-    'http://' + domain + ':3333/social/accept_friend_request/',
-    JSON.stringify({
-      accepterUsername: sessionStorage.getItem("username"),
-      acceptedUsername: event.currentTarget.dataset.name,
-      refreshToken: sessionStorage.getItem("refreshToken"),
-      accessToken: sessionStorage.getItem("accessToken"),
-    }),
-    { headers: { "Content-Type": "application/json" } }
-  );
-  if (request.data.success === true) {
-    sessionStorage.setItem("refreshToken", request.data.refreshToken);
-    sessionStorage.setItem("accessToken", request.data.accessToken);
-    console.log("accepted")
+  try {
+    const request = await axios.post(
+      'http://' + domain + ':3333/social/accept_friend_request/',
+      JSON.stringify({
+        accepterUsername: sessionStorage.getItem("username"),
+        acceptedUsername: event.currentTarget.dataset.name,
+        refreshToken: sessionStorage.getItem("refreshToken"),
+        accessToken: sessionStorage.getItem("accessToken"),
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (request.data.success === true) {
+      sessionStorage.setItem("refreshToken", request.data.refreshToken);
+      sessionStorage.setItem("accessToken", request.data.accessToken);
+      console.log("accepted")
+    }
+    else {
+      console.log("failed to accept")
+    }
   }
-  else {
-    console.log("failed to accept")
+  catch (err) {
+    console.log(err);
   }
   window.location.href = "/social/";
 }
 
 
 async function declineFunction(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
-  const request = await axios.post(
-    'http://' + domain + ':3333/social/decline_friend_request/',
-    JSON.stringify({
-      declinerUsername: sessionStorage.getItem("username"),
-      declinedUsername: event.currentTarget.dataset.name,
-      refreshToken: sessionStorage.getItem("refreshToken"),
-      accessToken: sessionStorage.getItem("accessToken"),
-    }),
-    { headers: { "Content-Type": "application/json" } }
-  );
-  if (request.data.success === true) {
-    sessionStorage.setItem("refreshToken", request.data.refreshToken);
-    sessionStorage.setItem("accessToken", request.data.accessToken);
-    console.log("declined")
+  try {
+    const request = await axios.post(
+      'http://' + domain + ':3333/social/decline_friend_request/',
+      JSON.stringify({
+        declinerUsername: sessionStorage.getItem("username"),
+        declinedUsername: event.currentTarget.dataset.name,
+        refreshToken: sessionStorage.getItem("refreshToken"),
+        accessToken: sessionStorage.getItem("accessToken"),
+      }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+    if (request.data.success === true) {
+      sessionStorage.setItem("refreshToken", request.data.refreshToken);
+      sessionStorage.setItem("accessToken", request.data.accessToken);
+      console.log("declined")
+    }
+    else {
+      console.log("failed to decline")
+    }
   }
-  else {
-    console.log("failed to decline")
+  catch (err) {
+    console.log(err);
   }
   window.location.href = "/social/";
 }
