@@ -77,7 +77,7 @@ export class ProfileController {
       destination: './uploads',
       filename: (req, file, callback) => {
         const fileExtension = file.originalname.split('.').pop();
-        callback(null, `undefined.${fileExtension}`);
+        callback(null, `undefineddd.${fileExtension}`);
       },
     }),
   }))
@@ -86,7 +86,7 @@ export class ProfileController {
     const avatar = file;
     const fileExtension = file.originalname.split('.').pop();
     const { username, refreshToken, accessToken } = request.body;
-    const oldPath = path.join('./uploads', `undefined.${fileExtension}`);
+    const oldPath = path.join('./uploads', `undefineddd.${fileExtension}`);
     const newPath = path.join('./uploads', `${username}.${fileExtension}`);
     const directory = path.join('./uploads');
 
