@@ -5,6 +5,9 @@ import { AuthService } from 'src/auth/auth.service';
 import { Console } from 'console';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+const FileType = require('file-type');
+
+
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -37,7 +40,7 @@ export class ProfileController {
   }
 
   @Post('user_info')
-  async getUserInfo(@Body() userInput: { username: string, refreshToken: string, accessToken: string }): Promise<{ userInfo: { username: string, wins: number, losses: number, avatar: string, ladderLevel: number, xp: number }, refreshToken: string, accessToken: string }> {
+  async getUserInfo(@Body() userInput: { username: string, refreshToken: string, accessToken: string }) {
     return await this.profileService.getUserInfo(userInput.username, userInput.refreshToken, userInput.accessToken);
   }
 
@@ -80,6 +83,9 @@ export class ProfileController {
         callback(null, `undefineddd.${fileExtension}`);
       },
     }),
+    limits: {
+      fileSize: 1 * 1024 * 1024 // 5MB
+    }
   }))
 
   async uploadAvatar(@UploadedFile() file, @Req() request) {
@@ -89,6 +95,18 @@ export class ProfileController {
     const oldPath = path.join('./uploads', `undefineddd.${fileExtension}`);
     const newPath = path.join('./uploads', `${username}.${fileExtension}`);
     const directory = path.join('./uploads');
+
+    const fileType = await FileType.fromFile(`./uploads/undefineddd.${fileExtension}`);
+
+    if (fileType && fileType.mime.startsWith('image/')) { }
+    else {
+      fs.unlinkSync(`./uploads/undefineddd.${fileExtension}`)
+      return { success: false, error: "File is not an image" };
+    }
+
+    if (file.mimetype.includes('image') == false) {
+      return { success: false, error: "File is not an image" };
+    }
 
     if (!fs.existsSync(directory)) {
       fs.mkdirSync(directory);

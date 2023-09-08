@@ -76,8 +76,14 @@ class ProfilePage extends Component<IProps, IState> {
 
     getUserInfo = async () => {
         const response = await axios.post('http://' + domain + ':3333/profile/user_info/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
-        sessionStorage.setItem("refreshToken", response.data.refreshToken);
-        sessionStorage.setItem("accessToken", response.data.accessToken);
+        if (response.data.success === true) {
+            sessionStorage.setItem("accessToken", response.data.accessToken);
+            sessionStorage.setItem("refreshToken", response.data.refreshToken);
+        }
+        else {
+            sessionStorage.clear();
+            window.location.href = '/';
+        }
         return response.data.userInfo;
     }
 
@@ -207,19 +213,34 @@ class ProfilePage extends Component<IProps, IState> {
             avatar.append('refreshToken', sessionStorage.getItem('refreshToken'));
             avatar.append('accessToken', sessionStorage.getItem('accessToken'));
 
-            const request = await axios.post(
-                'http://' + domain + ':3333/profile/upload/',
-                avatar,
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
+            try {
+                const request = await axios.post(
+                    'http://' + domain + ':3333/profile/upload/',
+                    avatar,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    }
+                );
+                if (request.data.success === true) {
+                    console.log(true)
+                    sessionStorage.setItem("refreshToken", request.data.refreshToken);
+                    sessionStorage.setItem("accessToken", request.data.accessToken);
+                    window.location.href = '/profile/';
                 }
-            );
-            sessionStorage.setItem("refreshToken", request.data.refreshToken);
-            sessionStorage.setItem("accessToken", request.data.accessToken);
+                else if (request.data.success === false) {
+                    console.log(false)
+                    console.error(request.data.error);
+                    alert(request.data.error);
+                    window.location.href = '/profile/';
+                }
+            }
+            catch (error) {
+                console.error(error);
+            }
+
         }
-        window.location.href = '/profile/';
     };
 
     async disable2FA() {
