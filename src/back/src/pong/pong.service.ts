@@ -124,7 +124,7 @@ export class PongService {
             else
               this.gameStates[index].paddleLeft -= paddleStep;
           }
-          else {
+          else if (this.gameStates[index].socketRight === socketId) {
             if (this.gameStates[index].paddleRight - paddleStep < 0)
               this.gameStates[index].paddleRight = 0;
             else
@@ -146,7 +146,7 @@ export class PongService {
                 this.gameStates[index].paddleLeft -= paddleStep;
             }
           }
-          else {
+          else if (this.gameStates[index].socketRight === socketId) {
             if (key == "Z") {
               if (this.gameStates[index].secondPaddleRight - paddleStep < 0)
                 this.gameStates[index].secondPaddleRight = 0;
@@ -178,7 +178,7 @@ export class PongService {
             else
               this.gameStates[index].paddleLeft += paddleStep;
           }
-          else {
+          else if (this.gameStates[index].socketRight === socketId) {
             if (this.gameStates[index].paddleRight + paddleHeight + paddleStep > heightGameboard)
               this.gameStates[index].paddleRight = heightGameboard - paddleHeight;
             else
@@ -199,7 +199,7 @@ export class PongService {
                 this.gameStates[index].paddleLeft += paddleStep;
             }
           }
-          else {
+          else if (this.gameStates[index].socketRight === socketId) {
             if (key == "S") {
               if (this.gameStates[index].secondPaddleRight + paddleHeight + paddleStep > heightGameboard)
                 this.gameStates[index].secondPaddleRight = heightGameboard - paddleHeight;
@@ -659,6 +659,9 @@ export class PongService {
     try {
       const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: username } });
       const index = this.gameStates.findIndex((gameState) => gameState.id1 === user.id || gameState.id2 === user.id);
+      if (index !== -1 && this.gameStates[index].socketLeft !== 0 && this.gameStates[index].socketRight !== 0) {
+        return;
+      }
       if (index !== -1) {
         if (this.gameStates[index].id1 === user.id && this.gameStates[index].socketLeft === 0) {
           this.gameStates[index].socketLeft = socketId;
@@ -759,7 +762,8 @@ export class PongService {
       const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: username } });
       const ret = await this.authService.checkToken(user, refreshToken, accessToken);
       if (ret.success) {
-        this.queueCustom.push(user.id);
+        if (!this.queueCustom.includes(user.id))
+          this.queueCustom.push(user.id);
         return { success: true, refreshToken: ret.refreshToken, accessToken: ret.accessToken };
       }
     } catch (e) {
@@ -825,7 +829,8 @@ export class PongService {
       const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: username } });
       const ret = await this.authService.checkToken(user, refreshToken, accessToken);
       if (ret.success) {
-        this.queueClassic.push(user.id);
+        if (!this.queueClassic.includes(user.id))
+          this.queueClassic.push(user.id);
         return { success: true, refreshToken: ret.refreshToken, accessToken: ret.accessToken };
       }
     } catch (e) {

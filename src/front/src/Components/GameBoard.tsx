@@ -37,7 +37,8 @@ interface IState {
 }
 
 class GameBoard extends Component<IProps, IState> {
-    interval: NodeJS.Timer;
+    interval: NodeJS.Timer | null;
+    interval2: NodeJS.Timer | null;
     rect: DOMRect | null;
     leftPaddleCollision: boolean;
     rightPaddleCollision: boolean;
@@ -47,6 +48,7 @@ class GameBoard extends Component<IProps, IState> {
     leftUser: string;
     rightUser: string;
     username: string;
+    timeout: NodeJS.Timeout | null;
     constructor(props: IProps) {
         super(props);
         const dirX = Math.random() < 0.5 ? -1 : 1;
@@ -71,13 +73,15 @@ class GameBoard extends Component<IProps, IState> {
             disconnectMessage: "Opponent disconnected, redirecting to profile in",
             secondsLeft: 10,
         };
-        this.interval = setInterval(() => { }, 10);
+        this.interval = null;
         this.rect = null;
         this.leftPaddleCollision = false;
         this.rightPaddleCollision = false;
         this.canvasRef = React.createRef();
         this.handleResize = this.handleResize.bind(this);
         this.username = sessionStorage.getItem('username')!;
+        this.timeout = null;
+        this.interval2 = null;
     }
 
     handleResize() {
@@ -202,6 +206,30 @@ class GameBoard extends Component<IProps, IState> {
         }
     }
 
+    async setEvents() {
+        const keysPressed: { [key: number]: boolean } = {};
+        if (this.leftUser == sessionStorage.getItem('username')) {
+            document.addEventListener('keydown', (event) => {
+                keysPressed[event.keyCode] = true;
+            });
+        }
+        else if (this.rightUser == sessionStorage.getItem('username')) {
+            document.addEventListener('keydown', (event) => {
+                keysPressed[event.keyCode] = true;
+            });
+        }
+        document.addEventListener('keyup', (event) => {
+            delete keysPressed[event.keyCode];
+        });
+
+        console.log("events emitted")
+        this.timeout = setTimeout(() => {
+            this.interval2 = setInterval(() => {
+                this.update(keysPressed);
+            }, 55);
+        }, 10);
+    }
+
     setSocket() {
         this.setState((prevState) => ({
             socket: io("http://" + domain + ":3333/"),
@@ -228,28 +256,8 @@ class GameBoard extends Component<IProps, IState> {
             this.state.socket.on('usernames', (data: any) => {
                 this.leftUser = data.leftUser;
                 this.rightUser = data.rightUser;
-                const keysPressed: { [key: number]: boolean } = {};
-
-                if (this.leftUser == sessionStorage.getItem('username')) {
-                    document.addEventListener('keydown', (event) => {
-                        keysPressed[event.keyCode] = true;
-                    });
-                }
-                else if (this.rightUser == sessionStorage.getItem('username')) {
-                    document.addEventListener('keydown', (event) => {
-                        keysPressed[event.keyCode] = true;
-                    });
-                }
-                document.addEventListener('keyup', (event) => {
-                    delete keysPressed[event.keyCode];
-                });
-
-                console.log("events emitted")
-                setTimeout(() => {
-                    this.interval = setInterval(() => {
-                        this.update(keysPressed);
-                    }, 55);
-                }, 10);
+                if (this.interval2 === null && this.timeout === null)
+                    this.setEvents();
             })
             this.state.socket.on('gameOver', (data: any) => {
                 // window.location.href = "/profile";
@@ -275,7 +283,7 @@ class GameBoard extends Component<IProps, IState> {
                 // this.state.socket.emit("update", { socketId: this.state.socket.id });
             })
             this.state.socket.emit("events", { socketId: this.state.socket.id, login: sessionStorage.getItem("username") });
-            this.state.socket.emit("update", { socketId: this.state.socket.id });
+            this.state.socket.emit("update", { socketId: this.state.socket.id, username: sessionStorage.getItem("username") });
             console.log("socketId", this.state.socket.id)
         });
     }
@@ -328,7 +336,6 @@ class GameBoard extends Component<IProps, IState> {
         ball.style.width = 20 / 1000 * this.rect!.width + "px";
         ball.style.height = 20 / 600 * this.rect!.height + "px";
         window.addEventListener('resize', this.handleResize)
-
     }
 
     componentWillUnmount() {
