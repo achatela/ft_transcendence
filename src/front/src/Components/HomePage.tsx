@@ -45,8 +45,12 @@ export default function HomePage(props: any) {
   }, []);
 
   async function redirectFortyTwo(): Promise<void> {
-    const response = await axios.get('http://' + domain + ':3333/auth/redirect_forty_two');
-    window.location.href = response.data.url;
+    try {
+      const response = await axios.get('http://' + domain + ':3333/auth/redirect_forty_two');
+      window.location.href = response.data.url;
+    }catch(err) {
+      console.log(err);
+    }
   }
 
 

@@ -59,21 +59,33 @@ export class AuthService {
         const personnal42Token = await this.getUserToken(code);
         if (personnal42Token.success === false)
             return { success: false, error: "getUserToken failure" };
-        const request = await axios.get("https://api.intra.42.fr/v2/me", { headers: { Authorization: `Bearer ${personnal42Token.access_token}` } });
-        let user = await this.prismaService.user.findUnique({ where: { login: request.data.login } });
-        if (!user) {
-            let username = request.data.login;
-            if (await this.prismaService.user.findUnique({ where: { username: username } })) {
-                let i = 1;
-                while (await this.prismaService.user.findUnique({ where: { username: username + String(i) } }))
-                    i++;
-                username = username + String(i);
+        try {
+            const request = await axios.get("https://api.intra.42.fr/v2/me", { headers: { Authorization: `Bearer ${personnal42Token.access_token}` } });
+            let user = await this.prismaService.user.findUnique({ where: { login: request.data.login } });
+            if (!user) {
+                let username = request.data.login;
+                if (await this.prismaService.user.findUnique({ where: { username: username } })) {
+                    let i = 1;
+                    while (await this.prismaService.user.findUnique({ where: { username: username + String(i) } }))
+                        i++;
+                    username = username + String(i);
+                }
+                let user = await this.prismaService.createUser({ username: username, login: request.data.login, avatar: request.data.image.versions.small, personnal42Token: personnal42Token.access_token });
+                const payload = { id: user.id };
+                const accessToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '45m' });
+                const refreshToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
+                user = await this.prismaService.user.update({ where: { username: username }, data: { accessToken: accessToken, refreshToken: refreshToken } });
+                return {
+                    success: true,
+                    refreshToken: user.refreshToken,
+                    accessToken: user.accessToken,
+                    username: user.username,
+                    twoFa: user.enabled2FA,
+                };
             }
-            let user = await this.prismaService.createUser({ username: username, login: request.data.login, avatar: request.data.image.versions.small, personnal42Token: personnal42Token.access_token });
-            const payload = { id: user.id };
-            const accessToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '45m' });
-            const refreshToken: string = await this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '10d' });
-            user = await this.prismaService.user.update({ where: { username: username }, data: { accessToken: accessToken, refreshToken: refreshToken } });
+            user = await this.prismaService.user.update({ where: { login: request.data.login }, data: { personnal42Token: personnal42Token.access_token } });
+            if (user.status != "offline")
+                return { success: false, error: "user already connected" };
             return {
                 success: true,
                 refreshToken: user.refreshToken,
@@ -81,17 +93,9 @@ export class AuthService {
                 username: user.username,
                 twoFa: user.enabled2FA,
             };
+        } catch(err){
+            console.log(err);
         }
-        user = await this.prismaService.user.update({ where: { login: request.data.login }, data: { personnal42Token: personnal42Token.access_token } });
-        if (user.status != "offline")
-            return { success: false, error: "user already connected" };
-        return {
-            success: true,
-            refreshToken: user.refreshToken,
-            accessToken: user.accessToken,
-            username: user.username,
-            twoFa: user.enabled2FA,
-        };
     }
 
     async getToken(): Promise<any> {
