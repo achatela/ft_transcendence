@@ -40,26 +40,31 @@ class MatchHistory extends Component<IProps, IState> {
         else
             profileId = this.state.profileId;
 
-        const response = await axios.post('http://' + domain + ':3333/profile/match_history/',
-            JSON.stringify({
-                username: sessionStorage.getItem("username"),
-                accessToken: sessionStorage.getItem("accessToken"),
-                refreshToken: sessionStorage.getItem("refreshToken"),
-                profileId: profileId,
-            }),
-            { headers: { "Content-Type": "application/json" } })
-        if (response.data.success === true) {
-            sessionStorage.setItem("refreshToken", response.data.refreshToken);
-            sessionStorage.setItem("accessToken", response.data.accessToken);
-            console.log("match history retrieved")
-            console.log(response.data.matches)
-            this.setState({ matches: response.data.matches.reverse() })
-            return;
+        try {
+            const response = await axios.post('http://' + domain + ':3333/profile/match_history/',
+                JSON.stringify({
+                    username: sessionStorage.getItem("username"),
+                    accessToken: sessionStorage.getItem("accessToken"),
+                    refreshToken: sessionStorage.getItem("refreshToken"),
+                    profileId: profileId,
+                }),
+                { headers: { "Content-Type": "application/json" } })
+            if (response.data.success === true) {
+                sessionStorage.setItem("refreshToken", response.data.refreshToken);
+                sessionStorage.setItem("accessToken", response.data.accessToken);
+                console.log("match history retrieved")
+                console.log(response.data.matches)
+                this.setState({ matches: response.data.matches.reverse() })
+                return;
+            }
+            else {
+                console.log("failed to retrieve match history")
+                console.log(response.data.error)
+                return;
+            }
         }
-        else {
-            console.log("failed to retrieve match history")
-            console.log(response.data.error)
-            return;
+        catch (err) {
+            console.log(err);
         }
     }
 
