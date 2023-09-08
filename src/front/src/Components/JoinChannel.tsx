@@ -113,6 +113,19 @@ export default class JoinChannel extends Component<IProps, IState> {
         }
     }
 
+    async componentDidUpdate() {
+        const elem1 = document.querySelector('.display-join') as HTMLElement;
+        if (this.state.joinChannel)
+            elem1.style.backgroundColor = 'grey';
+        else
+            elem1.style.backgroundColor = 'black';
+        const elem2 = document.querySelector('.display-create') as HTMLElement;
+        if (this.state.createChannel)
+            elem2.style.backgroundColor = 'grey';
+        else
+            elem2.style.backgroundColor = 'black';
+    }
+
     async acceptChannelInvite(channelName: string) {
         const request = await axios.post('http://' + domain + ':3333/channel/accept_channel_invite/',
             JSON.stringify({
@@ -196,18 +209,16 @@ export default class JoinChannel extends Component<IProps, IState> {
                     </div>
                 </div>
                 <div className='channels-join-create-div'>
-                    {this.state.joinChannel === true || this.state.createChannel === true ? (
-                        <button className="reset-states-channel" onClick={() => { this.setState({ createChannel: false, joinChannel: false }) }}>X</button>
-                    ) : <>
-                        <button className="display-join" onClick={() => {
-                            this.setState({ joinChannel: true });
-                            this.handleButtonsClick();
-                        }}>Join</button>
-                        <button className="display-create" onClick={() => {
-                            this.setState({ createChannel: true });
-                            this.handleButtonsClick();
-                        }}>Create</button>
-                    </>}
+                    <button className="display-join" onClick={() => {
+                        this.setState({ joinChannel: true });
+                        this.setState({ createChannel: false });
+                        this.handleButtonsClick();
+                    }}>Join</button>
+                    <button className="display-create" onClick={() => {
+                        this.setState({ createChannel: true });
+                        this.setState({ joinChannel: false });
+                        this.handleButtonsClick();
+                    }}>Create</button>
                     {this.state.createChannel === true ?
                         (
                             <>
@@ -232,10 +243,12 @@ export default class JoinChannel extends Component<IProps, IState> {
                                     {this.state.channels !== null ? this.state.channels.map((channel, index) => {
                                         return (
                                             <div onClick={() => {
+                                                console.log("before join channel")
                                                 if (channel.hasPassword === true) {
                                                     for (let yourChannel of this.state.yourChannels) {
                                                         if (yourChannel.channelName === channel.channelName) {
                                                             this.handleChannelClick(channel.channelName)
+                                                            this.setState({ joinChannel: false, createChannel: false })
                                                             return;
                                                         }
                                                     }
