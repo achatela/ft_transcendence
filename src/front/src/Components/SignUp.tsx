@@ -36,15 +36,20 @@ export default class SignUp extends Component<IProps, IState> {
             alert('Username too long');
             return;
         }
-        const request = await axios.post('http://' + domain + ':3333/auth/verify_sign_up', JSON.stringify({ username: username.value, password: bcrypt.hashSync(password.value, 10) }), { headers: { 'Content-Type': 'application/json' } });
-        if (request.data.success) {
-            sessionStorage.setItem("username", request.data.username);
-            sessionStorage.setItem("accessToken", request.data.accessToken);
-            sessionStorage.setItem("refreshToken", request.data.refreshToken);
-            window.location.href = '/profile';
+        try {
+            const request = await axios.post('http://' + domain + ':3333/auth/verify_sign_up', JSON.stringify({ username: username.value, password: bcrypt.hashSync(password.value, 10) }), { headers: { 'Content-Type': 'application/json' } });
+            if (request.data.success) {
+                sessionStorage.setItem("username", request.data.username);
+                sessionStorage.setItem("accessToken", request.data.accessToken);
+                sessionStorage.setItem("refreshToken", request.data.refreshToken);
+                window.location.href = '/profile';
+            }
+            else {
+                alert(request.data.error);
+            }
         }
-        else {
-            alert(request.data.error);
+        catch (err) {
+            console.log(err);
         }
         return;
     }

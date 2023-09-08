@@ -32,18 +32,23 @@ export default class SignIn extends Component<IProps, IState> {
         const password = document.querySelector('.signin-password-input') as HTMLInputElement;
         if (username.value == '' || password.value == '')
             return;
-        const request = await axios.post('http://' + domain + ':3333/auth/verify_sign_in', JSON.stringify({ username: username.value, password: password.value }), { headers: { 'Content-Type': 'application/json' } });
-        if (request.data.success) {
-            sessionStorage.setItem("username", request.data.username);
-            sessionStorage.setItem("accessToken", request.data.accessToken);
-            sessionStorage.setItem("refreshToken", request.data.refreshToken);
-            if (request.data.twoFa === false)
-                window.location.href = '/profile';
-            else
-                window.location.href = '/two_fa';
+        try {
+            const request = await axios.post('http://' + domain + ':3333/auth/verify_sign_in', JSON.stringify({ username: username.value, password: password.value }), { headers: { 'Content-Type': 'application/json' } });
+            if (request.data.success) {
+                sessionStorage.setItem("username", request.data.username);
+                sessionStorage.setItem("accessToken", request.data.accessToken);
+                sessionStorage.setItem("refreshToken", request.data.refreshToken);
+                if (request.data.twoFa === false)
+                    window.location.href = '/profile';
+                else
+                    window.location.href = '/two_fa';
+            }
+            else {
+                alert(request.data.error)
+            }
         }
-        else {
-            alert(request.data.error)
+        catch (err) {
+            console.log(err);
         }
         return;
     }

@@ -58,29 +58,34 @@ export default class SocialPage extends Component<IProps, IState> {
   }
 
   async joinChannel(channelName: string, password?: string) {
-    const request = await axios.post(
-      'http://' + domain + ':3333/channel/join/',
-      JSON.stringify({
-        username: sessionStorage.getItem("username"),
-        accessToken: sessionStorage.getItem("accessToken"),
-        refreshToken: sessionStorage.getItem("refreshToken"),
-        channelName: channelName,
-        password: password,
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (request.data.success === true) {
-      console.log("joined channel successfully")
-      sessionStorage.setItem("refreshToken", request.data.refreshToken);
-      sessionStorage.setItem("accessToken", request.data.accessToken);
-      this.setState({ isError: false })
-      return true;
+    try {
+      const request = await axios.post(
+        'http://' + domain + ':3333/channel/join/',
+        JSON.stringify({
+          username: sessionStorage.getItem("username"),
+          accessToken: sessionStorage.getItem("accessToken"),
+          refreshToken: sessionStorage.getItem("refreshToken"),
+          channelName: channelName,
+          password: password,
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (request.data.success === true) {
+        console.log("joined channel successfully")
+        sessionStorage.setItem("refreshToken", request.data.refreshToken);
+        sessionStorage.setItem("accessToken", request.data.accessToken);
+        this.setState({ isError: false })
+        return true;
+      }
+      else {
+        console.log("failed to join channel");
+        console.log(request.data.error);
+        this.setState({ errorMessage: request.data.error, isError: true });
+        return false;
+      }
     }
-    else {
-      console.log("failed to join channel");
-      console.log(request.data.error);
-      this.setState({ errorMessage: request.data.error, isError: true });
-      return false;
+    catch (err) {
+      console.log(err);
     }
   }
   async handleChannelClick(channelName: string, password?: string) {
@@ -88,93 +93,113 @@ export default class SocialPage extends Component<IProps, IState> {
     if (check === false) {
       return;
     }
-    const request = await axios.post(
-      'http://' + domain + ':3333/channel/get_channel_messages/',
-      JSON.stringify({
-        username: sessionStorage.getItem("username"),
-        accessToken: sessionStorage.getItem("accessToken"),
-        refreshToken: sessionStorage.getItem("refreshToken"),
-        channelName: channelName,
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (request.data.success === true) {
-      sessionStorage.setItem("refreshToken", request.data.refreshToken);
-      sessionStorage.setItem("accessToken", request.data.accessToken);
-      this.setState({ chat: request.data.chat, selectedChat: channelName });
-    } else {
-      console.log("failed to get channel messages");
-      console.log(request.data.error);
+    try {
+      const request = await axios.post(
+        'http://' + domain + ':3333/channel/get_channel_messages/',
+        JSON.stringify({
+          username: sessionStorage.getItem("username"),
+          accessToken: sessionStorage.getItem("accessToken"),
+          refreshToken: sessionStorage.getItem("refreshToken"),
+          channelName: channelName,
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (request.data.success === true) {
+        sessionStorage.setItem("refreshToken", request.data.refreshToken);
+        sessionStorage.setItem("accessToken", request.data.accessToken);
+        this.setState({ chat: request.data.chat, selectedChat: channelName });
+      } else {
+        console.log("failed to get channel messages");
+        console.log(request.data.error);
+      }
+    }
+    catch (err) {
+      console.log(err);
     }
     this.setState({ createChannel: false, joinChannel: false, isChannel: true });
   }
 
   async getFriendRequests(): Promise<string[]> {
-    const response = await axios.post(
-      'http://' + domain + ':3333/social/friend_request/',
-      JSON.stringify({
-        username: sessionStorage.getItem("username"),
-        refreshToken: sessionStorage.getItem("refreshToken"),
-        accessToken: sessionStorage.getItem("accessToken"),
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (response.data.success === true) {
-      sessionStorage.setItem("refreshToken", response.data.refreshToken);
-      sessionStorage.setItem("accessToken", response.data.accessToken);
-      return response.data.friendRequests;
+    try {
+      const response = await axios.post(
+        'http://' + domain + ':3333/social/friend_request/',
+        JSON.stringify({
+          username: sessionStorage.getItem("username"),
+          refreshToken: sessionStorage.getItem("refreshToken"),
+          accessToken: sessionStorage.getItem("accessToken"),
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (response.data.success === true) {
+        sessionStorage.setItem("refreshToken", response.data.refreshToken);
+        sessionStorage.setItem("accessToken", response.data.accessToken);
+        return response.data.friendRequests;
+      }
+      else {
+        console.log("failed")
+      }
     }
-    else {
-      console.log("failed")
+    catch (err) {
+      console.log(err);
     }
   }
 
   async getFriends(): Promise<string[]> {
-    const response = await axios.post(
-      'http://' + domain + ':3333/social/friends/',
-      JSON.stringify({
-        username: sessionStorage.getItem("username"),
-        refreshToken: sessionStorage.getItem("refreshToken"),
-        accessToken: sessionStorage.getItem("accessToken"),
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (response.data.success === true) {
-      sessionStorage.setItem("refreshToken", response.data.refreshToken);
-      sessionStorage.setItem("accessToken", response.data.accessToken);
-      console.log("friends", response.data.friends)
-      for (let friend in response.data.friends) {
-        this.getAvatar(response.data.friends[friend]);
-        this.getStatus(response.data.friends[friend]);
+    try {
+      const response = await axios.post(
+        'http://' + domain + ':3333/social/friends/',
+        JSON.stringify({
+          username: sessionStorage.getItem("username"),
+          refreshToken: sessionStorage.getItem("refreshToken"),
+          accessToken: sessionStorage.getItem("accessToken"),
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (response.data.success === true) {
+        sessionStorage.setItem("refreshToken", response.data.refreshToken);
+        sessionStorage.setItem("accessToken", response.data.accessToken);
+        console.log("friends", response.data.friends)
+        for (let friend in response.data.friends) {
+          this.getAvatar(response.data.friends[friend]);
+          this.getStatus(response.data.friends[friend]);
+        }
+        return response.data.friends;
       }
-      return response.data.friends;
+      else {
+        console.log("failed")
+      }
     }
-    else {
-      console.log("failed")
+    catch (err) {
+      console.log(err);
     }
   }
 
   async getBlockedIds(): Promise<number[]> {
-    const response = await axios.post(
-      'http://' + domain + ':3333/social/blocked_ids/',
-      JSON.stringify({
-        username: sessionStorage.getItem("username"),
-        refreshToken: sessionStorage.getItem("refreshToken"),
-        accessToken: sessionStorage.getItem("accessToken"),
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (response.data.success === true) {
-      sessionStorage.setItem("refreshToken", response.data.refreshToken);
-      sessionStorage.setItem("accessToken", response.data.accessToken);
-      console.log("friends", response.data.friends)
-      for (let friend in response.data.friends) {
-        this.getAvatar(response.data.friends[friend]);
+    try {
+      const response = await axios.post(
+        'http://' + domain + ':3333/social/blocked_ids/',
+        JSON.stringify({
+          username: sessionStorage.getItem("username"),
+          refreshToken: sessionStorage.getItem("refreshToken"),
+          accessToken: sessionStorage.getItem("accessToken"),
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (response.data.success === true) {
+        sessionStorage.setItem("refreshToken", response.data.refreshToken);
+        sessionStorage.setItem("accessToken", response.data.accessToken);
+        console.log("friends", response.data.friends)
+        for (let friend in response.data.friends) {
+          this.getAvatar(response.data.friends[friend]);
+        }
+        return response.data.blockedIds;
       }
-      return response.data.blockedIds;
+      else {
+        console.log("failed")
+      }
     }
-    else {
-      console.log("failed")
+    catch (err) {
+      console.log(err);
     }
   }
 
@@ -195,205 +220,250 @@ export default class SocialPage extends Component<IProps, IState> {
 
   async sendFriendRequestEnter(): Promise<void> {
     let inputElement = document.querySelector(".add-friend-input") as HTMLInputElement;
-    const request = await axios.post(
-      'http://' + domain + ':3333/social/send_friend_request/',
-      JSON.stringify({
-        requesterUsername: sessionStorage.getItem("username"),
-        requestedUsername: inputElement.value,
-        refreshToken: sessionStorage.getItem("refreshToken"),
-        accessToken: sessionStorage.getItem("accessToken"),
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (request.data.success === true) {
-      sessionStorage.setItem("refreshToken", request.data.refreshToken);
-      sessionStorage.setItem("accessToken", request.data.accessToken);
-      inputElement.value = "Friend request sent !";
-    }
-    else {
-      if (request.data.error === "User already in friend list.") {
+    try {
+      const request = await axios.post(
+        'http://' + domain + ':3333/social/send_friend_request/',
+        JSON.stringify({
+          requesterUsername: sessionStorage.getItem("username"),
+          requestedUsername: inputElement.value,
+          refreshToken: sessionStorage.getItem("refreshToken"),
+          accessToken: sessionStorage.getItem("accessToken"),
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (request.data.success === true) {
         sessionStorage.setItem("refreshToken", request.data.refreshToken);
         sessionStorage.setItem("accessToken", request.data.accessToken);
+        inputElement.value = "Friend request sent !";
+      }
+      else {
+        if (request.data.error === "User already in friend list.") {
+          sessionStorage.setItem("refreshToken", request.data.refreshToken);
+          sessionStorage.setItem("accessToken", request.data.accessToken);
+          inputElement.value = request.data.error;
+        }
+        console.log("failed to send")
         inputElement.value = request.data.error;
       }
-      console.log("failed to send")
-      inputElement.value = request.data.error;
+    }
+    catch (err) {
+      console.log(err);
     }
   }
 
   async sendFriendRequest(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
     let inputElement = document.querySelector(".add-friend-input") as HTMLInputElement;
-    const request = await axios.post(
-      'http://' + domain + ':3333/social/send_friend_request/',
-      JSON.stringify({
-        requesterUsername: sessionStorage.getItem("username"),
-        requestedUsername: inputElement.value,
-        refreshToken: sessionStorage.getItem("refreshToken"),
-        accessToken: sessionStorage.getItem("accessToken"),
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (request.data.success === true) {
-      sessionStorage.setItem("refreshToken", request.data.refreshToken);
-      sessionStorage.setItem("accessToken", request.data.accessToken);
-      inputElement.value = "Friend request sent !";
-    }
-    else {
-      if (request.data.error === "User already in friend list.") {
+    try {
+      const request = await axios.post(
+        'http://' + domain + ':3333/social/send_friend_request/',
+        JSON.stringify({
+          requesterUsername: sessionStorage.getItem("username"),
+          requestedUsername: inputElement.value,
+          refreshToken: sessionStorage.getItem("refreshToken"),
+          accessToken: sessionStorage.getItem("accessToken"),
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (request.data.success === true) {
         sessionStorage.setItem("refreshToken", request.data.refreshToken);
         sessionStorage.setItem("accessToken", request.data.accessToken);
+        inputElement.value = "Friend request sent !";
+      }
+      else {
+        if (request.data.error === "User already in friend list.") {
+          sessionStorage.setItem("refreshToken", request.data.refreshToken);
+          sessionStorage.setItem("accessToken", request.data.accessToken);
+          inputElement.value = request.data.error;
+        }
+        console.log("failed to send")
         inputElement.value = request.data.error;
       }
-      console.log("failed to send")
-      inputElement.value = request.data.error;
+    }
+    catch (err) {
+      console.log(err);
     }
   }
 
   async removeFriend(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
-    const request = await axios.post(
-      'http://' + domain + ':3333/social/remove_friend',
-      JSON.stringify({
-        removerUsername: sessionStorage.getItem("username"),
-        removedUsername: event.currentTarget.dataset.name,
-        refreshToken: sessionStorage.getItem("refreshToken"),
-        accessToken: sessionStorage.getItem("accessToken"),
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (request.data.success === true) {
-      sessionStorage.setItem("refreshToken", request.data.refreshToken);
-      sessionStorage.setItem("accessToken", request.data.accessToken);
-      console.log("removed")
+    try {
+      const request = await axios.post(
+        'http://' + domain + ':3333/social/remove_friend',
+        JSON.stringify({
+          removerUsername: sessionStorage.getItem("username"),
+          removedUsername: event.currentTarget.dataset.name,
+          refreshToken: sessionStorage.getItem("refreshToken"),
+          accessToken: sessionStorage.getItem("accessToken"),
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (request.data.success === true) {
+        sessionStorage.setItem("refreshToken", request.data.refreshToken);
+        sessionStorage.setItem("accessToken", request.data.accessToken);
+        console.log("removed")
+      }
+      else {
+        console.log("failed to remove")
+      }
     }
-    else {
-      console.log("failed to remove")
+    catch (err) {
+      console.log(err);
     }
     window.location.href = "/social/";
     return;
   }
 
   async getFriendChat(username: string): Promise<{ room: string, messages: [{ senderId: string, text: string, time: string, username: string, avatar: string }] }> {
-    const response = await axios.post(
-      'http://' + domain + ':3333/social/friend_chat/',
-      JSON.stringify({
-        username: sessionStorage.getItem("username"),
-        friendUsername: username,
-        refreshToken: sessionStorage.getItem("refreshToken"),
-        accessToken: sessionStorage.getItem("accessToken"),
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (response.data.success === false)
-      return;
-    sessionStorage.setItem("refreshToken", response.data.refreshToken);
-    sessionStorage.setItem("accessToken", response.data.accessToken);
-    return response.data.chat
+    try {
+      const response = await axios.post(
+        'http://' + domain + ':3333/social/friend_chat/',
+        JSON.stringify({
+          username: sessionStorage.getItem("username"),
+          friendUsername: username,
+          refreshToken: sessionStorage.getItem("refreshToken"),
+          accessToken: sessionStorage.getItem("accessToken"),
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (response.data.success === false)
+        return;
+      sessionStorage.setItem("refreshToken", response.data.refreshToken);
+      sessionStorage.setItem("accessToken", response.data.accessToken);
+      return response.data.chat
+    }
+    catch (err) {
+      console.log(err);
+    }
   }
 
   async seeProfile(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
     console.log(event.currentTarget.dataset.name);
-    const request = await axios.post(
-      'http://' + domain + ':3333/social/get_friend_id/',
-      JSON.stringify({
-        username: sessionStorage.getItem("username"),
-        friendUsername: event.currentTarget.dataset.name,
-        accessToken: sessionStorage.getItem("accessToken"),
-        refreshToken: sessionStorage.getItem("refreshToken"),
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (request.data.success === true) {
-      window.location.href = "/profile/" + request.data.id;
+    try {
+      const request = await axios.post(
+        'http://' + domain + ':3333/social/get_friend_id/',
+        JSON.stringify({
+          username: sessionStorage.getItem("username"),
+          friendUsername: event.currentTarget.dataset.name,
+          accessToken: sessionStorage.getItem("accessToken"),
+          refreshToken: sessionStorage.getItem("refreshToken"),
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (request.data.success === true) {
+        window.location.href = "/profile/" + request.data.id;
+      }
+      else {
+        console.error("failed to get friend id");
+      }
     }
-    else {
-      console.error("failed to get friend id");
+    catch (err) {
+      console.log(err);
     }
   }
 
   async getAvatar(username: string): Promise<void> {
-    const request = await axios.post(
-      'http://' + domain + ':3333/social/get_avatar/',
-      JSON.stringify({
-        username: username,
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (request.data.success === true) {
-      avatarUrls.set(username, request.data.avatar)
-      if (this.state.refresh === false)
-        this.setState({ refresh: true })
-      if (this.state.refresh === true)
-        this.setState({ refresh: false })
-      console.log("got avatar")
+    try {
+      const request = await axios.post(
+        'http://' + domain + ':3333/social/get_avatar/',
+        JSON.stringify({
+          username: username,
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (request.data.success === true) {
+        avatarUrls.set(username, request.data.avatar)
+        if (this.state.refresh === false)
+          this.setState({ refresh: true })
+        if (this.state.refresh === true)
+          this.setState({ refresh: false })
+        console.log("got avatar")
+      }
+      else
+        console.error("failed to get avatar");
     }
-    else
-      console.error("failed to get avatar");
+    catch (err) {
+      console.log(err);
+    }
   }
 
 
   async getStatus(username: string) {
-    const request = await axios.post(
-      'http://' + domain + ':3333/social/get_status/',
-      JSON.stringify({
-        username: username,
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (request.data.success === true) {
-      status.set(username, request.data.status)
-      if (this.state.refresh === false)
-        this.setState({ refresh: true })
-      if (this.state.refresh === true)
-        this.setState({ refresh: false })
-      console.log("got status")
+    try {
+      const request = await axios.post(
+        'http://' + domain + ':3333/social/get_status/',
+        JSON.stringify({
+          username: username,
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (request.data.success === true) {
+        status.set(username, request.data.status)
+        if (this.state.refresh === false)
+          this.setState({ refresh: true })
+        if (this.state.refresh === true)
+          this.setState({ refresh: false })
+        console.log("got status")
+      }
+      else
+        console.error("failed to get status");
     }
-    else
-      console.error("failed to get status");
+    catch (err) {
+      console.log(err);
+    }
   }
 
   async blockUser(event: React.MouseEvent<HTMLButtonElement>): Promise<void> {
     let inputElement = document.querySelector(".block-user-input") as HTMLInputElement;
-    const request = await axios.post(
-      'http://' + domain + ':3333/social/block_user/',
-      JSON.stringify({
-        username: sessionStorage.getItem("username"),
-        blockedUsername: inputElement.value,
-        accessToken: sessionStorage.getItem("accessToken"),
-        refreshToken: sessionStorage.getItem("refreshToken"),
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (request.data.success === true) {
-      sessionStorage.setItem("refreshToken", request.data.refreshToken);
-      sessionStorage.setItem("accessToken", request.data.accessToken);
-      console.log("blocked")
-      window.location.href = "/social"
+    try {
+      const request = await axios.post(
+        'http://' + domain + ':3333/social/block_user/',
+        JSON.stringify({
+          username: sessionStorage.getItem("username"),
+          blockedUsername: inputElement.value,
+          accessToken: sessionStorage.getItem("accessToken"),
+          refreshToken: sessionStorage.getItem("refreshToken"),
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (request.data.success === true) {
+        sessionStorage.setItem("refreshToken", request.data.refreshToken);
+        sessionStorage.setItem("accessToken", request.data.accessToken);
+        console.log("blocked")
+        window.location.href = "/social"
+      }
+      else {
+        console.log("failed to block")
+        inputElement.value = request.data.error;
+      }
     }
-    else {
-      console.log("failed to block")
-      inputElement.value = request.data.error;
+    catch (err) {
+      console.log(err);
     }
   }
 
   async blockUserEnter() {
     let inputElement = document.querySelector(".block-user-input") as HTMLInputElement;
-    const request = await axios.post(
-      'http://' + domain + ':3333/social/block_user/',
-      JSON.stringify({
-        username: sessionStorage.getItem("username"),
-        blockedUsername: inputElement.value,
-        accessToken: sessionStorage.getItem("accessToken"),
-        refreshToken: sessionStorage.getItem("refreshToken"),
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (request.data.success === true) {
-      sessionStorage.setItem("refreshToken", request.data.refreshToken);
-      sessionStorage.setItem("accessToken", request.data.accessToken);
-      console.log("blocked")
+    try {
+      const request = await axios.post(
+        'http://' + domain + ':3333/social/block_user/',
+        JSON.stringify({
+          username: sessionStorage.getItem("username"),
+          blockedUsername: inputElement.value,
+          accessToken: sessionStorage.getItem("accessToken"),
+          refreshToken: sessionStorage.getItem("refreshToken"),
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (request.data.success === true) {
+        sessionStorage.setItem("refreshToken", request.data.refreshToken);
+        sessionStorage.setItem("accessToken", request.data.accessToken);
+        console.log("blocked")
+      }
+      else
+        console.log("failed to block")
     }
-    else
-      console.log("failed to block")
+    catch (err) {
+      console.log(err);
+    }
     window.location.href = "/social"
   }
 

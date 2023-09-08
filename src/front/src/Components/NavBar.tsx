@@ -22,44 +22,59 @@ export default class NavBar extends Component<IProps, IState> {
     }
 
     async handleLogout() {
-        const request = await axios.post('http://' + domain + ':3333/auth/log_out/', JSON.stringify({
-            username: sessionStorage.getItem('username'),
-            accessToken: sessionStorage.getItem("accessToken"),
-            refreshToken: sessionStorage.getItem("refreshToken"),
-        }), { headers: { "Content-Type": "application/json" } });
+        try {
+            const request = await axios.post('http://' + domain + ':3333/auth/log_out/', JSON.stringify({
+                username: sessionStorage.getItem('username'),
+                accessToken: sessionStorage.getItem("accessToken"),
+                refreshToken: sessionStorage.getItem("refreshToken"),
+            }), { headers: { "Content-Type": "application/json" } });
+        }
+        catch (err) {
+            console.log(err);
+        }
         if (sessionStorage.getItem("queueing") === "Classic Pong") {
-            const response = await axios.post('http://' + domain + ':3333/pong/classic/queue_down/',
-                JSON.stringify({
-                    username: sessionStorage.getItem('username'),
-                    refreshToken: sessionStorage.getItem('refreshToken'),
-                    accessToken: sessionStorage.getItem('accessToken'),
-                }),
-                { headers: { 'Content-Type': 'application/json' } }
-            );
-            if (response.data.success === true) {
-                sessionStorage.setItem('accessToken', response.data.accessToken);
-                sessionStorage.setItem('refreshToken', response.data.refreshToken);
-                sessionStorage.setItem("queueing", "");
+            try {
+                const response = await axios.post('http://' + domain + ':3333/pong/classic/queue_down/',
+                    JSON.stringify({
+                        username: sessionStorage.getItem('username'),
+                        refreshToken: sessionStorage.getItem('refreshToken'),
+                        accessToken: sessionStorage.getItem('accessToken'),
+                    }),
+                    { headers: { 'Content-Type': 'application/json' } }
+                );
+                if (response.data.success === true) {
+                    sessionStorage.setItem('accessToken', response.data.accessToken);
+                    sessionStorage.setItem('refreshToken', response.data.refreshToken);
+                    sessionStorage.setItem("queueing", "");
+                }
+                else
+                    sessionStorage.setItem("queueing", "");
             }
-            else
-                sessionStorage.setItem("queueing", "");
+            catch (err) {
+                console.log(err);
+            }
         }
         else if (sessionStorage.getItem("queueing") === "Custom Pong") {
-            const response = await axios.post('http://' + domain + ':3333/pong/custom/queue_down/',
-                JSON.stringify({
-                    username: sessionStorage.getItem('username'),
-                    refreshToken: sessionStorage.getItem('refreshToken'),
-                    accessToken: sessionStorage.getItem('accessToken'),
-                }),
-                { headers: { 'Content-Type': 'application/json' } }
-            );
-            if (response.data.success === true) {
-                sessionStorage.setItem('accessToken', response.data.accessToken);
-                sessionStorage.setItem('refreshToken', response.data.refreshToken);
-                sessionStorage.setItem("queueing", "");
+            try {
+                const response = await axios.post('http://' + domain + ':3333/pong/custom/queue_down/',
+                    JSON.stringify({
+                        username: sessionStorage.getItem('username'),
+                        refreshToken: sessionStorage.getItem('refreshToken'),
+                        accessToken: sessionStorage.getItem('accessToken'),
+                    }),
+                    { headers: { 'Content-Type': 'application/json' } }
+                );
+                if (response.data.success === true) {
+                    sessionStorage.setItem('accessToken', response.data.accessToken);
+                    sessionStorage.setItem('refreshToken', response.data.refreshToken);
+                    sessionStorage.setItem("queueing", "");
+                }
+                else
+                    sessionStorage.setItem("queueing", "");
             }
-            else
-                sessionStorage.setItem("queueing", "");
+            catch (err) {
+                console.log(err);
+            }
         }
         sessionStorage.clear();
         window.location.href = "/";
