@@ -56,96 +56,69 @@ class ProfilePage extends Component<IProps, IState> {
     }
 
     getUserInfoId = async () => {
-        const request = await axios.post(
-            'http://' + domain + `:3333/profile/${this.state.profileId}/`,
-            JSON.stringify({
-                username: sessionStorage.getItem('username'),
-                refreshToken: sessionStorage.getItem("refreshToken"),
-                accessToken: sessionStorage.getItem("accessToken"),
-                id: this.state.profileId
-            }),
-            { headers: { "Content-Type": "application/json" } }
-        )
-        if (request.data.success === true) {
-            sessionStorage.setItem("refreshToken", request.data.refreshToken);
-            sessionStorage.setItem("accessToken", request.data.accessToken);
+        try {
+            const request = await axios.post(
+                'http://' + domain + `:3333/profile/${this.state.profileId}/`,
+                JSON.stringify({
+                    username: sessionStorage.getItem('username'),
+                    refreshToken: sessionStorage.getItem("refreshToken"),
+                    accessToken: sessionStorage.getItem("accessToken"),
+                    id: this.state.profileId
+                }),
+                { headers: { "Content-Type": "application/json" } }
+            )
+            if (request.data.success === true) {
+                sessionStorage.setItem("refreshToken", request.data.refreshToken);
+                sessionStorage.setItem("accessToken", request.data.accessToken);
+            }
+            else if (request.data.success === false && request.data.error === "UserID not found") {
+                window.location.href = '/profile/';
+            }
+            else if (request.data.success === false && request.data.error === "User not found") {
+                sessionStorage.clear();
+                window.location.href = '/';
+            }
+            else {
+                sessionStorage.clear();
+                window.location.href = '/';
+            }
+            return request.data.userInfo;
         }
-        else if (request.data.success === false && request.data.error === "UserID not found") {
-            window.location.href = '/profile/';
+        catch(err) {
+            console.log(err)
         }
-        else if (request.data.success === false && request.data.error === "User not found") {
-            sessionStorage.clear();
-            window.location.href = '/';
-        }
-        else {
-            sessionStorage.clear();
-            window.location.href = '/';
-        }
-        return request.data.userInfo;
     }
 
     getUserInfo = async () => {
-        const response = await axios.post('http://' + domain + ':3333/profile/user_info/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
-        if (response.data.success === true) {
-            sessionStorage.setItem("accessToken", response.data.accessToken);
-            sessionStorage.setItem("refreshToken", response.data.refreshToken);
+        try {
+            const response = await axios.post('http://' + domain + ':3333/profile/user_info/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+            if (response.data.success === true) {
+                sessionStorage.setItem("accessToken", response.data.accessToken);
+                sessionStorage.setItem("refreshToken", response.data.refreshToken);
+            }
+            else {
+                sessionStorage.clear();
+                window.location.href = '/';
+            }
+            return response.data.userInfo;
         }
-        else {
-            sessionStorage.clear();
-            window.location.href = '/';
+        catch(err) {
+            console.log(err)
         }
-        return response.data.userInfo;
     }
 
-    // getAvatar = async () => {
-    //     const response = await axios.post('http://' + domain + ':3333/profile/avatar/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
-    //     sessionStorage.setItem("refreshToken", response.data.refreshToken);
-    //     sessionStorage.setItem("accessToken", response.data.accessToken);
-    //     return response.data.avatar;
-    // }
-
-    // getUsername = async () => {
-    //     const response = await axios.post('http://' + domain + ':3333/profile/username/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
-    //     sessionStorage.setItem("refreshToken", response.data.refreshToken);
-    //     sessionStorage.setItem("accessToken", response.data.accessToken);
-    //     return response.data.username;
-    // }
-
-    // getWins = async () => {
-    //     const response = await axios.post('http://' + domain + ':3333/profile/wins/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
-    //     sessionStorage.setItem("refreshToken", response.data.refreshToken);
-    //     sessionStorage.setItem("accessToken", response.data.accessToken);
-    //     return response.data.wins;
-    // }
-
-    // getLosses = async () => {
-    //     const response = await axios.post('http://' + domain + ':3333/profile/losses/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
-    //     sessionStorage.setItem("refreshToken", response.data.refreshToken);
-    //     sessionStorage.setItem("accessToken", response.data.accessToken);
-    //     return response.data.losses;
-    // }
-
-    // getLadderLevel = async () => {
-    //     const response = await axios.post('http://' + domain + ':3333/profile/ladder_level/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
-    //     sessionStorage.setItem("refreshToken", response.data.refreshToken);
-    //     sessionStorage.setItem("accessToken", response.data.accessToken);
-    //     return response.data.ladderLevel;
-    // }
-
-    // getAchievements = async () => {
-    //     const response = await axios.post('http://' + domain + ':3333/profile/achievements/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
-    //     sessionStorage.setItem("refreshToken", response.data.refreshToken);
-    //     sessionStorage.setItem("accessToken", response.data.accessToken);
-    //     return response.data.achievements;
-    // }
-
     get2FAStatus = async () => {
-        const response = await axios.post('http://' + domain + ':3333/2fa/check_2fa/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
-        if (response.data.success === true) {
-            sessionStorage.setItem("accessToken", response.data.accessToken);
-            sessionStorage.setItem("refreshToken", response.data.refreshToken);
-            this.setState({ qrCode: response.data.qrCode });
-            return true;
+        try {
+            const response = await axios.post('http://' + domain + ':3333/2fa/check_2fa/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+            if (response.data.success === true) {
+                sessionStorage.setItem("accessToken", response.data.accessToken);
+                sessionStorage.setItem("refreshToken", response.data.refreshToken);
+                this.setState({ qrCode: response.data.qrCode });
+                return true;
+            }
+        }
+        catch(err) {
+            console.log(err)
         }
         return false;
     }
@@ -191,27 +164,37 @@ class ProfilePage extends Component<IProps, IState> {
     }
 
     async getIsFriend() {
-        const request = await axios.post('http://' + domain + ':3333/profile/is_friend/',
-            JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken"), profileId: this.state.profileId }), { headers: { 'Content-Type': 'application/json' } }
-        )
-        if (request.data.success === true) {
-            if (request.data.isFriend === true) {
+        try {
+            const request = await axios.post('http://' + domain + ':3333/profile/is_friend/',
+                JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken"), profileId: this.state.profileId }), { headers: { 'Content-Type': 'application/json' } }
+            )
+            if (request.data.success === true) {
+                if (request.data.isFriend === true) {
+                    sessionStorage.setItem("refreshToken", request.data.refreshToken);
+                    sessionStorage.setItem("accessToken", request.data.accessToken);
+                    return true;
+                }
                 sessionStorage.setItem("refreshToken", request.data.refreshToken);
                 sessionStorage.setItem("accessToken", request.data.accessToken);
-                return true;
             }
-            sessionStorage.setItem("refreshToken", request.data.refreshToken);
-            sessionStorage.setItem("accessToken", request.data.accessToken);
+        }
+        catch(err) {
+            console.log(err)
         }
         return false;
     }
 
     async checkUserExists() {
-        const request = await axios.post('http://' + domain + ':3333/profile/user_check/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken"), id: this.state.profileId }), { headers: { 'Content-Type': 'application/json' } });
-        if (request.data.success === false)
-            window.location.href = '/profile/';
-        sessionStorage.setItem("refreshToken", request.data.refreshToken);
-        sessionStorage.setItem("accessToken", request.data.accessToken);
+        try {
+            const request = await axios.post('http://' + domain + ':3333/profile/user_check/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken"), id: this.state.profileId }), { headers: { 'Content-Type': 'application/json' } });
+            if (request.data.success === false)
+                window.location.href = '/profile/';
+            sessionStorage.setItem("refreshToken", request.data.refreshToken);
+            sessionStorage.setItem("accessToken", request.data.accessToken);
+        }
+        catch(err) {
+            console.log(err)
+        }
     }
 
     async fileChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -247,74 +230,93 @@ class ProfilePage extends Component<IProps, IState> {
                 }
             }
             catch (error) {
-                console.error(error);
+                console.log(error);
             }
 
         }
     };
 
     async disable2FA() {
-        const request = await axios.post('http://' + domain + ':3333/2fa/disable_2fa/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
-        if (request.data.success === true) {
-            sessionStorage.setItem("refreshToken", request.data.refreshToken);
-            sessionStorage.setItem("accessToken", request.data.accessToken);
-            window.location.href = '/profile/';
+        try {
+            const request = await axios.post('http://' + domain + ':3333/2fa/disable_2fa/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+            if (request.data.success === true) {
+                sessionStorage.setItem("refreshToken", request.data.refreshToken);
+                sessionStorage.setItem("accessToken", request.data.accessToken);
+                window.location.href = '/profile/';
+            }
+        }
+        catch(err) {
+            console.log(err)
         }
     }
 
     async enable2FA() {
-        const request = await axios.post('http://' + domain + ':3333/2fa/create/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
-        if (request.data.success === true) {
-            sessionStorage.setItem("refreshToken", request.data.refreshToken);
-            sessionStorage.setItem("accessToken", request.data.accessToken);
-            window.location.href = '/profile/';
+        try {
+            const request = await axios.post('http://' + domain + ':3333/2fa/create/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+            if (request.data.success === true) {
+                sessionStorage.setItem("refreshToken", request.data.refreshToken);
+                sessionStorage.setItem("accessToken", request.data.accessToken);
+                window.location.href = '/profile/';
+            }
+        }
+        catch(err) {
+            console.log(err)
         }
     }
 
     async addFriend(): Promise<void> {
-        const request = await axios.post(
-            'http://' + domain + ':3333/social/send_friend_request/',
-            JSON.stringify({
-                requesterUsername: sessionStorage.getItem("username"),
-                requestedUsername: this.state.username,
-                refreshToken: sessionStorage.getItem("refreshToken"),
-                accessToken: sessionStorage.getItem("accessToken"),
-            }),
-            { headers: { "Content-Type": "application/json" } }
-        );
-        if (request.data.success === true) {
-            sessionStorage.setItem("refreshToken", request.data.refreshToken);
-            sessionStorage.setItem("accessToken", request.data.accessToken);
-        }
-        else {
-            if (request.data.error === "User already in friend list.") {
+        try {
+            const request = await axios.post(
+                'http://' + domain + ':3333/social/send_friend_request/',
+                JSON.stringify({
+                    requesterUsername: sessionStorage.getItem("username"),
+                    requestedUsername: this.state.username,
+                    refreshToken: sessionStorage.getItem("refreshToken"),
+                    accessToken: sessionStorage.getItem("accessToken"),
+                }),
+                { headers: { "Content-Type": "application/json" } }
+            );
+            if (request.data.success === true) {
                 sessionStorage.setItem("refreshToken", request.data.refreshToken);
                 sessionStorage.setItem("accessToken", request.data.accessToken);
+            }
+            else {
+                if (request.data.error === "User already in friend list.") {
+                    sessionStorage.setItem("refreshToken", request.data.refreshToken);
+                    sessionStorage.setItem("accessToken", request.data.accessToken);
+                    console.error(request.data.error)
+                }
+                console.log("failed to send")
                 console.error(request.data.error)
             }
-            console.log("failed to send")
-            console.error(request.data.error)
+        }
+        catch(err) {
+            console.log(err)
         }
     }
 
     async changeUsername() {
         const newUsername = prompt("Enter new username: ");
         if (newUsername !== null) {
-            const request = await axios.post("http://" + domain + ":3333/profile/change_username/", JSON.stringify({
-                username: sessionStorage.getItem('username'),
-                accessToken: sessionStorage.getItem("accessToken"),
-                refreshToken: sessionStorage.getItem("refreshToken"),
-                newUsername: newUsername,
-            }), { headers: { "Content-Type": "application/json" } });
-            if (request.data.success) {
-                sessionStorage.setItem("refreshToken", request.data.refreshToken);
-                sessionStorage.setItem("accessToken", request.data.accessToken);
-                sessionStorage.setItem("username", newUsername);
-                window.location.href = "/profile";
-            }
-            else {
-                console.error(request.data.error);
-                alert(request.data.error);
+            try {
+                const request = await axios.post("http://" + domain + ":3333/profile/change_username/", JSON.stringify({
+                    username: sessionStorage.getItem('username'),
+                    accessToken: sessionStorage.getItem("accessToken"),
+                    refreshToken: sessionStorage.getItem("refreshToken"),
+                    newUsername: newUsername,
+                }), { headers: { "Content-Type": "application/json" } });
+                if (request.data.success) {
+                    sessionStorage.setItem("refreshToken", request.data.refreshToken);
+                    sessionStorage.setItem("accessToken", request.data.accessToken);
+                    sessionStorage.setItem("username", newUsername);
+                    window.location.href = "/profile";
+                }
+                else {
+                    console.error(request.data.error);
+                    alert(request.data.error);
+                }
+            }catch(err) {
+                console.log(err)
             }
         }
     }

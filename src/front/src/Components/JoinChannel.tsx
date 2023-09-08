@@ -38,78 +38,98 @@ export default class JoinChannel extends Component<IProps, IState> {
     }
 
     async reFetchChannels() {
-        const request = await axios.post('http://' + domain + ':3333/channel/get_channels/',
-            JSON.stringify({
-                username: sessionStorage.getItem("username"),
-                accessToken: sessionStorage.getItem("accessToken"),
-                refreshToken: sessionStorage.getItem("refreshToken")
-            }),
-            { headers: { "Content-Type": "application/json" } }
-        )
-        if (request.data.success === true) {
-            sessionStorage.setItem("refreshToken", request.data.refreshToken);
-            sessionStorage.setItem("accessToken", request.data.accessToken);
-            this.setState({ channels: request.data.channels }, () => { console.log(this.state.channels) })
-            console.log("channels received")
+        try {
+            const request = await axios.post('http://' + domain + ':3333/channel/get_channels/',
+                JSON.stringify({
+                    username: sessionStorage.getItem("username"),
+                    accessToken: sessionStorage.getItem("accessToken"),
+                    refreshToken: sessionStorage.getItem("refreshToken")
+                }),
+                { headers: { "Content-Type": "application/json" } }
+            )
+            if (request.data.success === true) {
+                sessionStorage.setItem("refreshToken", request.data.refreshToken);
+                sessionStorage.setItem("accessToken", request.data.accessToken);
+                this.setState({ channels: request.data.channels }, () => { console.log(this.state.channels) })
+                console.log("channels received")
+            }
+            else {
+                console.log("failed to get channels")
+                console.log(request.data.error)
+            }
         }
-        else {
-            console.log("failed to get channels")
-            console.log(request.data.error)
+        catch(err) {
+            console.log(err)
         }
     }
 
     async componentDidMount() {
-        const request = await axios.post('http://' + domain + ':3333/channel/get_channels/',
-            JSON.stringify({
-                username: sessionStorage.getItem("username"),
-                accessToken: sessionStorage.getItem("accessToken"),
-                refreshToken: sessionStorage.getItem("refreshToken")
-            }),
-            { headers: { "Content-Type": "application/json" } })
-        if (request.data.success === true) {
-            sessionStorage.setItem("refreshToken", request.data.refreshToken);
-            sessionStorage.setItem("accessToken", request.data.accessToken);
-            this.setState({ channels: request.data.channels })
-            console.log("channels received")
+        try {
+            const request = await axios.post('http://' + domain + ':3333/channel/get_channels/',
+                JSON.stringify({
+                    username: sessionStorage.getItem("username"),
+                    accessToken: sessionStorage.getItem("accessToken"),
+                    refreshToken: sessionStorage.getItem("refreshToken")
+                }),
+                { headers: { "Content-Type": "application/json" } })
+            if (request.data.success === true) {
+                sessionStorage.setItem("refreshToken", request.data.refreshToken);
+                sessionStorage.setItem("accessToken", request.data.accessToken);
+                this.setState({ channels: request.data.channels })
+                console.log("channels received")
+            }
+            else {
+                console.log("failed to get channels")
+                console.log(request.data.error)
+            }
         }
-        else {
-            console.log("failed to get channels")
-            console.log(request.data.error)
+        catch(err) {
+            console.log(err)
         }
-        const request2 = await axios.post('http://' + domain + ':3333/channel/get_your_channels/',
-            JSON.stringify({
-                username: sessionStorage.getItem("username"),
-                accessToken: sessionStorage.getItem("accessToken"),
-                refreshToken: sessionStorage.getItem("refreshToken")
-            }),
-            { headers: { "Content-Type": "application/json" } })
-        if (request2.data.success === true) {
-            sessionStorage.setItem("refreshToken", request2.data.refreshToken);
-            sessionStorage.setItem("accessToken", request2.data.accessToken);
-            this.setState({ yourChannels: request2.data.yourChannels })
-            console.log("your channels received")
+        try {
+            const request2 = await axios.post('http://' + domain + ':3333/channel/get_your_channels/',
+                JSON.stringify({
+                    username: sessionStorage.getItem("username"),
+                    accessToken: sessionStorage.getItem("accessToken"),
+                    refreshToken: sessionStorage.getItem("refreshToken")
+                }),
+                { headers: { "Content-Type": "application/json" } })
+            if (request2.data.success === true) {
+                sessionStorage.setItem("refreshToken", request2.data.refreshToken);
+                sessionStorage.setItem("accessToken", request2.data.accessToken);
+                this.setState({ yourChannels: request2.data.yourChannels })
+                console.log("your channels received")
+            }
+            else {
+                console.log("failed to get your channels")
+                console.log(request2.data.error)
+            }
         }
-        else {
-            console.log("failed to get your channels")
-            console.log(request2.data.error)
+        catch(err) {
+            console.log(err)
         }
-        const request3 = await axios.post('http://' + domain + ':3333/channel/get_channel_invites/',
-            JSON.stringify({
-                username: sessionStorage.getItem("username"),
-                accessToken: sessionStorage.getItem("accessToken"),
-                refreshToken: sessionStorage.getItem("refreshToken")
-            }),
-            { headers: { "Content-Type": "application/json" } })
-        if (request3.data.success === true) {
-            sessionStorage.setItem("refreshToken", request3.data.refreshToken);
-            sessionStorage.setItem("accessToken", request3.data.accessToken);
-            this.setState({ channelInvites: request3.data.channelInvites })
-            console.log("channel invites received")
-            console.log(request3.data.channelInvites)
+        try {
+            const request3 = await axios.post('http://' + domain + ':3333/channel/get_channel_invites/',
+                JSON.stringify({
+                    username: sessionStorage.getItem("username"),
+                    accessToken: sessionStorage.getItem("accessToken"),
+                    refreshToken: sessionStorage.getItem("refreshToken")
+                }),
+                { headers: { "Content-Type": "application/json" } })
+            if (request3.data.success === true) {
+                sessionStorage.setItem("refreshToken", request3.data.refreshToken);
+                sessionStorage.setItem("accessToken", request3.data.accessToken);
+                this.setState({ channelInvites: request3.data.channelInvites })
+                console.log("channel invites received")
+                console.log(request3.data.channelInvites)
+            }
+            else {
+                console.log("failed to get channel invites")
+                console.log(request3.data.error)
+            }
         }
-        else {
-            console.log("failed to get channel invites")
-            console.log(request3.data.error)
+        catch(err) {
+            console.log(err)
         }
     }
 
@@ -127,45 +147,55 @@ export default class JoinChannel extends Component<IProps, IState> {
     }
 
     async acceptChannelInvite(channelName: string) {
-        const request = await axios.post('http://' + domain + ':3333/channel/accept_channel_invite/',
-            JSON.stringify({
-                username: sessionStorage.getItem("username"),
-                accessToken: sessionStorage.getItem("accessToken"),
-                refreshToken: sessionStorage.getItem("refreshToken"),
-                channelName: channelName,
-            }),
-            { headers: { "Content-Type": "application/json" } })
-        if (request.data.success === true) {
-            sessionStorage.setItem("refreshToken", request.data.refreshToken);
-            sessionStorage.setItem("accessToken", request.data.accessToken);
-            console.log("channel invite accepted")
+        try {
+            const request = await axios.post('http://' + domain + ':3333/channel/accept_channel_invite/',
+                JSON.stringify({
+                    username: sessionStorage.getItem("username"),
+                    accessToken: sessionStorage.getItem("accessToken"),
+                    refreshToken: sessionStorage.getItem("refreshToken"),
+                    channelName: channelName,
+                }),
+                { headers: { "Content-Type": "application/json" } })
+            if (request.data.success === true) {
+                sessionStorage.setItem("refreshToken", request.data.refreshToken);
+                sessionStorage.setItem("accessToken", request.data.accessToken);
+                console.log("channel invite accepted")
+            }
+            else {
+                console.log("failed to accept channel invite")
+                console.log(request.data.error)
+            }
         }
-        else {
-            console.log("failed to accept channel invite")
-            console.log(request.data.error)
+        catch(err) {
+            console.log(err)
         }
         sessionStorage.setItem("refresh", "true");
         window.location.href = "/social";
     }
 
     async declineChannelInvite(channelName: string) {
-        const request = await axios.post('http://' + domain + ':3333/channel/decline_channel_invite/',
-            JSON.stringify({
-                username: sessionStorage.getItem("username"),
-                accessToken: sessionStorage.getItem("accessToken"),
-                refreshToken: sessionStorage.getItem("refreshToken"),
-                channelName: channelName,
-            }),
-            { headers: { "Content-Type": "application/json" } })
-        if (request.data.success === true) {
-            sessionStorage.setItem("refreshToken", request.data.refreshToken);
-            sessionStorage.setItem("accessToken", request.data.accessToken);
-            console.log("channel invite accepted")
-            window.location.reload();
+        try {
+            const request = await axios.post('http://' + domain + ':3333/channel/decline_channel_invite/',
+                JSON.stringify({
+                    username: sessionStorage.getItem("username"),
+                    accessToken: sessionStorage.getItem("accessToken"),
+                    refreshToken: sessionStorage.getItem("refreshToken"),
+                    channelName: channelName,
+                }),
+                { headers: { "Content-Type": "application/json" } })
+            if (request.data.success === true) {
+                sessionStorage.setItem("refreshToken", request.data.refreshToken);
+                sessionStorage.setItem("accessToken", request.data.accessToken);
+                console.log("channel invite accepted")
+                window.location.reload();
+            }
+            else {
+                console.log("failed to accept channel invite")
+                console.log(request.data.error)
+            }
         }
-        else {
-            console.log("failed to accept channel invite")
-            console.log(request.data.error)
+        catch(err) {
+            console.log(err)
         }
         sessionStorage.setItem("refresh", "true");
         window.location.href = "/social";
