@@ -138,8 +138,13 @@ export class ProfileController {
     return await this.profileService.setUploadedAvatar(avatar, username, refreshToken, accessToken, fileExtension);
   }
 
+  @Post('check_validity')
+  async checkValidity(@Body() userInput: { username: string, refreshToken: string, accessToken: string }) {
+    return await this.profileService.checkValidity(userInput.username, userInput.refreshToken, userInput.accessToken);
+  }
+
   @Post(":id/")
-  async getUserProfileById(@Body() userInput: { username: string, refreshToken: string, accessToken: string, id: number }): Promise<{ success?: boolean, userInfo: { username?: string, wins?: number, losses?: number, avatar?: string, ladderLevel?: number }, refreshToken: string, accessToken: string }> {
+  async getUserProfileById(@Body() userInput: { username: string, refreshToken: string, accessToken: string, id: number }) {
     return await this.profileService.getUserInfoById(userInput.id, userInput.username, userInput.refreshToken, userInput.accessToken);
   }
 }

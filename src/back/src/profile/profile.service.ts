@@ -9,6 +9,16 @@ import * as fs from 'fs';
 export class ProfileService {
   constructor(private prismaService: PrismaService, private authService: AuthService) { }
 
+  async checkValidity(username: string, refreshToken: string, accessToken: string) {
+    const user = await this.prismaService.user.findUnique({ where: { username: username } });
+    if (!user)
+      return ({ success: false, error: "User not found" })
+    const ret = await this.authService.checkToken(user, refreshToken, accessToken);
+    if (ret.success == true)
+      return { success: true, refreshToken: ret.refreshToken, accessToken: ret.accessToken };
+    return { success: false, error: "Wrong token" };
+  }
+
   async changeUsername(username: string, refreshToken: string, accessToken: string, newUsername: string) {
     const user = await this.prismaService.user.findUnique({ where: { username: username } })
     if (!user)
@@ -105,23 +115,22 @@ export class ProfileService {
     }
   }
 
-  async getUserInfoById(id: number, username: string, refreshToken: string, accessToken: string): Promise<{ success: boolean, userInfo: { username?: string, avatar?: string, wins?: number, losses?: number, level?: number }, accessToken: string, refreshToken: string }> {
-    try {
-      const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: username } });
-      const user2 = await this.prismaService.user.findUniqueOrThrow({ where: { id: id } });
-      const ret = await this.authService.checkToken(user, refreshToken, accessToken);
-      if (ret.success == true)
-        return { success: true, userInfo: { username: user2.username, avatar: user2.avatar, wins: user2.wins, losses: user2.losses, level: user2.ladderLevel }, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
-    }
-    catch (e) {
-      console.log("Error in getUserInfoById", e)
-      return { success: false, userInfo: {}, accessToken: accessToken, refreshToken: refreshToken };
-    }
+  async getUserInfoById(id: number, username: string, refreshToken: string, accessToken: string) {
+    const user = await this.prismaService.user.findUnique({ where: { username: username } });
+    if (!user)
+      return ({ success: false, error: "User not found" })
+    const user2 = await this.prismaService.user.findUnique({ where: { id: id } });
+    if (!user2)
+      return ({ success: false, error: "UserID not found" })
+
+    const ret = await this.authService.checkToken(user, refreshToken, accessToken);
+    if (ret.success == true)
+      return { success: true, userInfo: { username: user2.username, avatar: user2.avatar, wins: user2.wins, losses: user2.losses, level: user2.ladderLevel }, accessToken: ret.accessToken, refreshToken: ret.refreshToken };
+    return { success: false, error: "Wrong token" };
   }
 
   async getUserInfo(username: string, refreshToken: string, accessToken: string) {
     const user = await this.prismaService.user.findUnique({ where: { username: username } });
-
     if (!user)
       return ({ success: false, error: "User not found" })
     const ret = await this.authService.checkToken(user, refreshToken, accessToken);
@@ -131,7 +140,7 @@ export class ProfileService {
   }
 
   async getUsername(username: string, refreshToken: string, accessToken: string): Promise<{ username: string, refreshToken: string, accessToken: string }> {
-    const user = await this.prismaService.user.findUniqueOrThrow({ where: { username: username } });
+    const user = await this.prismaService.user.findUnique({ where: { username: username } });
     const ret = await this.authService.checkToken(user, refreshToken, accessToken);
     if (ret.success == true)
       return { username: user.username, refreshToken: ret.refreshToken, accessToken: ret.accessToken };

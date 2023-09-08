@@ -66,11 +66,21 @@ class ProfilePage extends Component<IProps, IState> {
             }),
             { headers: { "Content-Type": "application/json" } }
         )
-        sessionStorage.setItem("refreshToken", request.data.refreshToken);
-        sessionStorage.setItem("accessToken", request.data.accessToken);
-        if (request.data.success === false)
+        if (request.data.success === true) {
+            sessionStorage.setItem("refreshToken", request.data.refreshToken);
+            sessionStorage.setItem("accessToken", request.data.accessToken);
+        }
+        else if (request.data.success === false && request.data.error === "UserID not found") {
             window.location.href = '/profile/';
-        console.log(request.data.userInfo)
+        }
+        else if (request.data.success === false && request.data.error === "User not found") {
+            sessionStorage.clear();
+            window.location.href = '/';
+        }
+        else {
+            sessionStorage.clear();
+            window.location.href = '/';
+        }
         return request.data.userInfo;
     }
 
@@ -87,47 +97,47 @@ class ProfilePage extends Component<IProps, IState> {
         return response.data.userInfo;
     }
 
-    getAvatar = async () => {
-        const response = await axios.post('http://' + domain + ':3333/profile/avatar/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
-        sessionStorage.setItem("refreshToken", response.data.refreshToken);
-        sessionStorage.setItem("accessToken", response.data.accessToken);
-        return response.data.avatar;
-    }
+    // getAvatar = async () => {
+    //     const response = await axios.post('http://' + domain + ':3333/profile/avatar/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+    //     sessionStorage.setItem("refreshToken", response.data.refreshToken);
+    //     sessionStorage.setItem("accessToken", response.data.accessToken);
+    //     return response.data.avatar;
+    // }
 
-    getUsername = async () => {
-        const response = await axios.post('http://' + domain + ':3333/profile/username/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
-        sessionStorage.setItem("refreshToken", response.data.refreshToken);
-        sessionStorage.setItem("accessToken", response.data.accessToken);
-        return response.data.username;
-    }
+    // getUsername = async () => {
+    //     const response = await axios.post('http://' + domain + ':3333/profile/username/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+    //     sessionStorage.setItem("refreshToken", response.data.refreshToken);
+    //     sessionStorage.setItem("accessToken", response.data.accessToken);
+    //     return response.data.username;
+    // }
 
-    getWins = async () => {
-        const response = await axios.post('http://' + domain + ':3333/profile/wins/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
-        sessionStorage.setItem("refreshToken", response.data.refreshToken);
-        sessionStorage.setItem("accessToken", response.data.accessToken);
-        return response.data.wins;
-    }
+    // getWins = async () => {
+    //     const response = await axios.post('http://' + domain + ':3333/profile/wins/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+    //     sessionStorage.setItem("refreshToken", response.data.refreshToken);
+    //     sessionStorage.setItem("accessToken", response.data.accessToken);
+    //     return response.data.wins;
+    // }
 
-    getLosses = async () => {
-        const response = await axios.post('http://' + domain + ':3333/profile/losses/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
-        sessionStorage.setItem("refreshToken", response.data.refreshToken);
-        sessionStorage.setItem("accessToken", response.data.accessToken);
-        return response.data.losses;
-    }
+    // getLosses = async () => {
+    //     const response = await axios.post('http://' + domain + ':3333/profile/losses/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+    //     sessionStorage.setItem("refreshToken", response.data.refreshToken);
+    //     sessionStorage.setItem("accessToken", response.data.accessToken);
+    //     return response.data.losses;
+    // }
 
-    getLadderLevel = async () => {
-        const response = await axios.post('http://' + domain + ':3333/profile/ladder_level/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
-        sessionStorage.setItem("refreshToken", response.data.refreshToken);
-        sessionStorage.setItem("accessToken", response.data.accessToken);
-        return response.data.ladderLevel;
-    }
+    // getLadderLevel = async () => {
+    //     const response = await axios.post('http://' + domain + ':3333/profile/ladder_level/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+    //     sessionStorage.setItem("refreshToken", response.data.refreshToken);
+    //     sessionStorage.setItem("accessToken", response.data.accessToken);
+    //     return response.data.ladderLevel;
+    // }
 
-    getAchievements = async () => {
-        const response = await axios.post('http://' + domain + ':3333/profile/achievements/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
-        sessionStorage.setItem("refreshToken", response.data.refreshToken);
-        sessionStorage.setItem("accessToken", response.data.accessToken);
-        return response.data.achievements;
-    }
+    // getAchievements = async () => {
+    //     const response = await axios.post('http://' + domain + ':3333/profile/achievements/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });
+    //     sessionStorage.setItem("refreshToken", response.data.refreshToken);
+    //     sessionStorage.setItem("accessToken", response.data.accessToken);
+    //     return response.data.achievements;
+    // }
 
     get2FAStatus = async () => {
         const response = await axios.post('http://' + domain + ':3333/2fa/check_2fa/', JSON.stringify({ username: sessionStorage.getItem('username'), refreshToken: sessionStorage.getItem("refreshToken"), accessToken: sessionStorage.getItem("accessToken") }), { headers: { 'Content-Type': 'application/json' } });

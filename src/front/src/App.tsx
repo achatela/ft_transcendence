@@ -79,7 +79,26 @@ function App() {
     }
   }
 
+  function checkValidity() {
+    if (sessionStorage.getItem('username') === null) {
+      return;
+    }
+    const request = axios.post("http://" + domain + ":3333/profile/check_validity/",
+      JSON.stringify({
+        username: sessionStorage.getItem('username'),
+        refreshToken: sessionStorage.getItem('refreshToken'),
+        accessToken: sessionStorage.getItem('accessToken'),
+      }),
+      { headers: { 'Content-Type': 'application/json' } }).then((response) => {
+        if (response.data.success !== true) {
+          sessionStorage.clear();
+          window.location.href = "/";
+        }
+      });
+  }
+
   useEffect(() => {
+    checkValidity();
     console.log(sessionStorage.getItem('accessToken'));
     if (sessionStorage.getItem('accessToken') == "undefined" || sessionStorage.getItem('refreshToken') == "undefined") {
       sessionStorage.clear();
