@@ -281,24 +281,28 @@ class GameBoard extends Component<IProps, IState> {
     }
 
     async componentDidMount(): Promise<void> {
-        const request = await axios.post('http://' + domain + ':3333/pong/user_ingame/',
-            JSON.stringify({
-                username: sessionStorage.getItem('username'),
-                accessToken: sessionStorage.getItem("accessToken"),
-                refreshToken: sessionStorage.getItem("refreshToken")
-            }),
-            { headers: { 'Content-Type': 'application/json' } }
-        );
-        if (request.data.success == true) {
-            sessionStorage.setItem("accessToken", request.data.accessToken);
-            sessionStorage.setItem("refreshToken", request.data.refreshToken);
-            if (request.data.inGame == false)
-                window.location.href = "/mode";
+        try {
+            const request = await axios.post('http://' + domain + ':3333/pong/user_ingame/',
+                JSON.stringify({
+                    username: sessionStorage.getItem('username'),
+                    accessToken: sessionStorage.getItem("accessToken"),
+                    refreshToken: sessionStorage.getItem("refreshToken")
+                }),
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+            if (request.data.success == true) {
+                sessionStorage.setItem("accessToken", request.data.accessToken);
+                sessionStorage.setItem("refreshToken", request.data.refreshToken);
+                if (request.data.inGame == false)
+                    window.location.href = "/mode";
+            }
+            else {
+                console.error(request.data.message)
+            }
         }
-        else {
-            console.error(request.data.message)
+        catch (err) {
+            console.log(err);
         }
-
         this.setSocket();
         this.rect = document.querySelector('.gameBoard')!.getBoundingClientRect();
         this.magicHeightRatio = this.rect!.height / 600;
