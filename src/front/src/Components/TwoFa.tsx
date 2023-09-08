@@ -30,39 +30,49 @@ class TwoFa extends Component<IProps, IState> {
 			this.setState({ success: false })
 			return;
 		}
-		const request = await axios.post('http://' + domain + ':3333/2fa/verify',
-			JSON.stringify({
-				token: token,
-				username: sessionStorage.getItem('username'),
-				refreshToken: sessionStorage.getItem('refreshToken'),
-				accessToken: sessionStorage.getItem('accessToken'),
-			}),
-			{ headers: { 'Content-Type': 'application/json' } });
-		if (request.data.success === true) {
-			sessionStorage.setItem('accessToken', request.data.accessToken);
-			sessionStorage.setItem('refreshToken', request.data.refreshToken);
-			window.location.href = '/profile';
+		try {
+			const request = await axios.post('http://' + domain + ':3333/2fa/verify',
+				JSON.stringify({
+					token: token,
+					username: sessionStorage.getItem('username'),
+					refreshToken: sessionStorage.getItem('refreshToken'),
+					accessToken: sessionStorage.getItem('accessToken'),
+				}),
+				{ headers: { 'Content-Type': 'application/json' } });
+			if (request.data.success === true) {
+				sessionStorage.setItem('accessToken', request.data.accessToken);
+				sessionStorage.setItem('refreshToken', request.data.refreshToken);
+				window.location.href = '/profile';
+			}
+			else {
+				this.setState({ success: false });
+				// @ts-ignore: Object is possibly 'null'.
+				document.querySelector('.input-2fa').value = "";
+			}
 		}
-		else {
-			this.setState({ success: false });
-			// @ts-ignore: Object is possibly 'null'.
-			document.querySelector('.input-2fa').value = "";
+		catch (err) {
+			console.log(err);
 		}
 	}
 
 	async componentDidMount(): Promise<void> {
-		const request = await axios.post('http://' + domain + ':3333/2fa/get_qr_if_not_enabled/',
-			JSON.stringify({
-				username: sessionStorage.getItem('username'),
-				refreshToken: sessionStorage.getItem('refreshToken'),
-				accessToken: sessionStorage.getItem('accessToken'),
-			}),
-			{ headers: { 'Content-Type': 'application/json' } });
-		if (request.data.success === true) {
-			console.log(request.data.qrCode)
-			this.setState({ qrCode: request.data.qrCode });
+		try {
+			const request = await axios.post('http://' + domain + ':3333/2fa/get_qr_if_not_enabled/',
+				JSON.stringify({
+					username: sessionStorage.getItem('username'),
+					refreshToken: sessionStorage.getItem('refreshToken'),
+					accessToken: sessionStorage.getItem('accessToken'),
+				}),
+				{ headers: { 'Content-Type': 'application/json' } });
+			if (request.data.success === true) {
+				console.log(request.data.qrCode)
+				this.setState({ qrCode: request.data.qrCode });
+			}
+			else {
+			}
 		}
-		else {
+		catch (err) {
+			console.log(err);
 		}
 	}
 
