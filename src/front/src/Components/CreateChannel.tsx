@@ -39,28 +39,34 @@ export default class CreateChannel extends Component<IProps, IState> {
         console.log(sessionStorage.getItem("username"))
         console.log(sessionStorage.getItem("accessToken"))
         console.log(sessionStorage.getItem("refreshToken"))
-        const request = await axios.post('http://' + domain + ':3333/channel/create/',
-            JSON.stringify({
-                username: sessionStorage.getItem("username"),
-                accessToken: sessionStorage.getItem("accessToken"),
-                refreshToken: sessionStorage.getItem("refreshToken"),
-                channelName: channelNameInput.value,
-                hasPassword: hasPassword,
-                password: bcrypt.hashSync(channelPasswordInput.value, 10),
-                isPrivate: privateCheckbox.checked
-            }),
-            { headers: { "Content-Type": "application/json" } })
-        if (request.data.success === true) {
-            sessionStorage.setItem("refreshToken", request.data.refreshToken);
-            sessionStorage.setItem("accessToken", request.data.accessToken);
-            this.setState({ channelCreated: true, channelError: false })
-            this.refetchChannels();
-            return;
+        try {
+            const request = await axios.post('http://' + domain + ':3333/channel/create/',
+                JSON.stringify({
+                    username: sessionStorage.getItem("username"),
+                    accessToken: sessionStorage.getItem("accessToken"),
+                    refreshToken: sessionStorage.getItem("refreshToken"),
+                    channelName: channelNameInput.value,
+                    hasPassword: hasPassword,
+                    password: bcrypt.hashSync(channelPasswordInput.value, 10),
+                    isPrivate: privateCheckbox.checked
+                }),
+                { headers: { "Content-Type": "application/json" } })
+            if (request.data.success === true) {
+                sessionStorage.setItem("refreshToken", request.data.refreshToken);
+                sessionStorage.setItem("accessToken", request.data.accessToken);
+                this.setState({ channelCreated: true, channelError: false })
+                this.refetchChannels();
+                return;
+            }
+            else {
+                console.log("failed to create channel")
+                alert(request.data.error)
+                // this.setState({ channelCreated: false, channelError: true, errorMessage: request.data.error })
+                return;
+            }
         }
-        else {
-            console.log("failed to create channel")
-            alert(request.data.error)
-            // this.setState({ channelCreated: false, channelError: true, errorMessage: request.data.error })
+        catch (err) {
+            console.log(err);
             return;
         }
     }
