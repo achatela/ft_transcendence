@@ -111,20 +111,26 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
       socket.on('receiveAcceptClassic', async (message: { fromUsername: string, toUsername: string, fromId: number, toId: number }) => {
         console.log(message)
         if (message.toUsername === sessionStorage.getItem("username")) {
-          const request = await axios.post('http://' + domain + ':3333/pong/create_classic/', JSON.stringify({
-            username: message.fromUsername,
-            opponentUsername: message.toUsername,
-            usernameId: message.fromId,
-            opponentUsernameId: message.toId,
-          }), { headers: { "Content-Type": "application/json" } });
-          if (request.data.success === true) {
-            if (message.toUsername === sessionStorage.getItem("username")) {
-              sessionStorage.setItem('gameMode', "classic");
-              window.location.href = '/game/'
+          try {
+
+            const request = await axios.post('http://' + domain + ':3333/pong/create_classic/', JSON.stringify({
+              username: message.fromUsername,
+              opponentUsername: message.toUsername,
+              usernameId: message.fromId,
+              opponentUsernameId: message.toId,
+            }), { headers: { "Content-Type": "application/json" } });
+            if (request.data.success === true) {
+              if (message.toUsername === sessionStorage.getItem("username")) {
+                sessionStorage.setItem('gameMode', "classic");
+                window.location.href = '/game/'
+              }
+            }
+            else {
+              console.error("failed to create classic game")
             }
           }
-          else {
-            console.error("failed to create classic game")
+          catch (err) {
+            console.error(err);
           }
         }
       })
@@ -178,161 +184,196 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
   }
 
   async function goToProfile(event: React.MouseEvent<HTMLDivElement>): Promise<void> {
-    const request = await axios.post(
-      'http://' + domain + ':3333/social/get_friend_id/',
-      JSON.stringify({
-        username: sessionStorage.getItem("username"),
-        friendUsername: sessionStorage.getItem('tmpUsername'),
-        accessToken: sessionStorage.getItem("accessToken"),
-        refreshToken: sessionStorage.getItem("refreshToken"),
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (request.data.success === true) {
-      sessionStorage.removeItem('tmpUsername');
-      window.location.href = "/profile/" + request.data.id;
+    try {
+      const request = await axios.post(
+        'http://' + domain + ':3333/social/get_friend_id/',
+        JSON.stringify({
+          username: sessionStorage.getItem("username"),
+          friendUsername: sessionStorage.getItem('tmpUsername'),
+          accessToken: sessionStorage.getItem("accessToken"),
+          refreshToken: sessionStorage.getItem("refreshToken"),
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (request.data.success === true) {
+        sessionStorage.removeItem('tmpUsername');
+        window.location.href = "/profile/" + request.data.id;
+      }
+      else {
+        sessionStorage.removeItem('tmpUsername');
+        console.error("failed to get friend id");
+      }
     }
-    else {
-      sessionStorage.removeItem('tmpUsername');
-      console.error("failed to get friend id");
+    catch (err) {
+      console.error(err);
     }
   }
 
   async function deleteChat() {
-    const request = await axios.post(
-      'http://' + domain + ':3333/channel/quit_channel/',
-      JSON.stringify({
-        username: sessionStorage.getItem("username"),
-        accessToken: sessionStorage.getItem("accessToken"),
-        refreshToken: sessionStorage.getItem("refreshToken"),
-        channelName: channelName,
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (request.data.success === true) {
-      sessionStorage.setItem('accessToken', request.data.accessToken);
-      sessionStorage.setItem('refreshToken', request.data.refreshToken);
-      window.location.href = "/social";
+    try {
+      const request = await axios.post(
+        'http://' + domain + ':3333/channel/quit_channel/',
+        JSON.stringify({
+          username: sessionStorage.getItem("username"),
+          accessToken: sessionStorage.getItem("accessToken"),
+          refreshToken: sessionStorage.getItem("refreshToken"),
+          channelName: channelName,
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (request.data.success === true) {
+        sessionStorage.setItem('accessToken', request.data.accessToken);
+        sessionStorage.setItem('refreshToken', request.data.refreshToken);
+        window.location.href = "/social";
+      }
+      else {
+        console.error("failed to quit chat");
+      }
     }
-    else {
-      console.error("failed to quit chat");
+    catch (err) {
+      console.error(err);
     }
   }
 
   async function kickUserChannel() {
-    const response = await axios.post(
-      'http://' + domain + ':3333/channel/kick_user_channel/',
-      JSON.stringify({
-        username: sessionStorage.getItem("username"),
-        accessToken: sessionStorage.getItem("accessToken"),
-        refreshToken: sessionStorage.getItem("refreshToken"),
-        channelName: channelName,
-        targetUsername: sessionStorage.getItem('tmpUsername'),
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (response.data.success === true) {
-      sessionStorage.removeItem('tmpUsername');
-      sessionStorage.setItem('accessToken', response.data.accessToken);
-      sessionStorage.setItem('refreshToken', response.data.refreshToken);
+    try {
+      const response = await axios.post(
+        'http://' + domain + ':3333/channel/kick_user_channel/',
+        JSON.stringify({
+          username: sessionStorage.getItem("username"),
+          accessToken: sessionStorage.getItem("accessToken"),
+          refreshToken: sessionStorage.getItem("refreshToken"),
+          channelName: channelName,
+          targetUsername: sessionStorage.getItem('tmpUsername'),
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (response.data.success === true) {
+        sessionStorage.removeItem('tmpUsername');
+        sessionStorage.setItem('accessToken', response.data.accessToken);
+        sessionStorage.setItem('refreshToken', response.data.refreshToken);
+      }
+      else {
+        setError(true);
+        setErrorMessage(response.data.error)
+        sessionStorage.removeItem('tmpUsername');
+      }
     }
-    else {
-      setError(true);
-      setErrorMessage(response.data.error)
-      sessionStorage.removeItem('tmpUsername');
+    catch (err) {
+      console.error(err);
     }
   }
 
   async function banUserChannel() {
-    const response = await axios.post(
-      'http://' + domain + ':3333/channel/ban_user_channel/',
-      JSON.stringify({
-        username: sessionStorage.getItem("username"),
-        accessToken: sessionStorage.getItem("accessToken"),
-        refreshToken: sessionStorage.getItem("refreshToken"),
-        channelName: channelName,
-        targetUsername: sessionStorage.getItem('tmpUsername'),
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (response.data.success === true) {
-      sessionStorage.removeItem('tmpUsername');
-      sessionStorage.setItem('accessToken', response.data.accessToken);
-      sessionStorage.setItem('refreshToken', response.data.refreshToken);
+    try {
+      const response = await axios.post(
+        'http://' + domain + ':3333/channel/ban_user_channel/',
+        JSON.stringify({
+          username: sessionStorage.getItem("username"),
+          accessToken: sessionStorage.getItem("accessToken"),
+          refreshToken: sessionStorage.getItem("refreshToken"),
+          channelName: channelName,
+          targetUsername: sessionStorage.getItem('tmpUsername'),
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (response.data.success === true) {
+        sessionStorage.removeItem('tmpUsername');
+        sessionStorage.setItem('accessToken', response.data.accessToken);
+        sessionStorage.setItem('refreshToken', response.data.refreshToken);
+      }
+      else {
+        setError(true);
+        setErrorMessage(response.data.error)
+        sessionStorage.removeItem('tmpUsername');
+      }
     }
-    else {
-      setError(true);
-      setErrorMessage(response.data.error)
-      sessionStorage.removeItem('tmpUsername');
+    catch (err) {
+      console.error(err);
     }
   }
 
   async function muteUserChannel() {
     const duration = prompt("Select a time duration (seconds)")
-    const response = await axios.post(
-      'http://' + domain + ':3333/channel/mute_user_channel/',
-      JSON.stringify({
-        username: sessionStorage.getItem("username"),
-        accessToken: sessionStorage.getItem("accessToken"),
-        refreshToken: sessionStorage.getItem("refreshToken"),
-        channelName: channelName,
-        targetUsername: sessionStorage.getItem('tmpUsername'),
-        duration: duration,
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (response.data.success === true) {
-      sessionStorage.removeItem('tmpUsername');
-      sessionStorage.setItem('accessToken', response.data.accessToken);
-      sessionStorage.setItem('refreshToken', response.data.refreshToken);
+    try {
+      const response = await axios.post(
+        'http://' + domain + ':3333/channel/mute_user_channel/',
+        JSON.stringify({
+          username: sessionStorage.getItem("username"),
+          accessToken: sessionStorage.getItem("accessToken"),
+          refreshToken: sessionStorage.getItem("refreshToken"),
+          channelName: channelName,
+          targetUsername: sessionStorage.getItem('tmpUsername'),
+          duration: duration,
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (response.data.success === true) {
+        sessionStorage.removeItem('tmpUsername');
+        sessionStorage.setItem('accessToken', response.data.accessToken);
+        sessionStorage.setItem('refreshToken', response.data.refreshToken);
+      }
+      else {
+        setError(true);
+        setErrorMessage(response.data.error)
+        sessionStorage.removeItem('tmpUsername');
+      }
     }
-    else {
-      setError(true);
-      setErrorMessage(response.data.error)
-      sessionStorage.removeItem('tmpUsername');
+    catch (err) {
+      console.error(err);
     }
     return;
   }
 
   async function blockUserPrivate() {
-    const request = await axios.post(
-      'http://' + domain + ':3333/social/block_user/',
-      JSON.stringify({
-        username: sessionStorage.getItem("username"),
-        blockedUsername: sessionStorage.getItem("tmpUsername"),
-        accessToken: sessionStorage.getItem("accessToken"),
-        refreshToken: sessionStorage.getItem("refreshToken"),
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (request.data.success === true) {
-      sessionStorage.setItem("refreshToken", request.data.refreshToken);
-      sessionStorage.setItem("accessToken", request.data.accessToken);
-      console.log("blocked")
+    try {
+      const request = await axios.post(
+        'http://' + domain + ':3333/social/block_user/',
+        JSON.stringify({
+          username: sessionStorage.getItem("username"),
+          blockedUsername: sessionStorage.getItem("tmpUsername"),
+          accessToken: sessionStorage.getItem("accessToken"),
+          refreshToken: sessionStorage.getItem("refreshToken"),
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (request.data.success === true) {
+        sessionStorage.setItem("refreshToken", request.data.refreshToken);
+        sessionStorage.setItem("accessToken", request.data.accessToken);
+        console.log("blocked")
+      }
+      else
+        console.log("failed to block")
     }
-    else
-      console.log("failed to block")
+    catch (err) {
+      console.error(err);
+    }
     return;
   }
 
   async function removeUserPrivate() {
-    const request = await axios.post(
-      'http://' + domain + ':3333/social/remove_friend',
-      JSON.stringify({
-        removerUsername: sessionStorage.getItem("username"),
-        removedUsername: sessionStorage.getItem("tmpUsername"),
-        refreshToken: sessionStorage.getItem("refreshToken"),
-        accessToken: sessionStorage.getItem("accessToken"),
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (request.data.success === true) {
-      sessionStorage.setItem("refreshToken", request.data.refreshToken);
-      sessionStorage.setItem("accessToken", request.data.accessToken);
-      console.log("removed")
+    try {
+      const request = await axios.post(
+        'http://' + domain + ':3333/social/remove_friend',
+        JSON.stringify({
+          removerUsername: sessionStorage.getItem("username"),
+          removedUsername: sessionStorage.getItem("tmpUsername"),
+          refreshToken: sessionStorage.getItem("refreshToken"),
+          accessToken: sessionStorage.getItem("accessToken"),
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (request.data.success === true) {
+        sessionStorage.setItem("refreshToken", request.data.refreshToken);
+        sessionStorage.setItem("accessToken", request.data.accessToken);
+        console.log("removed")
+      }
+      else {
+        console.log("failed to remove")
+      }
     }
-    else {
-      console.log("failed to remove")
+    catch (err) {
+      console.error(err);
     }
     window.location.href = "/social/";
     return;
@@ -343,102 +384,122 @@ const Chat: React.FC<FriendsProps> = ({ chat, isChannel, isSelected, blockedIds 
     if (newPassword.length < 1) {
       return;
     }
-    const request = await axios.post(
-      'http://' + domain + ':3333/channel/change_password_channel',
-      JSON.stringify({
-        username: sessionStorage.getItem("username"),
-        newPassword: bcrypt.hashSync(newPassword, 10),
-        accessToken: sessionStorage.getItem("accessToken"),
-        refreshToken: sessionStorage.getItem("refreshToken"),
-        channelName: channelName,
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (request.data.success === true) {
-      sessionStorage.setItem("refreshToken", request.data.refreshToken);
-      sessionStorage.setItem("accessToken", request.data.accessToken);
-      console.log("password changed")
+    try {
+      const request = await axios.post(
+        'http://' + domain + ':3333/channel/change_password_channel',
+        JSON.stringify({
+          username: sessionStorage.getItem("username"),
+          newPassword: bcrypt.hashSync(newPassword, 10),
+          accessToken: sessionStorage.getItem("accessToken"),
+          refreshToken: sessionStorage.getItem("refreshToken"),
+          channelName: channelName,
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (request.data.success === true) {
+        sessionStorage.setItem("refreshToken", request.data.refreshToken);
+        sessionStorage.setItem("accessToken", request.data.accessToken);
+        console.log("password changed")
+      }
+      else {
+        setError(true);
+        setErrorMessage(request.data.error)
+        sessionStorage.removeItem('tmpUsername');
+      }
     }
-    else {
-      setError(true);
-      setErrorMessage(request.data.error)
-      sessionStorage.removeItem('tmpUsername');
+    catch (err) {
+      console.error(err);
     }
     return;
   }
 
   async function inviteUser() {
     const user = prompt("Enter username");
-    const request = await axios.post(
-      'http://' + domain + ':3333/channel/invite_user_channel',
-      JSON.stringify({
-        username: sessionStorage.getItem("username"),
-        accessToken: sessionStorage.getItem("accessToken"),
-        refreshToken: sessionStorage.getItem("refreshToken"),
-        channelName: channelName,
-        invitedUser: user,
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (request.data.success === true) {
-      sessionStorage.setItem("refreshToken", request.data.refreshToken);
-      sessionStorage.setItem("accessToken", request.data.accessToken);
-      console.log("invited")
+    try {
+      const request = await axios.post(
+        'http://' + domain + ':3333/channel/invite_user_channel',
+        JSON.stringify({
+          username: sessionStorage.getItem("username"),
+          accessToken: sessionStorage.getItem("accessToken"),
+          refreshToken: sessionStorage.getItem("refreshToken"),
+          channelName: channelName,
+          invitedUser: user,
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (request.data.success === true) {
+        sessionStorage.setItem("refreshToken", request.data.refreshToken);
+        sessionStorage.setItem("accessToken", request.data.accessToken);
+        console.log("invited")
+      }
+      else {
+        setError(true);
+        setErrorMessage(request.data.error)
+        sessionStorage.removeItem('tmpUsername');
+      }
     }
-    else {
-      setError(true);
-      setErrorMessage(request.data.error)
-      sessionStorage.removeItem('tmpUsername');
+    catch (err) {
+      console.error(err);
     }
     return;
   }
 
   async function promoteUserChannel() {
-    const response = await axios.post(
-      'http://' + domain + ':3333/channel/promote_user_channel/',
-      JSON.stringify({
-        username: sessionStorage.getItem("username"),
-        accessToken: sessionStorage.getItem("accessToken"),
-        refreshToken: sessionStorage.getItem("refreshToken"),
-        channelName: channelName,
-        targetUsername: sessionStorage.getItem('tmpUsername'),
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (response.data.success === true) {
-      sessionStorage.removeItem('tmpUsername');
-      sessionStorage.setItem('accessToken', response.data.accessToken);
-      sessionStorage.setItem('refreshToken', response.data.refreshToken);
+    try {
+      const response = await axios.post(
+        'http://' + domain + ':3333/channel/promote_user_channel/',
+        JSON.stringify({
+          username: sessionStorage.getItem("username"),
+          accessToken: sessionStorage.getItem("accessToken"),
+          refreshToken: sessionStorage.getItem("refreshToken"),
+          channelName: channelName,
+          targetUsername: sessionStorage.getItem('tmpUsername'),
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (response.data.success === true) {
+        sessionStorage.removeItem('tmpUsername');
+        sessionStorage.setItem('accessToken', response.data.accessToken);
+        sessionStorage.setItem('refreshToken', response.data.refreshToken);
+      }
+      else {
+        setError(true);
+        setErrorMessage(response.data.error)
+        sessionStorage.removeItem('tmpUsername');
+      }
     }
-    else {
-      setError(true);
-      setErrorMessage(response.data.error)
-      sessionStorage.removeItem('tmpUsername');
+    catch (err) {
+      console.error(err);
     }
   }
 
 
   async function demoteUserChannel() {
-    const response = await axios.post(
-      'http://' + domain + ':3333/channel/demote_user_channel/',
-      JSON.stringify({
-        username: sessionStorage.getItem("username"),
-        accessToken: sessionStorage.getItem("accessToken"),
-        refreshToken: sessionStorage.getItem("refreshToken"),
-        channelName: channelName,
-        targetUsername: sessionStorage.getItem('tmpUsername'),
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-    if (response.data.success === true) {
-      sessionStorage.removeItem('tmpUsername');
-      sessionStorage.setItem('accessToken', response.data.accessToken);
-      sessionStorage.setItem('refreshToken', response.data.refreshToken);
+    try {
+      const response = await axios.post(
+        'http://' + domain + ':3333/channel/demote_user_channel/',
+        JSON.stringify({
+          username: sessionStorage.getItem("username"),
+          accessToken: sessionStorage.getItem("accessToken"),
+          refreshToken: sessionStorage.getItem("refreshToken"),
+          channelName: channelName,
+          targetUsername: sessionStorage.getItem('tmpUsername'),
+        }),
+        { headers: { "Content-Type": "application/json" } }
+      );
+      if (response.data.success === true) {
+        sessionStorage.removeItem('tmpUsername');
+        sessionStorage.setItem('accessToken', response.data.accessToken);
+        sessionStorage.setItem('refreshToken', response.data.refreshToken);
+      }
+      else {
+        setError(true);
+        setErrorMessage(response.data.error)
+        sessionStorage.removeItem('tmpUsername');
+      }
     }
-    else {
-      setError(true);
-      setErrorMessage(response.data.error)
-      sessionStorage.removeItem('tmpUsername');
+    catch (err) {
+      console.error(err);
     }
   }
 
